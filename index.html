@@ -1,0 +1,1219 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Webot Sales Dashboard</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --ink: #18212f;
+      --muted: #697586;
+      --line: #dde4ee;
+      --soft: #eef3f8;
+      --teal: #0f766e;
+      --blue: #2563eb;
+      --amber: #b7791f;
+      --rose: #c2415d;
+      --green: #15803d;
+      --shadow: 0 18px 45px rgba(30, 41, 59, 0.08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.84), rgba(246,248,251,0.92)),
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.10), transparent 32rem),
+        var(--bg);
+      letter-spacing: 0;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 264px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 18px;
+      background: #101820;
+      color: #dce7f3;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand {
+      padding: 0 6px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .brand strong {
+      display: block;
+      color: #ffffff;
+      font-size: 20px;
+      line-height: 1.1;
+      margin-bottom: 7px;
+    }
+
+    .brand span {
+      color: #9fb0c3;
+      font-size: 13px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav button {
+      min-height: 44px;
+      border: 0;
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: #cbd7e5;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .nav button:hover {
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+      transform: translateX(2px);
+    }
+
+    .nav button.active {
+      background: #ffffff;
+      color: #101820;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+    }
+
+    .nav .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: currentColor;
+      opacity: 0.76;
+      flex: 0 0 auto;
+    }
+
+    main {
+      min-width: 0;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0 0 7px;
+      font-size: 28px;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .status-pill {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.78);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .filters {
+      background: rgba(255,255,255,0.90);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .date-row, .quick-row {
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    input[type="date"] {
+      height: 40px;
+      min-width: 158px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0 10px;
+      color: var(--ink);
+      background: #ffffff;
+    }
+
+    .quick-row button, .apply-btn {
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+      color: var(--ink);
+      padding: 0 12px;
+      cursor: pointer;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .quick-row button:hover, .apply-btn:hover {
+      border-color: #9fb0c3;
+      transform: translateY(-1px);
+    }
+
+    .quick-row button.active, .apply-btn {
+      background: #101820;
+      color: #ffffff;
+      border-color: #101820;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #bfd0df;
+      box-shadow: 0 22px 56px rgba(30, 41, 59, 0.12);
+    }
+
+    .kpi {
+      padding: 18px;
+      min-height: 138px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 11px;
+      font-size: clamp(22px, 2vw, 30px);
+      line-height: 1.04;
+      overflow-wrap: anywhere;
+    }
+
+    .kpi small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      margin-top: 12px;
+    }
+
+    .delta-up { color: var(--green); }
+    .delta-down { color: var(--rose); }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.8fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .panel-note {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 320px;
+      width: 100%;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .tooltip {
+      position: fixed;
+      z-index: 10;
+      pointer-events: none;
+      background: #101820;
+      color: #ffffff;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 12px;
+      box-shadow: 0 16px 32px rgba(0,0,0,0.18);
+      opacity: 0;
+      transform: translate(-50%, -112%);
+      transition: opacity 120ms ease;
+      white-space: nowrap;
+    }
+
+    .ratio-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .ratio-item {
+      display: grid;
+      gap: 7px;
+    }
+
+    .ratio-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .ratio-top strong {
+      color: var(--ink);
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #e5ebf2;
+      overflow: hidden;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      width: 0;
+      transition: width 420ms ease;
+    }
+
+    .bar-new { background: var(--blue); }
+    .bar-repeat { background: var(--teal); }
+    .bar-shopee { background: var(--amber); }
+    .bar-tiktok { background: var(--rose); }
+
+    .table-panel {
+      overflow: hidden;
+    }
+
+    .table-scroll {
+      overflow: auto;
+      max-height: 420px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+
+    tbody tr {
+      transition: background 140ms ease, transform 140ms ease;
+    }
+
+    tbody tr:hover {
+      background: #f1f6fb;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 3px 9px;
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .empty-page {
+      min-height: calc(100vh - 48px);
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .empty-page .card {
+      width: min(560px, 100%);
+      padding: 36px;
+    }
+
+    .empty-page h2 {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .empty-page p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 1120px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar {
+        position: relative;
+        height: auto;
+        padding: 16px;
+      }
+      .nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .nav button {
+        justify-content: center;
+        text-align: center;
+      }
+      .kpi-grid, .content-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      main { padding: 16px; }
+      .topbar, .filters {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+      .status-pill {
+        justify-self: start;
+      }
+      .nav {
+        grid-template-columns: 1fr 1fr;
+      }
+      .kpi-grid, .content-grid {
+        grid-template-columns: 1fr;
+      }
+      .panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .panel-note {
+        text-align: left;
+      }
+      .chart-wrap {
+        height: 270px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <strong>Data Webot</strong>
+        <span>Sales command center</span>
+      </div>
+      <nav class="nav" aria-label="Menu utama">
+        <button class="active" data-page="dashboard"><span class="dot"></span>Dashboard</button>
+        <button data-page="advertiser"><span class="dot"></span>Report Advertiser Soscom</button>
+        <button data-page="cs"><span class="dot"></span>Customer Service</button>
+        <button data-page="crm"><span class="dot"></span>CRM</button>
+        <button data-page="shopee"><span class="dot"></span>Shopee</button>
+        <button data-page="tiktok"><span class="dot"></span>Tiktokshop</button>
+      </nav>
+    </aside>
+
+    <main>
+      <section id="dashboard-page">
+        <div class="topbar">
+          <div>
+            <h1>Dashboard Sales</h1>
+            <p class="subtitle">Monitoring gross omset, growth, rasio customer, marketplace, dan proyeksi periode berjalan.</p>
+          </div>
+          <div class="status-pill" id="sourceStatus">Menghubungkan data...</div>
+        </div>
+
+        <section class="filters" aria-label="Filter dashboard">
+          <div class="date-row">
+            <label>Tanggal awal
+              <input id="startDate" type="date">
+            </label>
+            <label>Tanggal akhir
+              <input id="endDate" type="date">
+            </label>
+            <button class="apply-btn" id="applyFilter">Terapkan</button>
+          </div>
+          <div class="quick-row" id="quickFilters">
+            <button data-range="thisMonth" class="active">Bulan ini</button>
+            <button data-range="lastMonth">Bulan lalu</button>
+            <button data-range="last3">3 bulan lalu</button>
+            <button data-range="last6">6 bulan lalu</button>
+            <button data-range="thisYear">Tahun ini</button>
+            <button data-range="lastYear">Tahun lalu</button>
+          </div>
+        </section>
+
+        <section class="kpi-grid">
+          <article class="card kpi">
+            <div>
+              <span>Gross Omset</span>
+              <strong id="grossOmset">Rp0</strong>
+            </div>
+            <small id="grossMeta">0 transaksi valid</small>
+          </article>
+          <article class="card kpi">
+            <div>
+              <span>Growth Omset</span>
+              <strong id="growthOmset">0%</strong>
+            </div>
+            <small id="growthMeta">Dibanding periode sebelumnya</small>
+          </article>
+          <article class="card kpi">
+            <div>
+              <span>Rasio Omset</span>
+              <strong id="dominantRatio">-</strong>
+            </div>
+            <small>New, repeat, Shopee, dan Tiktokshop</small>
+          </article>
+          <article class="card kpi">
+            <div>
+              <span>Proyeksi Omset</span>
+              <strong id="projection">Rp0</strong>
+            </div>
+            <small id="projectionMeta">Berdasarkan rata-rata harian periode</small>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Tren Omset Harian</h2>
+              <span class="panel-note" id="periodLabel">-</span>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="revenueChart"></canvas>
+            </div>
+          </article>
+
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Rasio Omset</h2>
+              <span class="panel-note">berdasarkan sumber data</span>
+            </div>
+            <div class="ratio-list">
+              <div class="ratio-item">
+                <div class="ratio-top"><strong>New Customer</strong><span id="newRatio">0%</span></div>
+                <div class="bar"><i class="bar-new" id="newBar"></i></div>
+              </div>
+              <div class="ratio-item">
+                <div class="ratio-top"><strong>Repeat Customer</strong><span id="repeatRatio">0%</span></div>
+                <div class="bar"><i class="bar-repeat" id="repeatBar"></i></div>
+              </div>
+              <div class="ratio-item">
+                <div class="ratio-top"><strong>Shopee</strong><span id="shopeeRatio">0%</span></div>
+                <div class="bar"><i class="bar-shopee" id="shopeeBar"></i></div>
+              </div>
+              <div class="ratio-item">
+                <div class="ratio-top"><strong>Tiktokshop</strong><span id="tiktokRatio">0%</span></div>
+                <div class="bar"><i class="bar-tiktok" id="tiktokBar"></i></div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="card panel table-panel">
+          <div class="panel-header">
+            <h2>Data Terbaru</h2>
+            <span class="panel-note" id="rowCount">0 baris</span>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Sumber</th>
+                  <th>Tipe / Platform</th>
+                  <th>Status</th>
+                  <th>Omset</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="coming-page" class="empty-page hidden">
+        <article class="card">
+          <h2 id="comingTitle">Coming soon ....</h2>
+          <p>Menu ini sudah bisa diklik dan siap diisi pada tahap berikutnya.</p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    const SHEETS = {
+      webot: {
+        id: "1GbKWkojWFT71dS2wP4Qa5WyYKrEYuk6lQEZuaHw-v9M",
+        sheet: "ALL DATA"
+      },
+      marketplace: {
+        id: "19W15h2w_gDsL6v8Chts6QbjeixEgqS9mYAo-iieUUR0",
+        sheet: "ALL DATA"
+      }
+    };
+
+    const EXCLUDED_WEBOT_STATUS = new Set(["cancelled", "canceled", "draft", "waiting for payment"]);
+    const els = {
+      sourceStatus: document.getElementById("sourceStatus"),
+      startDate: document.getElementById("startDate"),
+      endDate: document.getElementById("endDate"),
+      applyFilter: document.getElementById("applyFilter"),
+      quickFilters: document.getElementById("quickFilters"),
+      grossOmset: document.getElementById("grossOmset"),
+      grossMeta: document.getElementById("grossMeta"),
+      growthOmset: document.getElementById("growthOmset"),
+      growthMeta: document.getElementById("growthMeta"),
+      dominantRatio: document.getElementById("dominantRatio"),
+      projection: document.getElementById("projection"),
+      projectionMeta: document.getElementById("projectionMeta"),
+      periodLabel: document.getElementById("periodLabel"),
+      tableBody: document.getElementById("tableBody"),
+      rowCount: document.getElementById("rowCount"),
+      tooltip: document.getElementById("tooltip"),
+      comingPage: document.getElementById("coming-page"),
+      dashboardPage: document.getElementById("dashboard-page"),
+      comingTitle: document.getElementById("comingTitle")
+    };
+
+    const ratioEls = {
+      new: [document.getElementById("newRatio"), document.getElementById("newBar")],
+      repeat: [document.getElementById("repeatRatio"), document.getElementById("repeatBar")],
+      shopee: [document.getElementById("shopeeRatio"), document.getElementById("shopeeBar")],
+      tiktok: [document.getElementById("tiktokRatio"), document.getElementById("tiktokBar")]
+    };
+
+    let allRows = [];
+    let chartPoints = [];
+    let hoveredPoint = -1;
+
+    function currency(value) {
+      return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0
+      }).format(value || 0);
+    }
+
+    function percent(value) {
+      if (!Number.isFinite(value)) return "0%";
+      return `${value >= 0 ? "" : "-"}${Math.abs(value).toFixed(1)}%`;
+    }
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function toInputDate(date) {
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    }
+
+    function dateKey(date) {
+      return toInputDate(date);
+    }
+
+    function startOfDay(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function addDays(date, days) {
+      const next = new Date(date);
+      next.setDate(next.getDate() + days);
+      return next;
+    }
+
+    function addMonths(date, months) {
+      const next = new Date(date);
+      next.setMonth(next.getMonth() + months);
+      return next;
+    }
+
+    function parseMoney(raw) {
+      if (raw === null || raw === undefined || raw === "") return 0;
+      if (typeof raw === "number") return raw;
+      const normalized = String(raw)
+        .replace(/[^\d,.-]/g, "")
+        .replace(/\.(?=\d{3}(\D|$))/g, "")
+        .replace(",", ".");
+      const value = Number(normalized);
+      return Number.isFinite(value) ? value : 0;
+    }
+
+    function parseDateValue(raw) {
+      if (!raw) return null;
+      if (raw instanceof Date && !Number.isNaN(raw)) return startOfDay(raw);
+      if (typeof raw === "string") {
+        const gviz = raw.match(/^Date\((\d+),(\d+),(\d+)/);
+        if (gviz) return new Date(Number(gviz[1]), Number(gviz[2]), Number(gviz[3]));
+        const clean = raw.trim();
+        const parts = clean.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$/);
+        if (parts) {
+          const year = parts[3].length === 2 ? Number(`20${parts[3]}`) : Number(parts[3]);
+          return new Date(year, Number(parts[2]) - 1, Number(parts[1]));
+        }
+        const parsed = new Date(clean);
+        if (!Number.isNaN(parsed)) return startOfDay(parsed);
+      }
+      return null;
+    }
+
+    function normalizeStatus(status) {
+      return String(status || "").trim();
+    }
+
+    function getField(row, names) {
+      const keys = Object.keys(row);
+      for (const name of names) {
+        if (row[name] !== undefined) return row[name];
+        const found = keys.find(key => key.toLowerCase() === name.toLowerCase());
+        if (found) return row[found];
+      }
+      return "";
+    }
+
+    function cellValue(cell) {
+      if (!cell) return "";
+      if (cell.f !== undefined && cell.f !== null) return cell.f;
+      if (cell.v !== undefined && cell.v !== null) return cell.v;
+      return "";
+    }
+
+    function loadGoogleSheet(id, sheetName) {
+      return new Promise((resolve, reject) => {
+        const callback = `sheetCallback_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+        const script = document.createElement("script");
+        const timeout = window.setTimeout(() => {
+          cleanup();
+          reject(new Error("Timeout membaca Google Sheet"));
+        }, 18000);
+
+        function cleanup() {
+          window.clearTimeout(timeout);
+          delete window[callback];
+          script.remove();
+        }
+
+        window[callback] = (payload) => {
+          cleanup();
+          if (!payload || payload.status === "error") {
+            reject(new Error(payload?.errors?.[0]?.detailed_message || "Google Sheet tidak bisa dibaca"));
+            return;
+          }
+          const cols = (payload.table.cols || []).map((col, index) => col.label || col.id || `Column ${index + 1}`);
+          const rows = (payload.table.rows || []).map(row => {
+            const item = {};
+            cols.forEach((col, index) => item[col] = cellValue(row.c[index]));
+            return item;
+          });
+          resolve(rows);
+        };
+
+        const query = encodeURIComponent("select *");
+        script.src = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tq=${query}&tqx=out:json;responseHandler:${callback}`;
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("Koneksi ke Google Sheet gagal"));
+        };
+        document.head.appendChild(script);
+      });
+    }
+
+    function normalizeWebot(rows) {
+      return rows.map(row => {
+        const status = normalizeStatus(getField(row, ["Status"]));
+        const customerType = getField(row, ["Type Customer", "Type Transaksi"]) || "-";
+        return {
+          source: "Webot",
+          date: parseDateValue(getField(row, ["Date"])),
+          revenue: parseMoney(getField(row, ["Total Perline"])),
+          status,
+          type: normalizeCustomerType(customerType),
+          valid: !EXCLUDED_WEBOT_STATUS.has(status.toLowerCase())
+        };
+      }).filter(row => row.date && row.revenue > 0 && row.valid);
+    }
+
+    function normalizeCustomerType(raw) {
+      const value = String(raw || "-").trim();
+      const normalized = value.toLowerCase();
+      if (normalized.includes("repeat")) return "Repeat";
+      if (normalized.includes("new")) return "New";
+      return value || "-";
+    }
+
+    function normalizeMarketplace(rows) {
+      return rows.map(row => ({
+        source: "Marketplace",
+        date: parseDateValue(getField(row, ["Order_Date", "order_date"])),
+        revenue: parseMoney(getField(row, ["Omset", "omset"])),
+        status: normalizeStatus(getField(row, ["Status", "status"])) || "All",
+        type: String(getField(row, ["Platform", "platform"]) || "-").trim() || "-",
+        valid: true
+      })).filter(row => row.date && row.revenue > 0);
+    }
+
+    function sampleData() {
+      const today = new Date();
+      const start = new Date(today.getFullYear(), today.getMonth(), 1);
+      const statuses = ["paid", "completed", "processing", "shipped"];
+      const rows = [];
+      for (let i = 0; i < 42; i++) {
+        const date = addDays(start, i % 26);
+        rows.push({
+          source: "Webot",
+          date,
+          revenue: 750000 + (i % 7) * 185000,
+          status: statuses[i % statuses.length],
+          type: i % 3 === 0 ? "Repeat" : "New",
+          valid: true
+        });
+      }
+      for (let i = 0; i < 28; i++) {
+        const date = addDays(start, i % 26);
+        rows.push({
+          source: "Marketplace",
+          date,
+          revenue: 430000 + (i % 5) * 210000,
+          status: "all",
+          type: i % 2 === 0 ? "Shopee" : "Tiktokshop",
+          valid: true
+        });
+      }
+      return rows;
+    }
+
+    function rangePreset(name) {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      if (name === "lastMonth") return [new Date(y, m - 1, 1), new Date(y, m, 0)];
+      if (name === "last3") return [new Date(y, m - 3, 1), new Date(y, m, 0)];
+      if (name === "last6") return [new Date(y, m - 6, 1), new Date(y, m, 0)];
+      if (name === "thisYear") return [new Date(y, 0, 1), now];
+      if (name === "lastYear") return [new Date(y - 1, 0, 1), new Date(y - 1, 11, 31)];
+      return [new Date(y, m, 1), now];
+    }
+
+    function updateInputs(start, end) {
+      els.startDate.value = toInputDate(start);
+      els.endDate.value = toInputDate(end);
+    }
+
+    function getSelectedRange() {
+      return [parseDateValue(els.startDate.value), parseDateValue(els.endDate.value)];
+    }
+
+    function rowsInRange(start, end) {
+      const s = startOfDay(start);
+      const e = startOfDay(end);
+      return allRows.filter(row => row.date >= s && row.date <= e);
+    }
+
+    function sumRows(rows) {
+      return rows.reduce((total, row) => total + row.revenue, 0);
+    }
+
+    function previousRange(start, end) {
+      const days = Math.max(1, Math.round((startOfDay(end) - startOfDay(start)) / 86400000) + 1);
+      const previousEnd = addDays(startOfDay(start), -1);
+      const previousStart = addDays(previousEnd, -(days - 1));
+      return [previousStart, previousEnd];
+    }
+
+    function buildDailySeries(rows, start, end) {
+      const map = new Map();
+      rows.forEach(row => map.set(dateKey(row.date), (map.get(dateKey(row.date)) || 0) + row.revenue));
+      const series = [];
+      for (let cursor = startOfDay(start); cursor <= end; cursor = addDays(cursor, 1)) {
+        series.push({ date: new Date(cursor), value: map.get(dateKey(cursor)) || 0 });
+      }
+      return series;
+    }
+
+    function projectionFrom(rows, start, end) {
+      const today = startOfDay(new Date());
+      const selectedStart = startOfDay(start);
+      const selectedEnd = startOfDay(end);
+      const daysWithData = Math.max(1, Math.round((selectedEnd - selectedStart) / 86400000) + 1);
+      const total = sumRows(rows);
+      const avgDaily = total / daysWithData;
+      if (selectedStart.getMonth() === selectedEnd.getMonth() && selectedStart.getFullYear() === selectedEnd.getFullYear()) {
+        const monthDays = new Date(selectedStart.getFullYear(), selectedStart.getMonth() + 1, 0).getDate();
+        return {
+          value: avgDaily * monthDays,
+          note: `Estimasi penuh ${selectedStart.toLocaleDateString("id-ID", { month: "long", year: "numeric" })}`
+        };
+      }
+      const remainingDays = Math.max(0, Math.round((selectedEnd - today) / 86400000));
+      return {
+        value: total + avgDaily * remainingDays,
+        note: "Estimasi sampai akhir tanggal filter"
+      };
+    }
+
+    function render() {
+      const [start, end] = getSelectedRange();
+      if (!start || !end) return;
+      const current = rowsInRange(start, end);
+      const [prevStart, prevEnd] = previousRange(start, end);
+      const previous = rowsInRange(prevStart, prevEnd);
+      const gross = sumRows(current);
+      const prevGross = sumRows(previous);
+      const growth = prevGross > 0 ? ((gross - prevGross) / prevGross) * 100 : (gross > 0 ? 100 : 0);
+      const projected = projectionFrom(current, start, end);
+
+      const buckets = {
+        new: sumRows(current.filter(row => row.source === "Webot" && row.type.toLowerCase() === "new")),
+        repeat: sumRows(current.filter(row => row.source === "Webot" && row.type.toLowerCase() === "repeat")),
+        shopee: sumRows(current.filter(row => row.type.toLowerCase().includes("shopee"))),
+        tiktok: sumRows(current.filter(row => row.type.toLowerCase().includes("tiktok")))
+      };
+
+      const ratios = Object.fromEntries(Object.entries(buckets).map(([key, value]) => [key, gross > 0 ? value / gross * 100 : 0]));
+      const dominant = Object.entries(ratios).sort((a, b) => b[1] - a[1])[0];
+
+      els.grossOmset.textContent = currency(gross);
+      els.grossMeta.textContent = `${current.length.toLocaleString("id-ID")} transaksi valid`;
+      els.growthOmset.textContent = percent(growth);
+      els.growthOmset.className = growth >= 0 ? "delta-up" : "delta-down";
+      els.growthMeta.textContent = `${currency(prevGross)} pada periode sebelumnya`;
+      els.dominantRatio.textContent = dominant ? `${labelRatio(dominant[0])} ${percent(dominant[1])}` : "-";
+      els.projection.textContent = currency(projected.value);
+      els.projectionMeta.textContent = projected.note;
+      els.periodLabel.textContent = `${start.toLocaleDateString("id-ID")} - ${end.toLocaleDateString("id-ID")}`;
+      els.rowCount.textContent = `${current.length.toLocaleString("id-ID")} baris`;
+
+      Object.entries(ratios).forEach(([key, value]) => {
+        ratioEls[key][0].textContent = percent(value);
+        ratioEls[key][1].style.width = `${Math.min(100, Math.max(0, value))}%`;
+      });
+
+      chartPoints = buildDailySeries(current, start, end);
+      drawChart();
+      renderTable(current);
+    }
+
+    function labelRatio(key) {
+      return {
+        new: "New",
+        repeat: "Repeat",
+        shopee: "Shopee",
+        tiktok: "Tiktokshop"
+      }[key] || key;
+    }
+
+    function renderTable(rows) {
+      const ordered = rows.slice().sort((a, b) => b.date - a.date).slice(0, 120);
+      els.tableBody.innerHTML = ordered.map(row => `
+        <tr>
+          <td>${row.date.toLocaleDateString("id-ID")}</td>
+          <td><span class="badge">${row.source}</span></td>
+          <td>${row.type}</td>
+          <td>${row.status || "-"}</td>
+          <td>${currency(row.revenue)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function drawChart() {
+      const canvas = document.getElementById("revenueChart");
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      const padLeft = 58;
+      const padRight = 22;
+      const padTop = 24;
+      const padBottom = 42;
+      const width = rect.width - padLeft - padRight;
+      const height = rect.height - padTop - padBottom;
+      const max = Math.max(1, ...chartPoints.map(point => point.value));
+      const step = chartPoints.length > 1 ? width / (chartPoints.length - 1) : width;
+
+      ctx.strokeStyle = "#dde4ee";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#697586";
+      ctx.font = "12px Inter, Arial";
+      for (let i = 0; i <= 4; i++) {
+        const y = padTop + height * i / 4;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(rect.width - padRight, y);
+        ctx.stroke();
+        const value = max - max * i / 4;
+        ctx.fillText(shortMoney(value), 0, y + 4);
+      }
+
+      const points = chartPoints.map((point, index) => ({
+        x: padLeft + index * step,
+        y: padTop + height - (point.value / max) * height,
+        raw: point
+      }));
+
+      if (points.length) {
+        const gradient = ctx.createLinearGradient(0, padTop, 0, padTop + height);
+        gradient.addColorStop(0, "rgba(37, 99, 235, 0.22)");
+        gradient.addColorStop(1, "rgba(37, 99, 235, 0.00)");
+        ctx.beginPath();
+        points.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.lineTo(points[points.length - 1].x, padTop + height);
+        ctx.lineTo(points[0].x, padTop + height);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.beginPath();
+        points.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.strokeStyle = "#2563eb";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        points.forEach((point, index) => {
+          if (index !== hoveredPoint && chartPoints.length > 32 && index % 3 !== 0) return;
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, index === hoveredPoint ? 5 : 3, 0, Math.PI * 2);
+          ctx.fillStyle = index === hoveredPoint ? "#101820" : "#2563eb";
+          ctx.fill();
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+
+        ctx.fillStyle = "#697586";
+        const labelEvery = Math.max(1, Math.ceil(points.length / 7));
+        points.forEach((point, index) => {
+          if (index % labelEvery !== 0 && index !== points.length - 1) return;
+          const label = `${pad(point.raw.date.getDate())}/${pad(point.raw.date.getMonth() + 1)}`;
+          ctx.fillText(label, point.x - 16, rect.height - 14);
+        });
+      }
+
+      canvas._points = points;
+    }
+
+    function shortMoney(value) {
+      if (value >= 1000000000) return `${(value / 1000000000).toFixed(1)}M`;
+      if (value >= 1000000) return `${(value / 1000000).toFixed(1)}jt`;
+      if (value >= 1000) return `${Math.round(value / 1000)}rb`;
+      return String(Math.round(value));
+    }
+
+    function setupChartHover() {
+      const canvas = document.getElementById("revenueChart");
+      canvas.addEventListener("mousemove", event => {
+        const points = canvas._points || [];
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        let nearest = -1;
+        let distance = Infinity;
+        points.forEach((point, index) => {
+          const d = Math.hypot(point.x - x, point.y - y);
+          if (d < distance) {
+            distance = d;
+            nearest = index;
+          }
+        });
+        if (nearest >= 0 && distance < 26) {
+          hoveredPoint = nearest;
+          const point = points[nearest].raw;
+          els.tooltip.innerHTML = `${point.date.toLocaleDateString("id-ID")}<br><strong>${currency(point.value)}</strong>`;
+          els.tooltip.style.left = `${event.clientX}px`;
+          els.tooltip.style.top = `${event.clientY}px`;
+          els.tooltip.style.opacity = "1";
+          drawChart();
+        } else {
+          hoveredPoint = -1;
+          els.tooltip.style.opacity = "0";
+          drawChart();
+        }
+      });
+      canvas.addEventListener("mouseleave", () => {
+        hoveredPoint = -1;
+        els.tooltip.style.opacity = "0";
+        drawChart();
+      });
+    }
+
+    function setupNavigation() {
+      document.querySelectorAll(".nav button").forEach(button => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".nav button").forEach(item => item.classList.remove("active"));
+          button.classList.add("active");
+          const page = button.dataset.page;
+          if (page === "dashboard") {
+            els.dashboardPage.classList.remove("hidden");
+            els.comingPage.classList.add("hidden");
+            return;
+          }
+          els.dashboardPage.classList.add("hidden");
+          els.comingPage.classList.remove("hidden");
+          els.comingTitle.textContent = `${button.textContent.trim()} coming soon ....`;
+        });
+      });
+    }
+
+    function setupFilters() {
+      els.quickFilters.addEventListener("click", event => {
+        const button = event.target.closest("button[data-range]");
+        if (!button) return;
+        els.quickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        updateInputs(...rangePreset(button.dataset.range));
+        render();
+      });
+      els.applyFilter.addEventListener("click", () => {
+        els.quickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        render();
+      });
+      window.addEventListener("resize", drawChart);
+    }
+
+    function useLatestDataMonthIfCurrentIsEmpty() {
+      const [start, end] = getSelectedRange();
+      if (rowsInRange(start, end).length || !allRows.length) return false;
+      const latest = allRows.reduce((max, row) => row.date > max ? row.date : max, allRows[0].date);
+      const latestStart = new Date(latest.getFullYear(), latest.getMonth(), 1);
+      const latestEnd = new Date(latest.getFullYear(), latest.getMonth() + 1, 0);
+      updateInputs(latestStart, latestEnd);
+      els.quickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+      return true;
+    }
+
+    async function init() {
+      setupNavigation();
+      setupFilters();
+      setupChartHover();
+      updateInputs(...rangePreset("thisMonth"));
+      try {
+        const [webotRows, marketplaceRows] = await Promise.all([
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet),
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet)
+        ]);
+        allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
+        if (!allRows.length) throw new Error("Kolom data belum terbaca");
+        els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets`;
+        if (useLatestDataMonthIfCurrentIsEmpty()) {
+          els.sourceStatus.textContent += ", menampilkan bulan data terakhir";
+        }
+      } catch (error) {
+        console.warn(error);
+        allRows = sampleData();
+        els.sourceStatus.textContent = "Memakai data contoh, cek akses publik Google Sheets";
+      }
+      render();
+    }
+
+    init();
+  </script>
+</body>
+</html>

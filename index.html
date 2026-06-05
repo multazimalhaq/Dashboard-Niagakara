@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Data Webot Sales Dashboard</title>
+  <title>NIAGAKARA MITRA JUARA</title>
   <style>
     :root {
       --bg: #f6f8fb;
@@ -49,7 +49,7 @@
       top: 0;
       height: 100vh;
       padding: 24px 18px;
-      background: #101820;
+      background: #0b3554;
       color: #dce7f3;
       display: flex;
       flex-direction: column;
@@ -59,18 +59,32 @@
     .brand {
       padding: 0 6px 18px;
       border-bottom: 1px solid rgba(255,255,255,0.10);
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .brand img {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #ffffff;
+      border: 1px solid rgba(255,255,255,0.18);
     }
 
     .brand strong {
       display: block;
       color: #ffffff;
-      font-size: 20px;
-      line-height: 1.1;
-      margin-bottom: 7px;
+      font-size: 15px;
+      line-height: 1.18;
+      margin-bottom: 6px;
+      text-transform: uppercase;
     }
 
     .brand span {
-      color: #9fb0c3;
+      color: #c7e8ef;
       font-size: 13px;
     }
 
@@ -102,7 +116,7 @@
 
     .nav button.active {
       background: #ffffff;
-      color: #101820;
+      color: #0b3554;
       box-shadow: 0 12px 24px rgba(0,0,0,0.18);
     }
 
@@ -206,9 +220,9 @@
     }
 
     .quick-row button.active, .apply-btn {
-      background: #101820;
+      background: #0b3554;
       color: #ffffff;
-      border-color: #101820;
+      border-color: #0b3554;
     }
 
     .kpi-grid {
@@ -314,7 +328,7 @@
       position: fixed;
       z-index: 10;
       pointer-events: none;
-      background: #101820;
+      background: #0b3554;
       color: #ffffff;
       border-radius: 6px;
       padding: 8px 10px;
@@ -452,6 +466,13 @@
         height: auto;
         padding: 16px;
       }
+      .brand {
+        grid-template-columns: 44px minmax(0, 1fr);
+      }
+      .brand img {
+        width: 44px;
+        height: 44px;
+      }
       .nav {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
@@ -496,8 +517,11 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <strong>Data Webot</strong>
-        <span>Sales command center</span>
+        <img src="logo-niagakara.jpg" alt="Logo Niagakara">
+        <div>
+          <strong>NIAGAKARA MITRA JUARA</strong>
+          <span>Report Sales Niagakara</span>
+        </div>
       </div>
       <nav class="nav" aria-label="Menu utama">
         <button class="active" data-page="dashboard"><span class="dot"></span>Dashboard</button>

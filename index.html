@@ -287,6 +287,13 @@
       margin-bottom: 18px;
     }
 
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
     .panel {
       padding: 18px;
     }
@@ -343,6 +350,68 @@
     .ratio-list {
       display: grid;
       gap: 12px;
+    }
+
+    .rank-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rank-item {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #f8fafc;
+      transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+    }
+
+    .rank-item:hover {
+      background: #eef6fb;
+      border-color: #bfd0df;
+      transform: translateY(-1px);
+    }
+
+    .rank-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #0b3554;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .rank-main {
+      min-width: 0;
+    }
+
+    .rank-main strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .rank-main span, .rank-value span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .rank-value {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .rank-value strong {
+      display: block;
+      font-size: 13px;
     }
 
     .ratio-item {
@@ -483,6 +552,9 @@
       .kpi-grid, .content-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+      .rank-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 720px) {
@@ -592,6 +664,34 @@
             </div>
             <small id="projectionMeta">Berdasarkan rata-rata harian periode</small>
           </article>
+          <article class="card kpi">
+            <div>
+              <span>Total Order</span>
+              <strong id="totalOrder">0</strong>
+            </div>
+            <small>Jumlah transaksi pada periode filter</small>
+          </article>
+          <article class="card kpi">
+            <div>
+              <span>AOV</span>
+              <strong id="aov">Rp0</strong>
+            </div>
+            <small>Average order value</small>
+          </article>
+          <article class="card kpi">
+            <div>
+              <span>Return</span>
+              <strong id="returnCount">0</strong>
+            </div>
+            <small>Jumlah order berstatus return</small>
+          </article>
+          <article class="card kpi">
+            <div>
+              <span>Return Rate</span>
+              <strong id="returnRate">0%</strong>
+            </div>
+            <small>Return dibanding total order</small>
+          </article>
         </section>
 
         <section class="content-grid">
@@ -628,6 +728,32 @@
                 <div class="bar"><i class="bar-tiktok" id="tiktokBar"></i></div>
               </div>
             </div>
+          </article>
+        </section>
+
+        <section class="rank-grid">
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Top Produk</h2>
+              <span class="panel-note">berdasarkan omset</span>
+            </div>
+            <div class="rank-list" id="topProducts"></div>
+          </article>
+
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Rank Advertiser</h2>
+              <span class="panel-note">berdasarkan omset</span>
+            </div>
+            <div class="rank-list" id="topAdvertisers"></div>
+          </article>
+
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Rank CS</h2>
+              <span class="panel-note">berdasarkan omset</span>
+            </div>
+            <div class="rank-list" id="topCs"></div>
           </article>
         </section>
 
@@ -690,7 +816,14 @@
       dominantRatio: document.getElementById("dominantRatio"),
       projection: document.getElementById("projection"),
       projectionMeta: document.getElementById("projectionMeta"),
+      totalOrder: document.getElementById("totalOrder"),
+      aov: document.getElementById("aov"),
+      returnCount: document.getElementById("returnCount"),
+      returnRate: document.getElementById("returnRate"),
       periodLabel: document.getElementById("periodLabel"),
+      topProducts: document.getElementById("topProducts"),
+      topAdvertisers: document.getElementById("topAdvertisers"),
+      topCs: document.getElementById("topCs"),
       tableBody: document.getElementById("tableBody"),
       rowCount: document.getElementById("rowCount"),
       tooltip: document.getElementById("tooltip"),
@@ -847,13 +980,23 @@
         const customerType = getField(row, ["Type Customer", "Type Transaksi"]) || "-";
         return {
           source: "Webot",
+          orderId: cleanLabel(getField(row, ["Order Number", "invoice_number"]), ""),
           date: parseDateValue(getField(row, ["Date"])),
           revenue: parseMoney(getField(row, ["Total Perline"])),
           status,
           type: normalizeCustomerType(customerType),
+          product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk"]), "Tanpa produk"),
+          quantity: parseMoney(getField(row, ["Quantity", "quantity"])),
+          advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv"]), "Tanpa advertiser"),
+          cs: cleanLabel(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
           valid: !EXCLUDED_WEBOT_STATUS.has(status.toLowerCase())
         };
       }).filter(row => row.date && row.revenue > 0 && row.valid);
+    }
+
+    function cleanLabel(raw, fallback) {
+      const value = String(raw || "").trim();
+      return value && value !== "-" ? value : fallback;
     }
 
     function normalizeCustomerType(raw) {
@@ -867,10 +1010,15 @@
     function normalizeMarketplace(rows) {
       return rows.map(row => ({
         source: "Marketplace",
+        orderId: cleanLabel(getField(row, ["invoice_number", "Order Number"]), ""),
         date: parseDateValue(getField(row, ["Order_Date", "order_date"])),
         revenue: parseMoney(getField(row, ["Omset", "omset"])),
         status: normalizeStatus(getField(row, ["Status", "status"])) || "All",
         type: String(getField(row, ["Platform", "platform"]) || "-").trim() || "-",
+        product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk"]), "Tanpa produk"),
+        quantity: parseMoney(getField(row, ["Quantity", "quantity"])),
+        advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv"]), "Tanpa advertiser"),
+        cs: cleanLabel(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
         valid: true
       })).filter(row => row.date && row.revenue > 0);
     }
@@ -904,6 +1052,34 @@
 
     function sumRows(rows) {
       return rows.reduce((total, row) => total + row.revenue, 0);
+    }
+
+    function isReturnStatus(status) {
+      return String(status || "").toLowerCase().includes("return");
+    }
+
+    function uniqueOrderKey(row) {
+      return `${row.source}|${row.orderId || dateKey(row.date) + "|" + row.product + "|" + row.revenue}`;
+    }
+
+    function countUniqueOrders(rows) {
+      return new Set(rows.map(uniqueOrderKey)).size;
+    }
+
+    function aggregateRank(rows, field, limit = 5) {
+      const map = new Map();
+      rows.forEach(row => {
+        const name = row[field] || "Lainnya";
+        const item = map.get(name) || { name, revenue: 0, quantity: 0, orders: 0, orderKeys: new Set() };
+        item.revenue += row.revenue || 0;
+        item.quantity += row.quantity || 0;
+        item.orderKeys.add(uniqueOrderKey(row));
+        item.orders = item.orderKeys.size;
+        map.set(name, item);
+      });
+      return [...map.values()]
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, limit);
     }
 
     function previousRange(start, end) {
@@ -954,6 +1130,10 @@
       const prevGross = sumRows(previous);
       const growth = prevGross > 0 ? ((gross - prevGross) / prevGross) * 100 : (gross > 0 ? 100 : 0);
       const projected = projectionFrom(current, start, end);
+      const totalOrder = countUniqueOrders(current);
+      const returns = countUniqueOrders(current.filter(row => isReturnStatus(row.status)));
+      const returnRate = totalOrder > 0 ? returns / totalOrder * 100 : 0;
+      const aov = totalOrder > 0 ? gross / totalOrder : 0;
 
       const buckets = {
         new: sumRows(current.filter(row => row.source === "Webot" && row.type.toLowerCase() === "new")),
@@ -973,6 +1153,10 @@
       els.dominantRatio.textContent = dominant ? `${labelRatio(dominant[0])} ${percent(dominant[1])}` : "-";
       els.projection.textContent = currency(projected.value);
       els.projectionMeta.textContent = projected.note;
+      els.totalOrder.textContent = totalOrder.toLocaleString("id-ID");
+      els.aov.textContent = currency(aov);
+      els.returnCount.textContent = returns.toLocaleString("id-ID");
+      els.returnRate.textContent = percent(returnRate);
       els.periodLabel.textContent = `${start.toLocaleDateString("id-ID")} - ${end.toLocaleDateString("id-ID")}`;
       els.rowCount.textContent = `${current.length.toLocaleString("id-ID")} baris`;
 
@@ -983,7 +1167,49 @@
 
       chartPoints = buildDailySeries(current, start, end);
       drawChart();
+      renderRanks(current);
       renderTable(current);
+    }
+
+    function renderRanks(rows) {
+      renderRankList(els.topProducts, aggregateRank(rows, "product"), "qty");
+      renderRankList(els.topAdvertisers, aggregateRank(rows, "advertiser"), "order");
+      renderRankList(els.topCs, aggregateRank(rows, "cs"), "order");
+    }
+
+    function renderRankList(target, items, metaType) {
+      if (!items.length) {
+        target.innerHTML = `<div class="rank-item"><div class="rank-number">-</div><div class="rank-main"><strong>Belum ada data</strong><span>Sesuaikan filter periode</span></div><div class="rank-value"><strong>${currency(0)}</strong><span>-</span></div></div>`;
+        return;
+      }
+      target.innerHTML = items.map((item, index) => {
+        const meta = metaType === "qty"
+          ? `${item.quantity.toLocaleString("id-ID")} qty`
+          : `${item.orders.toLocaleString("id-ID")} order`;
+        return `
+          <div class="rank-item" title="${item.name}">
+            <div class="rank-number">${index + 1}</div>
+            <div class="rank-main">
+              <strong>${escapeHtml(item.name)}</strong>
+              <span>${meta}</span>
+            </div>
+            <div class="rank-value">
+              <strong>${currency(item.revenue)}</strong>
+              <span>${percent(sumRows(items) > 0 ? item.revenue / sumRows(items) * 100 : 0)}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
     }
 
     function labelRatio(key) {
@@ -1191,8 +1417,8 @@
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
         const [webotRows, marketplaceRows] = await Promise.all([
-          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, "select A,V,AG,K"),
-          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select C,AE,Y,F")
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, "select A,G,K,L,S,T,V,AF,AG"),
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,H,I,U,Y,AD,AE")
         ]);
         allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
         if (!allRows.length) throw new Error("Kolom data belum terbaca");

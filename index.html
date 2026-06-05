@@ -540,7 +540,7 @@
             <h1>Dashboard Sales</h1>
             <p class="subtitle">Monitoring gross omset, growth, rasio customer, marketplace, dan proyeksi periode berjalan.</p>
           </div>
-          <div class="status-pill" id="sourceStatus">Menghubungkan data...</div>
+          <div class="status-pill" id="sourceStatus">Memuat data real Google Sheets...</div>
         </div>
 
         <section class="filters" aria-label="Filter dashboard">
@@ -801,14 +801,14 @@
       return "";
     }
 
-    function loadGoogleSheet(id, sheetName) {
+    function loadGoogleSheet(id, sheetName, queryText = "select *") {
       return new Promise((resolve, reject) => {
         const callback = `sheetCallback_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
         const script = document.createElement("script");
         const timeout = window.setTimeout(() => {
           cleanup();
-          reject(new Error("Timeout membaca Google Sheet"));
-        }, 18000);
+          reject(new Error("Google Sheet terlalu lama merespons"));
+        }, 120000);
 
         function cleanup() {
           window.clearTimeout(timeout);
@@ -831,7 +831,7 @@
           resolve(rows);
         };
 
-        const query = encodeURIComponent("select *");
+        const query = encodeURIComponent(queryText);
         script.src = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tq=${query}&tqx=out:json;responseHandler:${callback}`;
         script.onerror = () => {
           cleanup();
@@ -873,36 +873,6 @@
         type: String(getField(row, ["Platform", "platform"]) || "-").trim() || "-",
         valid: true
       })).filter(row => row.date && row.revenue > 0);
-    }
-
-    function sampleData() {
-      const today = new Date();
-      const start = new Date(today.getFullYear(), today.getMonth(), 1);
-      const statuses = ["paid", "completed", "processing", "shipped"];
-      const rows = [];
-      for (let i = 0; i < 42; i++) {
-        const date = addDays(start, i % 26);
-        rows.push({
-          source: "Webot",
-          date,
-          revenue: 750000 + (i % 7) * 185000,
-          status: statuses[i % statuses.length],
-          type: i % 3 === 0 ? "Repeat" : "New",
-          valid: true
-        });
-      }
-      for (let i = 0; i < 28; i++) {
-        const date = addDays(start, i % 26);
-        rows.push({
-          source: "Marketplace",
-          date,
-          revenue: 430000 + (i % 5) * 210000,
-          status: "all",
-          type: i % 2 === 0 ? "Shopee" : "Tiktokshop",
-          valid: true
-        });
-      }
-      return rows;
     }
 
     function rangePreset(name) {
@@ -1219,9 +1189,10 @@
       setupChartHover();
       updateInputs(...rangePreset("thisMonth"));
       try {
+        els.sourceStatus.textContent = "Memuat data real Google Sheets...";
         const [webotRows, marketplaceRows] = await Promise.all([
-          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet),
-          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet)
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, "select A,V,AG,K"),
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select C,AE,Y,F")
         ]);
         allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
         if (!allRows.length) throw new Error("Kolom data belum terbaca");
@@ -1231,8 +1202,8 @@
         }
       } catch (error) {
         console.warn(error);
-        allRows = sampleData();
-        els.sourceStatus.textContent = "Memakai data contoh, cek akses publik Google Sheets";
+        allRows = [];
+        els.sourceStatus.textContent = `Data real belum berhasil terbaca: ${error.message}. Coba refresh beberapa saat lagi.`;
       }
       render();
     }

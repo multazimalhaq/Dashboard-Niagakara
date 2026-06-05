@@ -803,25 +803,30 @@
           </article>
         </section>
 
-        <section class="card panel table-panel">
-          <div class="panel-header">
-            <h2>Data Terbaru</h2>
-            <span class="panel-note" id="rowCount">0 baris</span>
-          </div>
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Sumber</th>
-                  <th>Tipe / Platform</th>
-                  <th>Status</th>
-                  <th>Omset</th>
-                </tr>
-              </thead>
-              <tbody id="tableBody"></tbody>
-            </table>
-          </div>
+        <section class="rank-grid">
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Provinsi</h2>
+              <span class="panel-note">return & success tertinggi</span>
+            </div>
+            <div class="rank-list" id="provinceInsights"></div>
+          </article>
+
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Produk</h2>
+              <span class="panel-note">return & success tertinggi</span>
+            </div>
+            <div class="rank-list" id="productStatusInsights"></div>
+          </article>
+
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Ekspedisi</h2>
+              <span class="panel-note">return & success tertinggi</span>
+            </div>
+            <div class="rank-list" id="expeditionInsights"></div>
+          </article>
         </section>
       </section>
 
@@ -871,8 +876,9 @@
       topAdvertisers: document.getElementById("topAdvertisers"),
       topCs: document.getElementById("topCs"),
       topCrm: document.getElementById("topCrm"),
-      tableBody: document.getElementById("tableBody"),
-      rowCount: document.getElementById("rowCount"),
+      provinceInsights: document.getElementById("provinceInsights"),
+      productStatusInsights: document.getElementById("productStatusInsights"),
+      expeditionInsights: document.getElementById("expeditionInsights"),
       tooltip: document.getElementById("tooltip"),
       comingPage: document.getElementById("coming-page"),
       dashboardPage: document.getElementById("dashboard-page"),
@@ -1034,6 +1040,8 @@
           type: normalizeCustomerType(customerType),
           product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk"]), "Tanpa produk"),
           quantity: parseMoney(getField(row, ["Quantity", "quantity"])),
+          province: extractProvince(getField(row, ["Provinsi", "provinsi", "Billing Address"])),
+          expedition: cleanLabel(getField(row, ["Ekspedisi", "ship_via", "Ship Via"]), "Tanpa ekspedisi"),
           advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv"]), "Tanpa advertiser"),
           cs: normalizeStaffName(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
           valid: !EXCLUDED_WEBOT_STATUS.has(status.toLowerCase())
@@ -1051,6 +1059,13 @@
       if (/^cs\b/i.test(cleaned)) return cleaned.replace(/^cs\b/i, "CS");
       if (/^crm\b/i.test(cleaned)) return cleaned.replace(/^crm\b/i, "CRM");
       return cleaned;
+    }
+
+    function extractProvince(raw) {
+      const value = String(raw || "").trim();
+      if (!value) return "Tanpa provinsi";
+      const match = value.match(/Provinsi:\s*([^,\n\r]+)/i);
+      return cleanLabel(match ? match[1] : value, "Tanpa provinsi");
     }
 
     function normalizeCustomerType(raw) {
@@ -1071,6 +1086,8 @@
         type: String(getField(row, ["Platform", "platform"]) || "-").trim() || "-",
         product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk"]), "Tanpa produk"),
         quantity: parseMoney(getField(row, ["Quantity", "quantity"])),
+        province: extractProvince(getField(row, ["Provinsi", "provinsi", "Billing Address"])),
+        expedition: cleanLabel(getField(row, ["Ekspedisi", "ship_via", "Ship Via"]), "Tanpa ekspedisi"),
         advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv"]), "Tanpa advertiser"),
         cs: normalizeStaffName(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
         valid: true
@@ -1249,7 +1266,6 @@
       els.aov.textContent = currency(aov);
       els.returnCount.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
       els.periodLabel.textContent = `${start.toLocaleDateString("id-ID")} - ${end.toLocaleDateString("id-ID")}`;
-      els.rowCount.textContent = `${current.length.toLocaleString("id-ID")} baris`;
 
       Object.entries(ratios).forEach(([key, value]) => {
         ratioEls[key][0].textContent = percent(value);
@@ -1261,7 +1277,13 @@
       drawChart();
       renderStatusRatios(current, gross);
       renderRanks(current);
-      renderTable(current);
+      renderStatusInsights(current);
+    }
+
+    function renderStatusInsights(rows) {
+      renderStatusInsightCard(els.provinceInsights, rows, "province");
+      renderStatusInsightCard(els.productStatusInsights, rows, "product");
+      renderStatusInsightCard(els.expeditionInsights, rows, "expedition");
     }
 
     function renderRanks(rows) {
@@ -1314,6 +1336,55 @@
       return [...map.values()].sort((a, b) => b.revenue - a.revenue);
     }
 
+    function aggregateByStatusAndField(rows, statusName, field, limit = 5) {
+      const filtered = rows.filter(row => statusGroup(row.status) === statusName);
+      const total = sumRows(filtered);
+      const ranked = aggregateRank(filtered, field, limit);
+      return { total, ranked };
+    }
+
+    function renderStatusInsightCard(target, rows, field) {
+      const returnData = aggregateByStatusAndField(rows, "Return", field, 5);
+      const successData = aggregateByStatusAndField(rows, "Success", field, 5);
+      target.innerHTML = `
+        ${renderInsightGroup("Return tertinggi", returnData, "bar-return")}
+        ${renderInsightGroup("Success tertinggi", successData, "bar-success")}
+      `;
+    }
+
+    function renderInsightGroup(title, data, barClass) {
+      if (!data.ranked.length) {
+        return `
+          <div class="ratio-item">
+            <div class="ratio-top"><strong>${title}</strong><span>0%</span></div>
+            <div class="bar"><i class="${barClass}" style="width:0%"></i></div>
+            <div class="ratio-amount">Belum ada data</div>
+          </div>
+        `;
+      }
+      return `
+        <div class="ratio-item">
+          <div class="ratio-top"><strong>${title}</strong><span>${data.ranked.length} data</span></div>
+        </div>
+        ${data.ranked.map((item, index) => {
+          const pct = data.total > 0 ? item.revenue / data.total * 100 : 0;
+          return `
+            <div class="rank-item ${index === 0 ? "winner" : ""}" title="${item.name}">
+              <div class="rank-number">${index === 0 ? "🏆 1" : index + 1}</div>
+              <div class="rank-main">
+                <strong>${escapeHtml(item.name)}</strong>
+                <span>${percent(pct)} dari ${title.toLowerCase()}</span>
+              </div>
+              <div class="rank-value">
+                <strong>${currency(item.revenue)}</strong>
+                <span>${item.orders.toLocaleString("id-ID")} order</span>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      `;
+    }
+
     function renderRankList(target, items, metaType) {
       if (!items.length) {
         target.innerHTML = `<div class="rank-item"><div class="rank-number">-</div><div class="rank-main"><strong>Belum ada data</strong><span>Sesuaikan filter periode</span></div><div class="rank-value"><strong>${currency(0)}</strong><span>-</span></div></div>`;
@@ -1356,19 +1427,6 @@
         shopee: "Shopee",
         tiktok: "Tiktokshop"
       }[key] || key;
-    }
-
-    function renderTable(rows) {
-      const ordered = rows.slice().sort((a, b) => b.date - a.date).slice(0, 120);
-      els.tableBody.innerHTML = ordered.map(row => `
-        <tr>
-          <td>${row.date.toLocaleDateString("id-ID")}</td>
-          <td><span class="badge">${row.source}</span></td>
-          <td>${row.type}</td>
-          <td>${row.status || "-"}</td>
-          <td>${currency(row.revenue)}</td>
-        </tr>
-      `).join("");
     }
 
     function drawChart() {
@@ -1554,8 +1612,8 @@
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
         const [webotRows, marketplaceRows] = await Promise.all([
-          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, "select A,G,K,L,S,T,V,AF,AG"),
-          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,H,I,U,Y,AD,AE")
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, "select A,G,K,L,P,S,T,V,W,AF,AG"),
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,H,I,J,O,U,Y,AD,AE")
         ]);
         allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
         if (!allRows.length) throw new Error("Kolom data belum terbaca");

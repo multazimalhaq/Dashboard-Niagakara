@@ -289,7 +289,7 @@
 
     .rank-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
       margin-bottom: 18px;
     }
@@ -375,6 +375,14 @@
       transform: translateY(-1px);
     }
 
+    .rank-item.winner {
+      grid-template-columns: 38px minmax(0, 1fr) auto;
+      padding: 12px;
+      background: linear-gradient(135deg, #fff7d6, #ffffff 62%);
+      border-color: #f2c94c;
+      box-shadow: 0 16px 34px rgba(183, 121, 31, 0.13);
+    }
+
     .rank-number {
       width: 28px;
       height: 28px;
@@ -385,6 +393,19 @@
       color: #ffffff;
       font-size: 12px;
       font-weight: 800;
+    }
+
+    .rank-item.winner .rank-number {
+      width: 38px;
+      height: 38px;
+      background: #b7791f;
+      font-size: 16px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.38);
+    }
+
+    .rank-item.winner .rank-main strong,
+    .rank-item.winner .rank-value strong {
+      font-size: 15px;
     }
 
     .rank-main {
@@ -431,6 +452,12 @@
       color: var(--ink);
     }
 
+    .ratio-amount {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
     .bar {
       height: 10px;
       border-radius: 999px;
@@ -450,6 +477,10 @@
     .bar-repeat { background: var(--teal); }
     .bar-shopee { background: var(--amber); }
     .bar-tiktok { background: var(--rose); }
+    .bar-success { background: #15803d; }
+    .bar-return { background: #c2415d; }
+    .bar-process { background: #2563eb; }
+    .bar-other { background: #697586; }
 
     .table-panel {
       overflow: hidden;
@@ -652,13 +683,6 @@
           </article>
           <article class="card kpi">
             <div>
-              <span>Rasio Omset</span>
-              <strong id="dominantRatio">-</strong>
-            </div>
-            <small>New, repeat, Shopee, dan Tiktokshop</small>
-          </article>
-          <article class="card kpi">
-            <div>
               <span>Proyeksi Omset</span>
               <strong id="projection">Rp0</strong>
             </div>
@@ -683,14 +707,7 @@
               <span>Return</span>
               <strong id="returnCount">0</strong>
             </div>
-            <small>Jumlah order berstatus return</small>
-          </article>
-          <article class="card kpi">
-            <div>
-              <span>Return Rate</span>
-              <strong id="returnRate">0%</strong>
-            </div>
-            <small>Return dibanding total order</small>
+            <small>Omset return dan rasionya</small>
           </article>
         </section>
 
@@ -712,22 +729,43 @@
             </div>
             <div class="ratio-list">
               <div class="ratio-item">
-                <div class="ratio-top"><strong>New Customer</strong><span id="newRatio">0%</span></div>
+                <div class="ratio-top"><strong>Soscom</strong><span id="newRatio">0%</span></div>
                 <div class="bar"><i class="bar-new" id="newBar"></i></div>
+                <div class="ratio-amount" id="newAmount">Rp0</div>
               </div>
               <div class="ratio-item">
-                <div class="ratio-top"><strong>Repeat Customer</strong><span id="repeatRatio">0%</span></div>
+                <div class="ratio-top"><strong>CRM</strong><span id="repeatRatio">0%</span></div>
                 <div class="bar"><i class="bar-repeat" id="repeatBar"></i></div>
+                <div class="ratio-amount" id="repeatAmount">Rp0</div>
               </div>
               <div class="ratio-item">
                 <div class="ratio-top"><strong>Shopee</strong><span id="shopeeRatio">0%</span></div>
                 <div class="bar"><i class="bar-shopee" id="shopeeBar"></i></div>
+                <div class="ratio-amount" id="shopeeAmount">Rp0</div>
               </div>
               <div class="ratio-item">
                 <div class="ratio-top"><strong>Tiktokshop</strong><span id="tiktokRatio">0%</span></div>
                 <div class="bar"><i class="bar-tiktok" id="tiktokBar"></i></div>
+                <div class="ratio-amount" id="tiktokAmount">Rp0</div>
               </div>
             </div>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Rasio Status Order</h2>
+              <span class="panel-note">berdasarkan omset</span>
+            </div>
+            <div class="ratio-list" id="statusRatios"></div>
+          </article>
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Catatan Status</h2>
+              <span class="panel-note">ringkasan periode</span>
+            </div>
+            <div class="ratio-list" id="statusSummary"></div>
           </article>
         </section>
 
@@ -754,6 +792,14 @@
               <span class="panel-note">berdasarkan omset</span>
             </div>
             <div class="rank-list" id="topCs"></div>
+          </article>
+
+          <article class="card panel">
+            <div class="panel-header">
+              <h2>Rank CRM</h2>
+              <span class="panel-note">berdasarkan omset</span>
+            </div>
+            <div class="rank-list" id="topCrm"></div>
           </article>
         </section>
 
@@ -813,17 +859,18 @@
       grossMeta: document.getElementById("grossMeta"),
       growthOmset: document.getElementById("growthOmset"),
       growthMeta: document.getElementById("growthMeta"),
-      dominantRatio: document.getElementById("dominantRatio"),
       projection: document.getElementById("projection"),
       projectionMeta: document.getElementById("projectionMeta"),
       totalOrder: document.getElementById("totalOrder"),
       aov: document.getElementById("aov"),
       returnCount: document.getElementById("returnCount"),
-      returnRate: document.getElementById("returnRate"),
       periodLabel: document.getElementById("periodLabel"),
+      statusRatios: document.getElementById("statusRatios"),
+      statusSummary: document.getElementById("statusSummary"),
       topProducts: document.getElementById("topProducts"),
       topAdvertisers: document.getElementById("topAdvertisers"),
       topCs: document.getElementById("topCs"),
+      topCrm: document.getElementById("topCrm"),
       tableBody: document.getElementById("tableBody"),
       rowCount: document.getElementById("rowCount"),
       tooltip: document.getElementById("tooltip"),
@@ -833,10 +880,10 @@
     };
 
     const ratioEls = {
-      new: [document.getElementById("newRatio"), document.getElementById("newBar")],
-      repeat: [document.getElementById("repeatRatio"), document.getElementById("repeatBar")],
-      shopee: [document.getElementById("shopeeRatio"), document.getElementById("shopeeBar")],
-      tiktok: [document.getElementById("tiktokRatio"), document.getElementById("tiktokBar")]
+      new: [document.getElementById("newRatio"), document.getElementById("newBar"), document.getElementById("newAmount")],
+      repeat: [document.getElementById("repeatRatio"), document.getElementById("repeatBar"), document.getElementById("repeatAmount")],
+      shopee: [document.getElementById("shopeeRatio"), document.getElementById("shopeeBar"), document.getElementById("shopeeAmount")],
+      tiktok: [document.getElementById("tiktokRatio"), document.getElementById("tiktokBar"), document.getElementById("tiktokAmount")]
     };
 
     let allRows = [];
@@ -988,7 +1035,7 @@
           product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk"]), "Tanpa produk"),
           quantity: parseMoney(getField(row, ["Quantity", "quantity"])),
           advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv"]), "Tanpa advertiser"),
-          cs: cleanLabel(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
+          cs: normalizeStaffName(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
           valid: !EXCLUDED_WEBOT_STATUS.has(status.toLowerCase())
         };
       }).filter(row => row.date && row.revenue > 0 && row.valid);
@@ -997,6 +1044,13 @@
     function cleanLabel(raw, fallback) {
       const value = String(raw || "").trim();
       return value && value !== "-" ? value : fallback;
+    }
+
+    function normalizeStaffName(raw, fallback) {
+      const cleaned = cleanLabel(raw, fallback).replace(/\./g, " ").replace(/\s+/g, " ").trim();
+      if (/^cs\b/i.test(cleaned)) return cleaned.replace(/^cs\b/i, "CS");
+      if (/^crm\b/i.test(cleaned)) return cleaned.replace(/^crm\b/i, "CRM");
+      return cleaned;
     }
 
     function normalizeCustomerType(raw) {
@@ -1018,7 +1072,7 @@
         product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk"]), "Tanpa produk"),
         quantity: parseMoney(getField(row, ["Quantity", "quantity"])),
         advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv"]), "Tanpa advertiser"),
-        cs: cleanLabel(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
+        cs: normalizeStaffName(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
         valid: true
       })).filter(row => row.date && row.revenue > 0);
     }
@@ -1058,6 +1112,25 @@
       return String(status || "").toLowerCase().includes("return");
     }
 
+    function statusGroup(status) {
+      const value = String(status || "Lainnya").toLowerCase();
+      if (value.includes("success") || value.includes("complete") || value.includes("delivered")) return "Success";
+      if (value.includes("return")) return "Return";
+      if (value.includes("cancel")) return "Cancelled";
+      if (value.includes("draft")) return "Draft";
+      if (value.includes("waiting")) return "Waiting Payment";
+      if (value.includes("process") || value.includes("ship") || value.includes("paid")) return "Process";
+      return cleanLabel(status, "Lainnya");
+    }
+
+    function statusBarClass(label) {
+      const value = String(label || "").toLowerCase();
+      if (value.includes("success")) return "bar-success";
+      if (value.includes("return") || value.includes("cancel")) return "bar-return";
+      if (value.includes("process") || value.includes("waiting")) return "bar-process";
+      return "bar-other";
+    }
+
     function uniqueOrderKey(row) {
       return `${row.source}|${row.orderId || dateKey(row.date) + "|" + row.product + "|" + row.revenue}`;
     }
@@ -1080,6 +1153,26 @@
       return [...map.values()]
         .sort((a, b) => b.revenue - a.revenue)
         .slice(0, limit);
+    }
+
+    function normalizeCompare(value) {
+      return String(value || "").replace(/\./g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+    }
+
+    function advertiserRows(rows) {
+      const excluded = new Set(["adv niagakara_crm", "adv surya_mp"]);
+      return rows.filter(row => row.advertiser && !excluded.has(normalizeCompare(row.advertiser)));
+    }
+
+    function csRows(rows) {
+      return rows.filter(row => {
+        const name = normalizeCompare(row.cs);
+        return name.startsWith("cs ") && name !== "cs niagakara_mp";
+      });
+    }
+
+    function crmRows(rows) {
+      return rows.filter(row => normalizeCompare(row.cs).startsWith("crm "));
     }
 
     function previousRange(start, end) {
@@ -1131,8 +1224,9 @@
       const growth = prevGross > 0 ? ((gross - prevGross) / prevGross) * 100 : (gross > 0 ? 100 : 0);
       const projected = projectionFrom(current, start, end);
       const totalOrder = countUniqueOrders(current);
-      const returns = countUniqueOrders(current.filter(row => isReturnStatus(row.status)));
-      const returnRate = totalOrder > 0 ? returns / totalOrder * 100 : 0;
+      const returnRows = current.filter(row => isReturnStatus(row.status));
+      const returnRevenue = sumRows(returnRows);
+      const returnRate = gross > 0 ? returnRevenue / gross * 100 : 0;
       const aov = totalOrder > 0 ? gross / totalOrder : 0;
 
       const buckets = {
@@ -1143,38 +1237,81 @@
       };
 
       const ratios = Object.fromEntries(Object.entries(buckets).map(([key, value]) => [key, gross > 0 ? value / gross * 100 : 0]));
-      const dominant = Object.entries(ratios).sort((a, b) => b[1] - a[1])[0];
 
       els.grossOmset.textContent = currency(gross);
       els.grossMeta.textContent = `${current.length.toLocaleString("id-ID")} transaksi valid`;
       els.growthOmset.textContent = percent(growth);
       els.growthOmset.className = growth >= 0 ? "delta-up" : "delta-down";
       els.growthMeta.textContent = `${currency(prevGross)} pada periode sebelumnya`;
-      els.dominantRatio.textContent = dominant ? `${labelRatio(dominant[0])} ${percent(dominant[1])}` : "-";
       els.projection.textContent = currency(projected.value);
       els.projectionMeta.textContent = projected.note;
       els.totalOrder.textContent = totalOrder.toLocaleString("id-ID");
       els.aov.textContent = currency(aov);
-      els.returnCount.textContent = returns.toLocaleString("id-ID");
-      els.returnRate.textContent = percent(returnRate);
+      els.returnCount.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
       els.periodLabel.textContent = `${start.toLocaleDateString("id-ID")} - ${end.toLocaleDateString("id-ID")}`;
       els.rowCount.textContent = `${current.length.toLocaleString("id-ID")} baris`;
 
       Object.entries(ratios).forEach(([key, value]) => {
         ratioEls[key][0].textContent = percent(value);
         ratioEls[key][1].style.width = `${Math.min(100, Math.max(0, value))}%`;
+        ratioEls[key][2].textContent = currency(buckets[key]);
       });
 
       chartPoints = buildDailySeries(current, start, end);
       drawChart();
+      renderStatusRatios(current, gross);
       renderRanks(current);
       renderTable(current);
     }
 
     function renderRanks(rows) {
       renderRankList(els.topProducts, aggregateRank(rows, "product"), "qty");
-      renderRankList(els.topAdvertisers, aggregateRank(rows, "advertiser"), "order");
-      renderRankList(els.topCs, aggregateRank(rows, "cs"), "order");
+      renderRankList(els.topAdvertisers, aggregateRank(advertiserRows(rows), "advertiser"), "order");
+      renderRankList(els.topCs, aggregateRank(csRows(rows), "cs"), "order");
+      renderRankList(els.topCrm, aggregateRank(crmRows(rows), "cs"), "order");
+    }
+
+    function renderStatusRatios(rows, gross) {
+      const grouped = aggregateStatus(rows);
+      const topStatuses = grouped.slice(0, 6);
+      els.statusRatios.innerHTML = topStatuses.length ? topStatuses.map(item => {
+        const pct = gross > 0 ? item.revenue / gross * 100 : 0;
+        return `
+          <div class="ratio-item">
+            <div class="ratio-top"><strong>${escapeHtml(item.name)}</strong><span>${percent(pct)}</span></div>
+            <div class="bar"><i class="${statusBarClass(item.name)}" style="width:${Math.min(100, Math.max(0, pct))}%"></i></div>
+            <div class="ratio-amount">${currency(item.revenue)}</div>
+          </div>
+        `;
+      }).join("") : `<div class="ratio-amount">Belum ada data status pada periode ini.</div>`;
+
+      const totalOrder = countUniqueOrders(rows);
+      const returnOrder = countUniqueOrders(rows.filter(row => isReturnStatus(row.status)));
+      els.statusSummary.innerHTML = `
+        <div class="ratio-item">
+          <div class="ratio-top"><strong>Total Order</strong><span>${totalOrder.toLocaleString("id-ID")}</span></div>
+          <div class="bar"><i class="bar-process" style="width:100%"></i></div>
+          <div class="ratio-amount">Order unik dalam periode filter</div>
+        </div>
+        <div class="ratio-item">
+          <div class="ratio-top"><strong>Order Return</strong><span>${returnOrder.toLocaleString("id-ID")}</span></div>
+          <div class="bar"><i class="bar-return" style="width:${totalOrder ? Math.min(100, returnOrder / totalOrder * 100) : 0}%"></i></div>
+          <div class="ratio-amount">${percent(totalOrder ? returnOrder / totalOrder * 100 : 0)} dari total order</div>
+        </div>
+      `;
+    }
+
+    function aggregateStatus(rows) {
+      const map = new Map();
+      rows.forEach(row => {
+        const name = statusGroup(row.status);
+        const item = map.get(name) || { name, revenue: 0, orders: 0, orderKeys: new Set() };
+        item.revenue += row.revenue || 0;
+        item.orderKeys.add(uniqueOrderKey(row));
+        item.orders = item.orderKeys.size;
+        map.set(name, item);
+      });
+      return [...map.values()].sort((a, b) => b.revenue - a.revenue);
     }
 
     function renderRankList(target, items, metaType) {
@@ -1187,8 +1324,8 @@
           ? `${item.quantity.toLocaleString("id-ID")} qty`
           : `${item.orders.toLocaleString("id-ID")} order`;
         return `
-          <div class="rank-item" title="${item.name}">
-            <div class="rank-number">${index + 1}</div>
+          <div class="rank-item ${index === 0 ? "winner" : ""}" title="${item.name}">
+            <div class="rank-number">${index === 0 ? "🏆 1" : index + 1}</div>
             <div class="rank-main">
               <strong>${escapeHtml(item.name)}</strong>
               <span>${meta}</span>

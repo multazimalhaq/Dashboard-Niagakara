@@ -301,6 +301,10 @@
       margin-bottom: 10px;
     }
 
+    .advertiser-main-card .advertiser-metric span {
+      color: #ffffff;
+    }
+
     .cs-main-card .advertiser-metric span {
       color: #ffffff;
     }
@@ -472,6 +476,26 @@
       color: #25f4ee !important;
     }
 
+    .daily-table.advertiser-daily-table .total-row td,
+    .daily-table.advertiser-daily-table .total-row td:first-child,
+    .daily-table.transaction-table .total-row td,
+    .daily-table.transaction-table .total-row td:first-child {
+      color: #ffd84d !important;
+    }
+
+    .daily-table.advertiser-daily-table th,
+    .daily-table.advertiser-daily-table th:first-child,
+    .daily-table.transaction-table th,
+    .daily-table.transaction-table th:first-child {
+      background: #082b45 !important;
+      color: #ffffff !important;
+    }
+
+    .advertiser-chart-card h2,
+    #advertiser-page .panel-header h2 {
+      color: #082b45;
+    }
+
     .daily-table th.market-head-blue {
       background: #dbeafe !important;
       color: #111827 !important;
@@ -485,6 +509,100 @@
     .daily-table th.market-head-green {
       background: #14532d !important;
       color: #ffffff !important;
+    }
+
+    .tracking-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .tracking-stat {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #ffffff;
+    }
+
+    .tracking-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .tracking-stat strong {
+      color: var(--ink);
+      font-size: 22px;
+    }
+
+    .tracking-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .tracking-controls label {
+      min-width: 180px;
+    }
+
+    .tracking-table {
+      min-width: 1780px;
+    }
+
+    .tracking-table th {
+      color: #ffffff;
+    }
+
+    .tracking-note {
+      width: 240px;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 8px;
+      resize: vertical;
+      font: inherit;
+    }
+
+    .wa-link {
+      color: #047857;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .follow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(86px, 1fr));
+      gap: 6px;
+    }
+
+    .follow-box {
+      display: grid;
+      gap: 4px;
+      justify-items: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .follow-box input {
+      width: 18px;
+      height: 18px;
+      accent-color: #15803d;
+    }
+
+    .cs-tracking-table th,
+    .cs-tracking-table th:first-child {
+      background: #2d145f !important;
+    }
+
+    .crm-tracking-table th,
+    .crm-tracking-table th:first-child {
+      background: #14532d !important;
     }
 
     .stack-tooltip {
@@ -759,18 +877,26 @@
 
     .tooltip {
       position: fixed;
-      z-index: 10;
+      z-index: 24;
       pointer-events: none;
-      background: #0b3554;
-      color: #ffffff;
-      border-radius: 6px;
-      padding: 8px 10px;
+      background: #ffffff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
       font-size: 12px;
-      box-shadow: 0 16px 32px rgba(0,0,0,0.18);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
       opacity: 0;
-      transform: translate(-50%, -112%);
+      transform: translate(14px, -112%);
       transition: opacity 120ms ease;
       white-space: nowrap;
+    }
+
+    .tooltip strong {
+      display: block;
+      margin-top: 4px;
+      color: #082b45;
+      font-size: 14px;
     }
 
     .ratio-list {
@@ -1290,6 +1416,11 @@
                 <option value="all">Semua Advertiser</option>
               </select>
             </label>
+            <label>Produk
+              <select id="advProductSelect">
+                <option value="all">Semua Produk</option>
+              </select>
+            </label>
             <button class="apply-btn" id="applyAdvertiserFilter">Terapkan</button>
           </div>
           <div class="quick-row" id="advertiserQuickFilters">
@@ -1330,7 +1461,7 @@
             <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
           </div>
           <div class="daily-table-wrap">
-            <table class="daily-table">
+            <table class="daily-table advertiser-daily-table">
               <thead>
                 <tr>
                   <th>Tanggal</th>
@@ -1351,6 +1482,29 @@
                 </tr>
               </thead>
               <tbody id="dailyReportBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2>Data Transaksi</h2>
+            <span class="panel-note">berdasarkan filter advertiser dan produk</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table transaction-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Nomor Customer</th>
+                  <th>Nama Customer</th>
+                  <th>Nama Produk</th>
+                  <th>Quantity</th>
+                  <th>Omset</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="advTransactionBody"></tbody>
             </table>
           </div>
         </section>
@@ -1428,6 +1582,50 @@
                 </tr>
               </thead>
               <tbody id="csStatusBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="cs-panel-title">Tracking Paket</h2>
+            <span class="panel-note">follow up status pengiriman</span>
+          </div>
+          <div class="tracking-grid">
+            <div class="tracking-stat"><span>On Delivery</span><strong id="csTrackDelivery">0 (0%)</strong></div>
+            <div class="tracking-stat"><span>Packing</span><strong id="csTrackPacking">0 (0%)</strong></div>
+            <div class="tracking-stat"><span>Waiting For Payment</span><strong id="csTrackWaiting">0 (0%)</strong></div>
+          </div>
+          <div class="tracking-controls">
+            <label>Rentang Hari
+              <select id="csTrackDayFilter">
+                <option value="all">Semua Rentang</option>
+              </select>
+            </label>
+            <label>Status
+              <select id="csTrackStatusFilter">
+                <option value="all">Semua Status</option>
+              </select>
+            </label>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table tracking-table cs-tracking-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Order ID</th>
+                  <th>Nomor Resi</th>
+                  <th>Nama Customer</th>
+                  <th>Nomor Customer</th>
+                  <th>Total Ongkir</th>
+                  <th>Ekspedisi</th>
+                  <th>Status</th>
+                  <th>Rentang Hari</th>
+                  <th>Follow Up</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody id="csTrackingBody"></tbody>
             </table>
           </div>
         </section>
@@ -1539,6 +1737,50 @@
                 </tr>
               </thead>
               <tbody id="crmStatusBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="crm-panel-title">Tracking Paket</h2>
+            <span class="panel-note">follow up status pengiriman</span>
+          </div>
+          <div class="tracking-grid">
+            <div class="tracking-stat"><span>On Delivery</span><strong id="crmTrackDelivery">0 (0%)</strong></div>
+            <div class="tracking-stat"><span>Packing</span><strong id="crmTrackPacking">0 (0%)</strong></div>
+            <div class="tracking-stat"><span>Waiting For Payment</span><strong id="crmTrackWaiting">0 (0%)</strong></div>
+          </div>
+          <div class="tracking-controls">
+            <label>Rentang Hari
+              <select id="crmTrackDayFilter">
+                <option value="all">Semua Rentang</option>
+              </select>
+            </label>
+            <label>Status
+              <select id="crmTrackStatusFilter">
+                <option value="all">Semua Status</option>
+              </select>
+            </label>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table tracking-table crm-tracking-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Order ID</th>
+                  <th>Nomor Resi</th>
+                  <th>Nama Customer</th>
+                  <th>Nomor Customer</th>
+                  <th>Total Ongkir</th>
+                  <th>Ekspedisi</th>
+                  <th>Status</th>
+                  <th>Rentang Hari</th>
+                  <th>Follow Up</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody id="crmTrackingBody"></tbody>
             </table>
           </div>
         </section>
@@ -1823,6 +2065,7 @@
       tiktokStartDate: document.getElementById("tiktokStartDate"),
       tiktokEndDate: document.getElementById("tiktokEndDate"),
       advertiserSelect: document.getElementById("advertiserSelect"),
+      advProductSelect: document.getElementById("advProductSelect"),
       csSelect: document.getElementById("csSelect"),
       crmSelect: document.getElementById("crmSelect"),
       shopeeStoreSelect: document.getElementById("shopeeStoreSelect"),
@@ -1867,6 +2110,7 @@
       advNett: document.getElementById("advNett"),
       advChartPeriod: document.getElementById("advChartPeriod"),
       dailyReportBody: document.getElementById("dailyReportBody"),
+      advTransactionBody: document.getElementById("advTransactionBody"),
       csGross: document.getElementById("csGross"),
       csLead: document.getElementById("csLead"),
       csClosing: document.getElementById("csClosing"),
@@ -1876,6 +2120,12 @@
       csNett: document.getElementById("csNett"),
       csStatusBody: document.getElementById("csStatusBody"),
       csDailyReportBody: document.getElementById("csDailyReportBody"),
+      csTrackDelivery: document.getElementById("csTrackDelivery"),
+      csTrackPacking: document.getElementById("csTrackPacking"),
+      csTrackWaiting: document.getElementById("csTrackWaiting"),
+      csTrackDayFilter: document.getElementById("csTrackDayFilter"),
+      csTrackStatusFilter: document.getElementById("csTrackStatusFilter"),
+      csTrackingBody: document.getElementById("csTrackingBody"),
       crmGross: document.getElementById("crmGross"),
       crmNewGross: document.getElementById("crmNewGross"),
       crmRetention: document.getElementById("crmRetention"),
@@ -1886,6 +2136,12 @@
       crmStatusBody: document.getElementById("crmStatusBody"),
       crmDailyReportBody: document.getElementById("crmDailyReportBody"),
       crmChartPeriod: document.getElementById("crmChartPeriod"),
+      crmTrackDelivery: document.getElementById("crmTrackDelivery"),
+      crmTrackPacking: document.getElementById("crmTrackPacking"),
+      crmTrackWaiting: document.getElementById("crmTrackWaiting"),
+      crmTrackDayFilter: document.getElementById("crmTrackDayFilter"),
+      crmTrackStatusFilter: document.getElementById("crmTrackStatusFilter"),
+      crmTrackingBody: document.getElementById("crmTrackingBody"),
       shopeeStatus: document.getElementById("shopeeStatus"),
       shopeeGross: document.getElementById("shopeeGross"),
       shopeeBudgetAdmin: document.getElementById("shopeeBudgetAdmin"),
@@ -1933,6 +2189,7 @@
     let allRows = [];
     let chartPoints = [];
     let hoveredPoint = -1;
+    let hoveredAdvertiserPoint = -1;
 
     function currency(value) {
       return new Intl.NumberFormat("id-ID", {
@@ -2025,10 +2282,18 @@
       const keys = Object.keys(row);
       for (const name of names) {
         if (row[name] !== undefined) return row[name];
-        const found = keys.find(key => key.toLowerCase() === name.toLowerCase());
+        const found = keys.find(key => normalizeFieldKey(key) === normalizeFieldKey(name));
         if (found) return row[found];
       }
       return "";
+    }
+
+    function normalizeFieldKey(value) {
+      return String(value || "")
+        .replace(/[_\-.]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
     }
 
     function cellValue(cell) {
@@ -2042,6 +2307,7 @@
       return new Promise((resolve, reject) => {
         const callback = `sheetCallback_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
         const script = document.createElement("script");
+        const selectedColumns = parseSelectedColumns(queryText);
         const timeout = window.setTimeout(() => {
           cleanup();
           reject(new Error("Google Sheet terlalu lama merespons"));
@@ -2059,10 +2325,17 @@
             reject(new Error(payload?.errors?.[0]?.detailed_message || "Google Sheet tidak bisa dibaca"));
             return;
           }
-          const cols = (payload.table.cols || []).map((col, index) => col.label || col.id || `Column ${index + 1}`);
+          const cols = (payload.table.cols || []).map((col, index) => ({
+            label: col.label || "",
+            id: col.id || "",
+            fallback: `Column ${index + 1}`
+          }));
           const rows = (payload.table.rows || []).map(row => {
             const item = {};
-            cols.forEach((col, index) => item[col] = cellValue(row.c[index]));
+            cols.forEach((col, index) => {
+              const value = cellValue(row.c[index]);
+              [col.label, col.id, col.fallback, selectedColumns[index]].filter(Boolean).forEach(key => item[key] = value);
+            });
             return item;
           });
           resolve(rows);
@@ -2078,26 +2351,37 @@
       });
     }
 
+    function parseSelectedColumns(queryText) {
+      const match = String(queryText || "").match(/select\s+(.+?)(?:\s+where|\s+group|\s+order|\s+limit|$)/i);
+      if (!match || match[1].trim() === "*") return [];
+      return match[1].split(",").map(item => item.trim().replace(/`/g, "").toUpperCase());
+    }
+
     function normalizeWebot(rows) {
       return rows.map(row => {
-        const status = normalizeStatus(getField(row, ["Status"]));
-        const customerType = getField(row, ["Type Customer", "Type Transaksi"]) || "-";
+        const status = normalizeStatus(getField(row, ["Status", "AG"]));
+        const customerType = getField(row, ["Type Customer", "Type Transaksi", "K"]) || "-";
         return {
           source: "Webot",
-          orderId: cleanLabel(getField(row, ["Order Number", "invoice_number"]), ""),
-          date: parseDateValue(getField(row, ["Date"])),
-          revenue: parseMoney(getField(row, ["Total Perline"])),
+          orderId: cleanLabel(getField(row, ["Order Number", "invoice_number", "L"]), ""),
+          resi: cleanLabel(getField(row, ["Nomor Resi", "No Resi", "Resi", "AWB", "M", "Column 6"]), "-"),
+          date: parseDateValue(getField(row, ["Date", "A"])),
+          revenue: parseMoney(getField(row, ["Total Perline", "V"])),
           status,
-          channel: cleanLabel(getField(row, ["Kanal", "kanal"]), "Tanpa kanal"),
+          channel: cleanLabel(getField(row, ["Kanal", "kanal", "C"]), "Tanpa kanal"),
           type: normalizeCustomerType(customerType),
-          product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk"]), "Tanpa produk"),
-          quantity: parseMoney(getField(row, ["Quantity", "quantity"])),
-          returnCost: parseMoney(getField(row, ["Ongkir", "ongkir"])),
-          closing: parseMoney(getField(row, ["Closing", "closing"])),
+          product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk", "S"]), "Tanpa produk"),
+          quantity: parseMoney(getField(row, ["Quantity", "quantity", "T"])),
+          returnCost: parseMoney(getField(row, ["Ongkir", "ongkir", "AB"])),
+          trackingCost: parseMoney(getField(row, ["Total Ongkir", "Ongkir Tracking", "Ongkir Customer", "AC", "Column 15"])),
+          closing: parseMoney(getField(row, ["Closing", "closing", "AH"])),
           province: extractProvince(getField(row, ["Provinsi", "provinsi", "Billing Address"])),
-          expedition: cleanExpedition(getField(row, ["Ekspedisi", "ship_via", "Ship Via"])),
-          advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv"]), "Tanpa advertiser"),
-          cs: normalizeStaffName(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
+          expedition: cleanExpedition(getField(row, ["Ekspedisi", "ship_via", "Ship Via", "W"])),
+          advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv", "G"]), "Tanpa advertiser"),
+          cs: normalizeStaffName(getField(row, ["Nama CS", "name_cs", "CS", "AF"]), "Tanpa CS"),
+          customerPhoneRaw: cleanLabel(getField(row, ["Customer Phone Number", "Customer Phone", "Phone Number", "Nomor Customer", "No Customer", "Phone", "No HP", "Whatsapp", "WA", "N", "Column 7"]), ""),
+          customerPhone: cleanPhone(getField(row, ["Customer Phone Number", "Customer Phone", "Phone Number", "Nomor Customer", "No Customer", "Phone", "No HP", "Whatsapp", "WA", "N", "Column 7"])),
+          customerName: cleanLabel(getField(row, ["Nama Customer", "Customer Name", "Nama Penerima", "O", "Column 8"]), "Tanpa nama"),
           valid: !EXCLUDED_WEBOT_STATUS.has(status.toLowerCase())
         };
       }).filter(row => row.date && row.revenue > 0 && row.valid);
@@ -2106,6 +2390,14 @@
     function cleanLabel(raw, fallback) {
       const value = String(raw || "").trim();
       return value && value !== "-" ? value : fallback;
+    }
+
+    function cleanPhone(raw) {
+      const digits = String(raw || "").replace(/[^\d]/g, "");
+      if (!digits) return "";
+      if (digits.startsWith("62")) return digits;
+      if (digits.startsWith("0")) return `62${digits.slice(1)}`;
+      return digits;
     }
 
     function normalizeStaffName(raw, fallback) {
@@ -2334,20 +2626,30 @@
 
     function advertiserRowsInRange(start, end) {
       const selectedAdvertiser = els.advertiserSelect.value;
+      const selectedProduct = els.advProductSelect.value;
       return advertiserSourceRows().filter(row =>
         row.date >= startOfDay(start) &&
         row.date <= startOfDay(end) &&
-        (selectedAdvertiser === "all" || row.advertiser === selectedAdvertiser)
+        (selectedAdvertiser === "all" || row.advertiser === selectedAdvertiser) &&
+        (selectedProduct === "all" || row.product === selectedProduct)
       );
     }
 
     function populateAdvertiserFilter() {
       const currentValue = els.advertiserSelect.value || "all";
+      const currentProduct = els.advProductSelect.value || "all";
       const names = [...new Set(advertiserSourceRows().map(row => row.advertiser))]
         .sort((a, b) => a.localeCompare(b, "id-ID"));
       els.advertiserSelect.innerHTML = `<option value="all">Semua Advertiser</option>` +
         names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
       els.advertiserSelect.value = names.includes(currentValue) ? currentValue : "all";
+
+      const products = [...new Set(advertiserSourceRows().map(row => row.product))]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.advProductSelect.innerHTML = `<option value="all">Semua Produk</option>` +
+        products.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+      els.advProductSelect.value = products.includes(currentProduct) ? currentProduct : "all";
     }
 
     function updateAdvertiserInputs(start, end) {
@@ -3270,6 +3572,7 @@
       const dailyRows = buildAdvertiserDailyRows(rows, start, end);
       drawAdvertiserChart(dailyRows);
       renderDailyReport(dailyRows);
+      renderAdvertiserTransactions(grossRows);
     }
 
     function drawAdvertiserChart(rows) {
@@ -3324,17 +3627,31 @@
       if (points.length) {
         ctx.beginPath();
         points.forEach((point, index) => index === 0 ? ctx.moveTo(point.x, point.y) : ctx.lineTo(point.x, point.y));
-        ctx.strokeStyle = "#2563eb";
+        ctx.strokeStyle = "#082b45";
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        points.forEach((point, index) => {
-          if (rows.length > 32 && index % 3 !== 0) return;
+        if (hoveredAdvertiserPoint >= 0 && points[hoveredAdvertiserPoint]) {
+          const active = points[hoveredAdvertiserPoint];
           ctx.beginPath();
-          ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
-          ctx.fillStyle = "#2563eb";
+          ctx.moveTo(active.x, padTop);
+          ctx.lineTo(active.x, padTop + height);
+          ctx.strokeStyle = "rgba(8, 43, 69, 0.22)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(active.x, active.y, 7, 0, Math.PI * 2);
+          ctx.fillStyle = "#ffffff";
           ctx.fill();
-        });
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = "#082b45";
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(active.x, active.y, 3, 0, Math.PI * 2);
+          ctx.fillStyle = "#082b45";
+          ctx.fill();
+        }
 
         const labelEvery = Math.max(1, Math.ceil(points.length / 8));
         ctx.fillStyle = "#697586";
@@ -3343,6 +3660,7 @@
           ctx.fillText(`${pad(point.row.date.getDate())}/${pad(point.row.date.getMonth() + 1)}`, point.x - 16, rect.height - 14);
         });
       }
+      canvas._advertiserPoints = points;
     }
 
     function reportCell(value, className = "") {
@@ -3423,6 +3741,130 @@
       els.dailyReportBody.innerHTML = totalRow + bodyRows;
     }
 
+    function renderAdvertiserTransactions(rows) {
+      const sorted = [...rows].sort((a, b) => b.date - a.date);
+      const totalRow = `
+        <tr class="total-row">
+          ${reportCell("TOTAL")}
+          ${reportCell(`${countUniqueOrders(sorted).toLocaleString("id-ID")} transaksi`)}
+          ${reportCell("-")}
+          ${reportCell("-")}
+          ${reportCell(sorted.reduce((total, row) => total + (row.quantity || 0), 0).toLocaleString("id-ID"))}
+          ${reportCell(currency(sumRows(sorted)))}
+          ${reportCell("-")}
+        </tr>
+      `;
+      const bodyRows = sorted.map(row => `
+        <tr>
+          ${reportCell(longIndonesianDate(row.date), isHolidayDate(row.date) ? "holiday-cell" : "")}
+          ${reportCell(escapeHtml(row.customerPhoneRaw || row.customerPhone || "-"))}
+          ${reportCell(escapeHtml(row.customerName || "-"))}
+          ${reportCell(escapeHtml(row.product || "-"))}
+          ${reportCell((row.quantity || 0).toLocaleString("id-ID"))}
+          ${reportCell(currency(row.revenue))}
+          ${reportCell(escapeHtml(row.status || "-"))}
+        </tr>
+      `).join("");
+      els.advTransactionBody.innerHTML = totalRow + bodyRows;
+    }
+
+    function trackingStatusGroup(status) {
+      const value = String(status || "").toLowerCase();
+      if (value.includes("delivery") || value.includes("delivered") || value.includes("on delivery")) return "On Delivery";
+      if (value.includes("packing")) return "Packing";
+      if (value.includes("waiting")) return "Waiting For Payment";
+      return "";
+    }
+
+    function trackingDayRange(row) {
+      const today = startOfDay(new Date());
+      const days = Math.max(0, Math.floor((today - startOfDay(row.date)) / 86400000));
+      return days;
+    }
+
+    function trackingStorageKey(row, suffix) {
+      return `tracking:${uniqueOrderKey(row)}:${suffix}`;
+    }
+
+    function trackingMessage(row, status) {
+      const name = row.customerName || "kak";
+      const expedition = row.expedition || "ekspedisi";
+      if (status === "On Delivery") {
+        return `Halo kak ${name} paket anda sedang dalam perjalanan menuju rumah ka oleh ekspedisi ${expedition}. Mohon ditunggu. Terima kasih`;
+      }
+      if (status === "Packing") {
+        return `Halo kak ${name} paket anda sudah diproses dan akan segera dikirim oleh tim ekspedisi ${expedition}. Mohon ditunggu. Terima kasih`;
+      }
+      return `Halo ka ${name} kami menunggu pembayaran melalui transfernya ya ka. Supaya paket segera kami proses. Terima kasih`;
+    }
+
+    function whatsappUrl(row, status) {
+      if (!row.customerPhone) return "#";
+      return `https://wa.me/${row.customerPhone}?text=${encodeURIComponent(trackingMessage(row, status))}`;
+    }
+
+    function updateTrackingFilters(prefix, rows) {
+      const daySelect = els[`${prefix}TrackDayFilter`];
+      const statusSelect = els[`${prefix}TrackStatusFilter`];
+      const currentDay = daySelect.value || "all";
+      const currentStatus = statusSelect.value || "all";
+      const days = [...new Set(rows.map(trackingDayRange))].sort((a, b) => a - b);
+      daySelect.innerHTML = `<option value="all">Semua Rentang</option>` +
+        days.map(day => `<option value="${day}">${day} hari</option>`).join("");
+      daySelect.value = days.map(String).includes(currentDay) ? currentDay : "all";
+      const statuses = ["On Delivery", "Packing", "Waiting For Payment"].filter(status => rows.some(row => trackingStatusGroup(row.status) === status));
+      statusSelect.innerHTML = `<option value="all">Semua Status</option>` +
+        statuses.map(status => `<option value="${escapeHtml(status)}">${escapeHtml(status)}</option>`).join("");
+      statusSelect.value = statuses.includes(currentStatus) ? currentStatus : "all";
+    }
+
+    function renderTrackingSection(prefix, rows) {
+      const trackingRows = rows.filter(row => trackingStatusGroup(row.status));
+      const totalOrders = Math.max(1, countUniqueOrders(rows));
+      const countByStatus = status => countUniqueOrders(trackingRows.filter(row => trackingStatusGroup(row.status) === status));
+      const delivery = countByStatus("On Delivery");
+      const packing = countByStatus("Packing");
+      const waiting = countByStatus("Waiting For Payment");
+      els[`${prefix}TrackDelivery`].textContent = `${delivery.toLocaleString("id-ID")} (${percent(delivery / totalOrders * 100)})`;
+      els[`${prefix}TrackPacking`].textContent = `${packing.toLocaleString("id-ID")} (${percent(packing / totalOrders * 100)})`;
+      els[`${prefix}TrackWaiting`].textContent = `${waiting.toLocaleString("id-ID")} (${percent(waiting / totalOrders * 100)})`;
+      updateTrackingFilters(prefix, trackingRows);
+
+      const selectedDay = els[`${prefix}TrackDayFilter`].value;
+      const selectedStatus = els[`${prefix}TrackStatusFilter`].value;
+      const filtered = trackingRows.filter(row =>
+        (selectedDay === "all" || String(trackingDayRange(row)) === selectedDay) &&
+        (selectedStatus === "all" || trackingStatusGroup(row.status) === selectedStatus)
+      );
+
+      els[`${prefix}TrackingBody`].innerHTML = filtered.map(row => {
+        const status = trackingStatusGroup(row.status);
+        const clicked = localStorage.getItem(trackingStorageKey(row, status)) === "1";
+        const note = localStorage.getItem(trackingStorageKey(row, "note")) || "";
+        return `
+          <tr>
+            ${reportCell(longIndonesianDate(row.date), isHolidayDate(row.date) ? "holiday-cell" : "")}
+            ${reportCell(escapeHtml(row.orderId || "-"))}
+            ${reportCell(escapeHtml(row.resi || "-"))}
+            ${reportCell(escapeHtml(row.customerName || "-"))}
+            ${reportCell(row.customerPhone ? `<a class="wa-link" href="${whatsappUrl(row, status)}" target="_blank" data-track-key="${trackingStorageKey(row, status)}">${escapeHtml(row.customerPhoneRaw || row.customerPhone)}</a>` : escapeHtml(row.customerPhoneRaw || "-"))}
+            ${reportCell(currency(row.trackingCost || row.returnCost || 0))}
+            ${reportCell(escapeHtml(row.expedition || "-"))}
+            ${reportCell(escapeHtml(row.status || "-"))}
+            ${reportCell(`${trackingDayRange(row).toLocaleString("id-ID")} hari`)}
+            ${reportCell(`
+              <div class="follow-grid">
+                <label class="follow-box">WFP<input type="checkbox" ${status === "Waiting For Payment" && clicked ? "checked" : ""} disabled></label>
+                <label class="follow-box">Packing<input type="checkbox" ${status === "Packing" && clicked ? "checked" : ""} disabled></label>
+                <label class="follow-box">On Delivery<input type="checkbox" ${status === "On Delivery" && clicked ? "checked" : ""} disabled></label>
+              </div>
+            `)}
+            ${reportCell(`<textarea class="tracking-note" data-note-key="${trackingStorageKey(row, "note")}" placeholder="Isi keterangan...">${escapeHtml(note)}</textarea>`)}
+          </tr>
+        `;
+      }).join("") || `<tr><td colspan="11">Belum ada data tracking pada filter ini.</td></tr>`;
+    }
+
     function renderCsReport() {
       const [start, end] = getCsRange();
       if (!start || !end) return;
@@ -3450,6 +3892,7 @@
       const dailyRows = buildCsDailyRows(rows, start, end);
       drawCsChart(dailyRows);
       renderCsStatusTable(rows);
+      renderTrackingSection("cs", rows);
       renderCsDailyReport(dailyRows);
     }
 
@@ -3638,6 +4081,7 @@
       drawCrmRevenueChart(dailyRows);
       drawCrmStackChart(dailyRows);
       renderCrmStatusTable(allStatusRows);
+      renderTrackingSection("crm", crmRows);
       renderCrmDailyReport(dailyRows);
     }
 
@@ -3938,6 +4382,40 @@
         els.tooltip.style.opacity = "0";
         drawChart();
       });
+
+      const advertiserCanvas = document.getElementById("advertiserChart");
+      advertiserCanvas.addEventListener("mousemove", event => {
+        const points = advertiserCanvas._advertiserPoints || [];
+        const rect = advertiserCanvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        let nearest = -1;
+        let distance = Infinity;
+        points.forEach((point, index) => {
+          const d = Math.abs(point.x - x);
+          if (d < distance) {
+            distance = d;
+            nearest = index;
+          }
+        });
+        if (nearest >= 0 && distance < 28) {
+          hoveredAdvertiserPoint = nearest;
+          const point = points[nearest].row;
+          els.tooltip.innerHTML = `${longIndonesianDate(point.date)}<strong>${currency(point.revenue)}</strong>`;
+          els.tooltip.style.left = `${event.clientX}px`;
+          els.tooltip.style.top = `${event.clientY}px`;
+          els.tooltip.style.opacity = "1";
+          drawAdvertiserChart(points.map(item => item.row));
+        } else {
+          hoveredAdvertiserPoint = -1;
+          els.tooltip.style.opacity = "0";
+          drawAdvertiserChart(points.map(item => item.row));
+        }
+      });
+      advertiserCanvas.addEventListener("mouseleave", () => {
+        hoveredAdvertiserPoint = -1;
+        els.tooltip.style.opacity = "0";
+        drawAdvertiserChart((advertiserCanvas._advertiserPoints || []).map(item => item.row));
+      });
     }
 
     function setupNavigation() {
@@ -4014,6 +4492,7 @@
         renderAdvertiserReport();
       });
       els.advertiserSelect.addEventListener("change", renderAdvertiserReport);
+      els.advProductSelect.addEventListener("change", renderAdvertiserReport);
       els.csQuickFilters.addEventListener("click", event => {
         const button = event.target.closest("button[data-range]");
         if (!button) return;
@@ -4027,6 +4506,8 @@
         renderCsReport();
       });
       els.csSelect.addEventListener("change", renderCsReport);
+      els.csTrackDayFilter.addEventListener("change", renderCsReport);
+      els.csTrackStatusFilter.addEventListener("change", renderCsReport);
       els.crmQuickFilters.addEventListener("click", event => {
         const button = event.target.closest("button[data-range]");
         if (!button) return;
@@ -4040,6 +4521,8 @@
         renderCrmReport();
       });
       els.crmSelect.addEventListener("change", renderCrmReport);
+      els.crmTrackDayFilter.addEventListener("change", renderCrmReport);
+      els.crmTrackStatusFilter.addEventListener("change", renderCrmReport);
       els.shopeeQuickFilters.addEventListener("click", event => {
         const button = event.target.closest("button[data-range]");
         if (!button) return;
@@ -4084,6 +4567,20 @@
         renderCrmReport();
         renderShopeeReport();
         renderTiktokReport();
+      });
+      document.addEventListener("click", event => {
+        const link = event.target.closest("[data-track-key]");
+        if (!link) return;
+        localStorage.setItem(link.dataset.trackKey, "1");
+        window.setTimeout(() => {
+          renderCsReport();
+          renderCrmReport();
+        }, 250);
+      });
+      document.addEventListener("input", event => {
+        const note = event.target.closest("[data-note-key]");
+        if (!note) return;
+        localStorage.setItem(note.dataset.noteKey, note.value);
       });
     }
 
@@ -4151,7 +4648,7 @@
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
         const [webotResult, marketplaceResult] = await Promise.allSettled([
-          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, "select A,C,G,K,L,P,S,T,V,W,AB,AF,AG,AH"),
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, "select A,C,G,K,L,M,N,O,P,S,T,V,W,AB,AC,AF,AG,AH"),
           loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,H,I,K,O,U,Y,AD,AE")
         ]);
         const webotRows = webotResult.status === "fulfilled" ? webotResult.value : [];

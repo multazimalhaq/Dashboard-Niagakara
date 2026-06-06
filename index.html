@@ -2334,7 +2334,8 @@
             const item = {};
             cols.forEach((col, index) => {
               const value = cellValue(row.c[index]);
-              [col.label, col.id, col.fallback, selectedColumns[index]].filter(Boolean).forEach(key => item[key] = value);
+              const explicitColumn = selectedColumns[index] || columnLetter(index + 1);
+              [col.label, col.id, col.fallback, explicitColumn, `__col_${index + 1}`].filter(Boolean).forEach(key => item[key] = value);
             });
             return item;
           });
@@ -2357,11 +2358,22 @@
       return match[1].split(",").map(item => item.trim().replace(/`/g, "").toUpperCase());
     }
 
+    function columnLetter(number) {
+      let text = "";
+      let current = number;
+      while (current > 0) {
+        const mod = (current - 1) % 26;
+        text = String.fromCharCode(65 + mod) + text;
+        current = Math.floor((current - mod) / 26);
+      }
+      return text;
+    }
+
     function normalizeWebot(rows) {
       return rows.map(row => {
         const status = normalizeStatus(getField(row, ["Status", "AG"]));
         const customerType = getField(row, ["Type Customer", "Type Transaksi", "K"]) || "-";
-        const phoneRaw = getField(row, ["Customer Phone Number", "Customer Phone", "Phone Number", "Nomor Customer", "No Customer", "Phone", "No HP", "Whatsapp", "WA", "N", "Column 7"]) || findLikelyPhone(row);
+        const phoneRaw = getField(row, ["N", "__col_14", "Customer Phone Number", "Customer Phone", "Phone Number"]);
         return {
           source: "Webot",
           orderId: cleanLabel(getField(row, ["Order Number", "invoice_number", "L"]), ""),
@@ -2399,15 +2411,6 @@
       if (digits.startsWith("62")) return digits;
       if (digits.startsWith("0")) return `62${digits.slice(1)}`;
       return digits;
-    }
-
-    function findLikelyPhone(row) {
-      const values = Object.values(row || {});
-      const found = values.find(value => {
-        const digits = String(value || "").replace(/[^\d]/g, "");
-        return /^62\d{9,15}$/.test(digits) || /^08\d{8,14}$/.test(digits);
-      });
-      return found || "";
     }
 
     function normalizeStaffName(raw, fallback) {
@@ -3767,7 +3770,7 @@
       const bodyRows = sorted.map(row => `
         <tr>
           ${reportCell(longIndonesianDate(row.date), isHolidayDate(row.date) ? "holiday-cell" : "")}
-          ${reportCell(escapeHtml(row.customerPhoneRaw || row.customerPhone || "-"))}
+          ${reportCell(escapeHtml(displayCustomerPhone(row)))}
           ${reportCell(escapeHtml(row.customerName || "-"))}
           ${reportCell(escapeHtml(row.product || "-"))}
           ${reportCell((row.quantity || 0).toLocaleString("id-ID"))}
@@ -3776,6 +3779,18 @@
         </tr>
       `).join("");
       els.advTransactionBody.innerHTML = totalRow + bodyRows;
+    }
+
+    function displayCustomerPhone(row) {
+      const phone = row.customerPhoneRaw || row.customerPhone || "";
+      return formatDisplayPhone(phone) || "-";
+    }
+
+    function formatDisplayPhone(raw) {
+      const digits = String(raw || "").replace(/[^\d]/g, "");
+      if (!digits) return "";
+      if (digits.startsWith("62")) return `0${digits.slice(2)}`;
+      return digits;
     }
 
     function trackingStatusGroup(status) {
@@ -4658,7 +4673,7 @@
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
         const [webotResult, marketplaceResult] = await Promise.allSettled([
-          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, "select A,C,G,K,L,M,N,O,P,S,T,V,W,AB,AC,AF,AG,AH"),
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, "select *"),
           loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,H,I,K,O,U,Y,AD,AE")
         ]);
         const webotRows = webotResult.status === "fulfilled" ? webotResult.value : [];

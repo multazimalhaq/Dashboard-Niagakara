@@ -261,6 +261,15 @@
       border-color: rgba(255,255,255,0.10);
     }
 
+    .card.tiktok-main-card {
+      background:
+        linear-gradient(135deg, rgba(37, 244, 238, 0.18), transparent 38%),
+        linear-gradient(315deg, rgba(254, 44, 85, 0.18), transparent 42%),
+        #080b12;
+      color: #ffffff;
+      border-color: rgba(255,255,255,0.10);
+    }
+
     .advertiser-main-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -270,7 +279,8 @@
     #advertiser-page > .card,
     #cs-page > .card,
     #crm-page > .card,
-    #shopee-page > .card {
+    #shopee-page > .card,
+    #tiktok-page > .card {
       margin-bottom: 18px;
     }
 
@@ -300,6 +310,10 @@
     }
 
     .shopee-main-card .advertiser-metric span {
+      color: #ffffff;
+    }
+
+    .tiktok-main-card .advertiser-metric span {
       color: #ffffff;
     }
 
@@ -333,6 +347,10 @@
 
     .shopee-panel-title {
       color: #c2410c;
+    }
+
+    .tiktok-panel-title {
+      color: #080b12;
     }
 
     .panel-action {
@@ -441,6 +459,17 @@
     .daily-table.shopee-daily-table .total-row td,
     .daily-table.shopee-daily-table .total-row td:first-child {
       color: #ffd84d !important;
+    }
+
+    .daily-table.tiktok-daily-table th,
+    .daily-table.tiktok-daily-table th:first-child {
+      background: #080b12 !important;
+      color: #ffffff !important;
+    }
+
+    .daily-table.tiktok-daily-table .total-row td,
+    .daily-table.tiktok-daily-table .total-row td:first-child {
+      color: #25f4ee !important;
     }
 
     .stack-tooltip {
@@ -1624,6 +1653,108 @@
         </section>
       </section>
 
+      <section id="tiktok-page" class="hidden">
+        <div class="topbar">
+          <div>
+            <h1>Performa Tiktokshop</h1>
+            <p class="subtitle">Ringkasan performa marketplace Tiktokshop</p>
+          </div>
+          <div class="status-pill" id="tiktokStatus">Menunggu data Tiktokshop...</div>
+        </div>
+
+        <section class="filters" aria-label="Filter Tiktokshop">
+          <div class="date-row">
+            <label>Tanggal awal
+              <input id="tiktokStartDate" type="date">
+            </label>
+            <label>Tanggal akhir
+              <input id="tiktokEndDate" type="date">
+            </label>
+            <label>Toko
+              <select id="tiktokStoreSelect">
+                <option value="all">Semua Toko</option>
+              </select>
+            </label>
+            <button class="apply-btn" id="applyTiktokFilter">Terapkan</button>
+          </div>
+          <div class="quick-row" id="tiktokQuickFilters">
+            <button data-range="thisMonth" class="active">Bulan ini</button>
+            <button data-range="lastMonth">Bulan lalu</button>
+            <button data-range="last3">3 bulan lalu</button>
+            <button data-range="last6">6 bulan lalu</button>
+            <button data-range="thisYear">Tahun ini</button>
+            <button data-range="lastYear">Tahun lalu</button>
+          </div>
+        </section>
+
+        <section class="card panel tiktok-main-card">
+          <div class="advertiser-main-grid">
+            <div class="advertiser-metric"><span>Gross Omset</span><strong id="tiktokGross">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Budget Iklan + Admin</span><strong id="tiktokBudgetAdmin">Rp0</strong></div>
+            <div class="advertiser-metric"><span>CAC</span><strong id="tiktokCac">0%</strong></div>
+            <div class="advertiser-metric"><span>ROAS</span><strong id="tiktokRoas">0.00x</strong></div>
+            <div class="advertiser-metric"><span>Return</span><strong id="tiktokReturn">Rp0 (0%)</strong></div>
+            <div class="advertiser-metric"><span>Beban Return</span><strong id="tiktokReturnCost">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Nett Omset</span><strong id="tiktokNett">Rp0</strong></div>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="tiktok-panel-title">Status Pesanan</h2>
+            <span class="panel-note">berdasarkan order Tiktokshop</span>
+          </div>
+          <div class="table-scroll">
+            <table class="status-table">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Jumlah</th>
+                  <th>Omset</th>
+                  <th>Persentase</th>
+                </tr>
+              </thead>
+              <tbody id="tiktokStatusBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="tiktok-panel-title">Report Daily</h2>
+            <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table tiktok-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Budget Iklan</th>
+                  <th>Omset Dashgo</th>
+                  <th>CAC Dashgo</th>
+                  <th>ROAS Dashgo</th>
+                  <th>Omset Dashboard</th>
+                  <th>CAC Dashboard</th>
+                  <th>ROAS Dashboard</th>
+                  <th>Impresi</th>
+                  <th>Lead Dashboard</th>
+                  <th>Cost Per Lead</th>
+                  <th>Beban Admin Quickcount</th>
+                  <th>CAC Dashgo Quickcount</th>
+                  <th>ROAS Dashgo Quickcount</th>
+                  <th>Admin</th>
+                  <th>Total Budget + Admin</th>
+                  <th>CAC After Admin</th>
+                  <th>ROAS After Admin</th>
+                  <th>Growth</th>
+                </tr>
+              </thead>
+              <tbody id="tiktokDailyReportBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
       <section id="coming-page" class="empty-page hidden">
         <article class="card">
           <h2 id="comingTitle">Coming soon ....</h2>
@@ -1674,20 +1805,25 @@
       crmEndDate: document.getElementById("crmEndDate"),
       shopeeStartDate: document.getElementById("shopeeStartDate"),
       shopeeEndDate: document.getElementById("shopeeEndDate"),
+      tiktokStartDate: document.getElementById("tiktokStartDate"),
+      tiktokEndDate: document.getElementById("tiktokEndDate"),
       advertiserSelect: document.getElementById("advertiserSelect"),
       csSelect: document.getElementById("csSelect"),
       crmSelect: document.getElementById("crmSelect"),
       shopeeStoreSelect: document.getElementById("shopeeStoreSelect"),
+      tiktokStoreSelect: document.getElementById("tiktokStoreSelect"),
       applyFilter: document.getElementById("applyFilter"),
       applyAdvertiserFilter: document.getElementById("applyAdvertiserFilter"),
       applyCsFilter: document.getElementById("applyCsFilter"),
       applyCrmFilter: document.getElementById("applyCrmFilter"),
       applyShopeeFilter: document.getElementById("applyShopeeFilter"),
+      applyTiktokFilter: document.getElementById("applyTiktokFilter"),
       quickFilters: document.getElementById("quickFilters"),
       advertiserQuickFilters: document.getElementById("advertiserQuickFilters"),
       csQuickFilters: document.getElementById("csQuickFilters"),
       crmQuickFilters: document.getElementById("crmQuickFilters"),
       shopeeQuickFilters: document.getElementById("shopeeQuickFilters"),
+      tiktokQuickFilters: document.getElementById("tiktokQuickFilters"),
       grossOmset: document.getElementById("grossOmset"),
       grossMeta: document.getElementById("grossMeta"),
       growthOmset: document.getElementById("growthOmset"),
@@ -1745,6 +1881,16 @@
       shopeeNett: document.getElementById("shopeeNett"),
       shopeeStatusBody: document.getElementById("shopeeStatusBody"),
       shopeeDailyReportBody: document.getElementById("shopeeDailyReportBody"),
+      tiktokStatus: document.getElementById("tiktokStatus"),
+      tiktokGross: document.getElementById("tiktokGross"),
+      tiktokBudgetAdmin: document.getElementById("tiktokBudgetAdmin"),
+      tiktokCac: document.getElementById("tiktokCac"),
+      tiktokRoas: document.getElementById("tiktokRoas"),
+      tiktokReturn: document.getElementById("tiktokReturn"),
+      tiktokReturnCost: document.getElementById("tiktokReturnCost"),
+      tiktokNett: document.getElementById("tiktokNett"),
+      tiktokStatusBody: document.getElementById("tiktokStatusBody"),
+      tiktokDailyReportBody: document.getElementById("tiktokDailyReportBody"),
       crmStackTooltip: document.getElementById("crmStackTooltip"),
       crTargetModal: document.getElementById("crTargetModal"),
       crTargetInput: document.getElementById("crTargetInput"),
@@ -1757,6 +1903,7 @@
       csPage: document.getElementById("cs-page"),
       crmPage: document.getElementById("crm-page"),
       shopeePage: document.getElementById("shopee-page"),
+      tiktokPage: document.getElementById("tiktok-page"),
       dashboardPage: document.getElementById("dashboard-page"),
       comingTitle: document.getElementById("comingTitle")
     };
@@ -2609,6 +2756,184 @@
         `;
       }).join("");
       els.shopeeDailyReportBody.innerHTML = totalRow + bodyRows;
+    }
+
+    function tiktokSourceRows() {
+      return allRows.filter(row => row.source === "Marketplace" && normalizeCompare(row.type).includes("tiktok"));
+    }
+
+    function populateTiktokFilter() {
+      const currentValue = els.tiktokStoreSelect.value || "all";
+      const names = [...new Set(tiktokSourceRows().map(row => row.store || row.type))]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.tiktokStoreSelect.innerHTML = `<option value="all">Semua Toko</option>` +
+        names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+      els.tiktokStoreSelect.value = names.includes(currentValue) ? currentValue : "all";
+    }
+
+    function updateTiktokInputs(start, end) {
+      els.tiktokStartDate.value = toInputDate(start);
+      els.tiktokEndDate.value = toInputDate(end);
+    }
+
+    function getTiktokRange() {
+      return [parseDateValue(els.tiktokStartDate.value), parseDateValue(els.tiktokEndDate.value)];
+    }
+
+    function tiktokRowsInRange(start, end) {
+      const selectedStore = els.tiktokStoreSelect.value;
+      return tiktokSourceRows().filter(row =>
+        row.date >= startOfDay(start) &&
+        row.date <= startOfDay(end) &&
+        (selectedStore === "all" || row.store === selectedStore)
+      );
+    }
+
+    function useLatestTiktokMonthIfCurrentIsEmpty() {
+      const [start, end] = getTiktokRange();
+      const source = tiktokSourceRows();
+      if (tiktokRowsInRange(start, end).length || !source.length) return false;
+      const latest = source.reduce((max, row) => row.date > max ? row.date : max, source[0].date);
+      updateTiktokInputs(new Date(latest.getFullYear(), latest.getMonth(), 1), new Date(latest.getFullYear(), latest.getMonth() + 1, 0));
+      els.tiktokQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+      return true;
+    }
+
+    function buildTiktokDailyRows(rows, start, end) {
+      const byDate = new Map();
+      rows.forEach(row => {
+        const key = dateKey(row.date);
+        const item = byDate.get(key) || {
+          date: row.date, budget: 0, dashgoRevenue: 0, dashboardRevenue: 0,
+          impressions: 0, leadDashboard: 0, admin: 0, returnRevenue: 0, returnCost: 0
+        };
+        item.dashgoRevenue += row.revenue || 0;
+        if (isReturnStatus(row.status)) {
+          item.returnRevenue += row.revenue || 0;
+          item.returnCost += row.returnCost || 0;
+        }
+        byDate.set(key, item);
+      });
+      return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
+        date, budget: 0, dashgoRevenue: 0, dashboardRevenue: 0,
+        impressions: 0, leadDashboard: 0, admin: 0, returnRevenue: 0, returnCost: 0
+      });
+    }
+
+    function renderTiktokReport() {
+      const [start, end] = getTiktokRange();
+      if (!start || !end) return;
+      const rows = tiktokRowsInRange(start, end);
+      const gross = sumRows(rows);
+      const budget = 0;
+      const admin = 0;
+      const totalBudgetAdmin = budget + admin;
+      const returnRows = rows.filter(row => isReturnStatus(row.status));
+      const returnRevenue = sumRows(returnRows);
+      const returnRate = percentRatio(returnRevenue, gross);
+      const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
+      const nett = gross - returnRevenue - returnCost;
+      const cac = percentRatio(totalBudgetAdmin, gross);
+      const roasValue = totalBudgetAdmin > 0 ? gross / totalBudgetAdmin : 0;
+      const dailyRows = buildTiktokDailyRows(rows, start, end);
+
+      els.tiktokGross.textContent = currency(gross);
+      els.tiktokBudgetAdmin.textContent = currency(totalBudgetAdmin);
+      els.tiktokCac.textContent = percent(cac);
+      els.tiktokRoas.textContent = roas(roasValue);
+      els.tiktokReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
+      els.tiktokReturnCost.textContent = currency(returnCost);
+      els.tiktokNett.textContent = currency(nett);
+      els.tiktokStatus.textContent = `${rows.length.toLocaleString("id-ID")} baris Tiktokshop terbaca`;
+
+      renderMarketplaceStatusTable(rows, els.tiktokStatusBody);
+      renderTiktokDailyReport(dailyRows);
+    }
+
+    function renderTiktokDailyReport(rows) {
+      const totals = rows.reduce((acc, row) => {
+        acc.budget += row.budget;
+        acc.dashgoRevenue += row.dashgoRevenue;
+        acc.dashboardRevenue += row.dashboardRevenue;
+        acc.impressions += row.impressions;
+        acc.leadDashboard += row.leadDashboard;
+        acc.admin += row.admin;
+        return acc;
+      }, { budget: 0, dashgoRevenue: 0, dashboardRevenue: 0, impressions: 0, leadDashboard: 0, admin: 0 });
+      const qcRate = 17;
+      const totalBudgetAdmin = totals.budget + totals.admin;
+      const totalCacDashgo = percentRatio(totals.budget, totals.dashgoRevenue);
+      const totalRoasDashgo = totals.budget > 0 ? totals.dashgoRevenue / totals.budget : 0;
+      const totalCacDashboard = percentRatio(totals.budget, totals.dashboardRevenue);
+      const totalRoasDashboard = totals.budget > 0 ? totals.dashboardRevenue / totals.budget : 0;
+      const totalCostPerLead = totals.leadDashboard > 0 ? totals.budget / totals.leadDashboard : 0;
+      const totalCacAfterAdmin = percentRatio(totalBudgetAdmin, totals.dashgoRevenue);
+      const totalRoasAfterAdmin = totalBudgetAdmin > 0 ? totals.dashgoRevenue / totalBudgetAdmin : 0;
+      const totalRow = `
+        <tr class="total-row">
+          ${reportCell("TOTAL")}
+          ${reportCell(currency(totals.budget))}
+          ${reportCell(currency(totals.dashgoRevenue))}
+          ${reportCell(percent(totalCacDashgo))}
+          ${reportCell(roas(totalRoasDashgo))}
+          ${reportCell(currency(totals.dashboardRevenue))}
+          ${reportCell(percent(totalCacDashboard))}
+          ${reportCell(roas(totalRoasDashboard))}
+          ${reportCell(totals.impressions.toLocaleString("id-ID"))}
+          ${reportCell(totals.leadDashboard.toLocaleString("id-ID"))}
+          ${reportCell(currency(totalCostPerLead))}
+          ${reportCell(percent(qcRate))}
+          ${reportCell(percent(totalCacDashgo + qcRate))}
+          ${reportCell(roas(totalRoasDashgo + qcRate / 100))}
+          ${reportCell(currency(totals.admin))}
+          ${reportCell(currency(totalBudgetAdmin))}
+          ${reportCell(percent(totalCacAfterAdmin))}
+          ${reportCell(roas(totalRoasAfterAdmin))}
+          ${reportCell("-")}
+        </tr>
+      `;
+      let previousRevenue = 0;
+      const bodyRows = rows.map(row => {
+        const budget = row.budget || 0;
+        const admin = row.admin || 0;
+        const totalBudget = budget + admin;
+        const cacDashgo = percentRatio(budget, row.dashgoRevenue);
+        const roasDashgo = budget > 0 ? row.dashgoRevenue / budget : 0;
+        const cacDashboard = percentRatio(budget, row.dashboardRevenue);
+        const roasDashboard = budget > 0 ? row.dashboardRevenue / budget : 0;
+        const costPerLead = row.leadDashboard > 0 ? budget / row.leadDashboard : 0;
+        const cacAfterAdmin = percentRatio(totalBudget, row.dashgoRevenue);
+        const roasAfterAdmin = totalBudget > 0 ? row.dashgoRevenue / totalBudget : 0;
+        const growth = previousRevenue > 0 ? ((row.dashgoRevenue - previousRevenue) / previousRevenue) * 100 : (row.dashgoRevenue > 0 ? 100 : 0);
+        const growthText = row.dashgoRevenue || previousRevenue ? `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}` : "-";
+        const growthClass = growth >= 0 ? "positive-cell" : "negative-cell";
+        previousRevenue = row.dashgoRevenue;
+        return `
+          <tr>
+            ${reportCell(longIndonesianDate(row.date), isHolidayDate(row.date) ? "holiday-cell" : "")}
+            ${reportCell(currency(budget))}
+            ${reportCell(currency(row.dashgoRevenue))}
+            ${reportCell(percent(cacDashgo))}
+            ${reportCell(roas(roasDashgo))}
+            ${reportCell(currency(row.dashboardRevenue))}
+            ${reportCell(percent(cacDashboard))}
+            ${reportCell(roas(roasDashboard))}
+            ${reportCell(row.impressions.toLocaleString("id-ID"))}
+            ${reportCell(row.leadDashboard.toLocaleString("id-ID"))}
+            ${reportCell(currency(costPerLead))}
+            ${reportCell(percent(qcRate))}
+            ${reportCell(percent(cacDashgo + qcRate))}
+            ${reportCell(roas(roasDashgo + qcRate / 100))}
+            ${reportCell(currency(admin))}
+            ${reportCell(currency(totalBudget))}
+            ${reportCell(percent(cacAfterAdmin))}
+            ${reportCell(roas(roasAfterAdmin))}
+            ${reportCell(growthText, growthClass)}
+          </tr>
+        `;
+      }).join("");
+      els.tiktokDailyReportBody.innerHTML = totalRow + bodyRows;
     }
 
     function render() {
@@ -3611,6 +3936,7 @@
           els.csPage.classList.add("hidden");
           els.crmPage.classList.add("hidden");
           els.shopeePage.classList.add("hidden");
+          els.tiktokPage.classList.add("hidden");
           els.comingPage.classList.add("hidden");
           if (page === "dashboard") {
             els.dashboardPage.classList.remove("hidden");
@@ -3634,6 +3960,11 @@
           if (page === "shopee") {
             els.shopeePage.classList.remove("hidden");
             renderShopeeReport();
+            return;
+          }
+          if (page === "tiktok") {
+            els.tiktokPage.classList.remove("hidden");
+            renderTiktokReport();
             return;
           }
           els.comingPage.classList.remove("hidden");
@@ -3707,6 +4038,19 @@
         renderShopeeReport();
       });
       els.shopeeStoreSelect.addEventListener("change", renderShopeeReport);
+      els.tiktokQuickFilters.addEventListener("click", event => {
+        const button = event.target.closest("button[data-range]");
+        if (!button) return;
+        els.tiktokQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        updateTiktokInputs(...rangePreset(button.dataset.range));
+        renderTiktokReport();
+      });
+      els.applyTiktokFilter.addEventListener("click", () => {
+        els.tiktokQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        renderTiktokReport();
+      });
+      els.tiktokStoreSelect.addEventListener("change", renderTiktokReport);
       els.openCrTarget.addEventListener("click", () => {
         els.crTargetInput.value = getCrTarget() || "";
         els.crTargetModal.classList.remove("hidden");
@@ -3724,6 +4068,7 @@
         renderCsReport();
         renderCrmReport();
         renderShopeeReport();
+        renderTiktokReport();
       });
     }
 
@@ -3787,6 +4132,7 @@
       updateCsInputs(...rangePreset("thisMonth"));
       updateCrmInputs(...rangePreset("thisMonth"));
       updateShopeeInputs(...rangePreset("thisMonth"));
+      updateTiktokInputs(...rangePreset("thisMonth"));
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
         const [webotResult, marketplaceResult] = await Promise.allSettled([
@@ -3801,6 +4147,7 @@
         populateCsFilter();
         populateCrmFilter();
         populateShopeeFilter();
+        populateTiktokFilter();
         const sourceNotes = [];
         if (webotResult.status === "rejected") sourceNotes.push("Webot belum terbaca");
         if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace belum terbaca");
@@ -3820,6 +4167,9 @@
         if (useLatestShopeeMonthIfCurrentIsEmpty()) {
           els.shopeeStatus.textContent = "Menampilkan bulan data Shopee terakhir";
         }
+        if (useLatestTiktokMonthIfCurrentIsEmpty()) {
+          els.tiktokStatus.textContent = "Menampilkan bulan data Tiktokshop terakhir";
+        }
       } catch (error) {
         console.warn(error);
         allRows = [];
@@ -3830,6 +4180,7 @@
       renderCsReport();
       renderCrmReport();
       renderShopeeReport();
+      renderTiktokReport();
     }
 
     init();

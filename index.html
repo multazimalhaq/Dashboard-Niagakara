@@ -668,6 +668,16 @@
       width: 100%;
     }
 
+    .chart-scroll-wrap {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 6px;
+    }
+
+    .chart-scroll-wrap canvas {
+      min-width: 100%;
+    }
+
     canvas {
       display: block;
       width: 100%;
@@ -1435,7 +1445,7 @@
             <h2 class="crm-panel-title">Omset Produk Utama vs Crosselling</h2>
             <span class="panel-note">berdasarkan tanggal harian</span>
           </div>
-          <div class="chart-wrap">
+          <div class="chart-wrap chart-scroll-wrap">
             <canvas id="crmStackChart"></canvas>
           </div>
         </section>
@@ -3013,6 +3023,9 @@
 
     function drawCrmStackChart(rows) {
       const canvas = document.getElementById("crmStackChart");
+      const parentWidth = canvas.parentElement ? canvas.parentElement.clientWidth : canvas.clientWidth;
+      const desiredWidth = Math.max(parentWidth, rows.length * 78 + 80);
+      canvas.style.width = `${desiredWidth}px`;
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
       canvas.width = Math.floor(rect.width * dpr);
@@ -3026,7 +3039,7 @@
       const height = rect.height - padTop - padBottom;
       const max = Math.max(1, ...rows.map(row => row.mainRevenue + row.crossRevenue));
       const slot = rows.length ? width / rows.length : width;
-      const barWidth = Math.max(8, Math.min(28, slot * 0.58));
+      const barWidth = Math.max(38, Math.min(58, slot * 0.74));
       const bars = [];
 
       ctx.strokeStyle = "#dde4ee";
@@ -3061,13 +3074,19 @@
           ctx.font = "11px Inter, Arial";
           ctx.textAlign = "center";
           ctx.fillText(shortMoney(total), x + barWidth / 2, Math.max(12, crossY - 6));
-          if (mainH > 26) {
+          if (mainH > 36) {
             ctx.fillStyle = "#ffffff";
-            ctx.fillText(`${shortMoney(row.mainRevenue)} ${percent(percentRatio(row.mainRevenue, total))}`, x + barWidth / 2, mainY + mainH / 2 + 4);
+            ctx.font = "600 10px Inter, Arial";
+            const centerY = mainY + mainH / 2;
+            ctx.fillText(shortMoney(row.mainRevenue), x + barWidth / 2, centerY - 4);
+            ctx.fillText(percent(percentRatio(row.mainRevenue, total)), x + barWidth / 2, centerY + 10);
           }
-          if (crossH > 26) {
+          if (crossH > 36) {
             ctx.fillStyle = "#ffffff";
-            ctx.fillText(`${shortMoney(row.crossRevenue)} ${percent(percentRatio(row.crossRevenue, total))}`, x + barWidth / 2, crossY + crossH / 2 + 4);
+            ctx.font = "600 10px Inter, Arial";
+            const centerY = crossY + crossH / 2;
+            ctx.fillText(shortMoney(row.crossRevenue), x + barWidth / 2, centerY - 4);
+            ctx.fillText(percent(percentRatio(row.crossRevenue, total)), x + barWidth / 2, centerY + 10);
           }
         }
         bars.push({ x, y: crossY, width: barWidth, height: mainH + crossH, row });

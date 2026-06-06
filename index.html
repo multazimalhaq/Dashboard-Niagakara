@@ -1588,6 +1588,29 @@
 
         <section class="card panel">
           <div class="panel-header">
+            <h2 class="cs-panel-title">Daily Report</h2>
+            <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table cs-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Lead CS</th>
+                  <th>Closing</th>
+                  <th>Quantity</th>
+                  <th>Closing Rate</th>
+                  <th>Upsell</th>
+                  <th>Omset</th>
+                  <th>Growth</th>
+                </tr>
+              </thead>
+              <tbody id="csDailyReportBody"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="card panel">
+          <div class="panel-header">
             <h2 class="cs-panel-title">Tracking Paket</h2>
             <span class="panel-note">follow up status pengiriman</span>
           </div>
@@ -1630,29 +1653,6 @@
           </div>
         </section>
 
-        <section class="card panel">
-          <div class="panel-header">
-            <h2 class="cs-panel-title">Daily Report</h2>
-            <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
-          </div>
-          <div class="daily-table-wrap">
-            <table class="daily-table cs-daily-table">
-              <thead>
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Lead CS</th>
-                  <th>Closing</th>
-                  <th>Quantity</th>
-                  <th>Closing Rate</th>
-                  <th>Upsell</th>
-                  <th>Omset</th>
-                  <th>Growth</th>
-                </tr>
-              </thead>
-              <tbody id="csDailyReportBody"></tbody>
-            </table>
-          </div>
-        </section>
       </section>
 
       <section id="crm-page" class="hidden">
@@ -1743,6 +1743,30 @@
 
         <section class="card panel">
           <div class="panel-header">
+            <h2 class="crm-panel-title">Daily Report CRM</h2>
+            <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table crm-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Budget Iklan</th>
+                  <th>Omset CRM</th>
+                  <th>Omset New Customer</th>
+                  <th>Retention</th>
+                  <th>Total Omset</th>
+                  <th>CAC after CRM</th>
+                  <th>PAM (%)</th>
+                  <th>Growth</th>
+                </tr>
+              </thead>
+              <tbody id="crmDailyReportBody"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="card panel">
+          <div class="panel-header">
             <h2 class="crm-panel-title">Tracking Paket</h2>
             <span class="panel-note">follow up status pengiriman</span>
           </div>
@@ -1785,30 +1809,6 @@
           </div>
         </section>
 
-        <section class="card panel">
-          <div class="panel-header">
-            <h2 class="crm-panel-title">Daily Report CRM</h2>
-            <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
-          </div>
-          <div class="daily-table-wrap">
-            <table class="daily-table crm-daily-table">
-              <thead>
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Budget Iklan</th>
-                  <th>Omset CRM</th>
-                  <th>Omset New Customer</th>
-                  <th>Retention</th>
-                  <th>Total Omset</th>
-                  <th>CAC after CRM</th>
-                  <th>PAM (%)</th>
-                  <th>Growth</th>
-                </tr>
-              </thead>
-              <tbody id="crmDailyReportBody"></tbody>
-            </table>
-          </div>
-        </section>
       </section>
 
       <section id="shopee-page" class="hidden">
@@ -2298,8 +2298,8 @@
 
     function cellValue(cell) {
       if (!cell) return "";
-      if (cell.f !== undefined && cell.f !== null) return cell.f;
       if (cell.v !== undefined && cell.v !== null) return cell.v;
+      if (cell.f !== undefined && cell.f !== null) return cell.f;
       return "";
     }
 
@@ -2342,7 +2342,7 @@
         };
 
         const query = encodeURIComponent(queryText);
-        script.src = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tq=${query}&tqx=out:json;responseHandler:${callback}`;
+        script.src = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&headers=1&tq=${query}&tqx=out:json;responseHandler:${callback}&cache=${Date.now()}`;
         script.onerror = () => {
           cleanup();
           reject(new Error("Koneksi ke Google Sheet gagal"));

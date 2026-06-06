@@ -2361,6 +2361,7 @@
       return rows.map(row => {
         const status = normalizeStatus(getField(row, ["Status", "AG"]));
         const customerType = getField(row, ["Type Customer", "Type Transaksi", "K"]) || "-";
+        const phoneRaw = getField(row, ["Customer Phone Number", "Customer Phone", "Phone Number", "Nomor Customer", "No Customer", "Phone", "No HP", "Whatsapp", "WA", "N", "Column 7"]) || findLikelyPhone(row);
         return {
           source: "Webot",
           orderId: cleanLabel(getField(row, ["Order Number", "invoice_number", "L"]), ""),
@@ -2379,8 +2380,8 @@
           expedition: cleanExpedition(getField(row, ["Ekspedisi", "ship_via", "Ship Via", "W"])),
           advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv", "G"]), "Tanpa advertiser"),
           cs: normalizeStaffName(getField(row, ["Nama CS", "name_cs", "CS", "AF"]), "Tanpa CS"),
-          customerPhoneRaw: cleanLabel(getField(row, ["Customer Phone Number", "Customer Phone", "Phone Number", "Nomor Customer", "No Customer", "Phone", "No HP", "Whatsapp", "WA", "N", "Column 7"]), ""),
-          customerPhone: cleanPhone(getField(row, ["Customer Phone Number", "Customer Phone", "Phone Number", "Nomor Customer", "No Customer", "Phone", "No HP", "Whatsapp", "WA", "N", "Column 7"])),
+          customerPhoneRaw: cleanLabel(phoneRaw, ""),
+          customerPhone: cleanPhone(phoneRaw),
           customerName: cleanLabel(getField(row, ["Nama Customer", "Customer Name", "Nama Penerima", "O", "Column 8"]), "Tanpa nama"),
           valid: !EXCLUDED_WEBOT_STATUS.has(status.toLowerCase())
         };
@@ -2398,6 +2399,15 @@
       if (digits.startsWith("62")) return digits;
       if (digits.startsWith("0")) return `62${digits.slice(1)}`;
       return digits;
+    }
+
+    function findLikelyPhone(row) {
+      const values = Object.values(row || {});
+      const found = values.find(value => {
+        const digits = String(value || "").replace(/[^\d]/g, "");
+        return /^62\d{9,15}$/.test(digits) || /^08\d{8,14}$/.test(digits);
+      });
+      return found || "";
     }
 
     function normalizeStaffName(raw, fallback) {

@@ -2484,14 +2484,14 @@
     function renderMarketplaceStatusTable(rows, targetBody) {
       const totalRevenue = sumRows(rows);
       const statusOrder = [
-        ["On Progress", "status-delivery", "status-progress-delivery"],
-        ["Paket Hilang", "status-lost", "status-progress-lost"],
-        ["Pending Pickup", "status-packing", "status-progress-packing"],
-        ["Retun", "status-return", "status-progress-return"],
-        ["Success", "status-success", "status-progress-success"]
+        ["Success", "status-success", "status-progress-success", ["success"]],
+        ["On Progress", "status-delivery", "status-progress-delivery", ["on progress"]],
+        ["Pending Pickup", "status-packing", "status-progress-packing", ["pending pickup"]],
+        ["Paket Hilang", "status-lost", "status-progress-lost", ["paket hilang"]],
+        ["Return", "status-return", "status-progress-return", ["return", "retun"]]
       ];
-      targetBody.innerHTML = statusOrder.map(([name, className, progressClass]) => {
-        const statusRows = rows.filter(row => normalizeCompare(row.status) === normalizeCompare(name));
+      targetBody.innerHTML = statusOrder.map(([name, className, progressClass, matches]) => {
+        const statusRows = rows.filter(row => matches.includes(normalizeCompare(row.status)));
         const amount = sumRows(statusRows);
         const count = countUniqueOrders(statusRows);
         const pct = percentRatio(amount, totalRevenue);

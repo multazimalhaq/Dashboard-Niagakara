@@ -243,13 +243,20 @@
       border-color: rgba(255,255,255,0.10);
     }
 
+    .card.cs-main-card {
+      background: #2d145f;
+      color: #ffffff;
+      border-color: rgba(255,255,255,0.10);
+    }
+
     .advertiser-main-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
     }
 
-    #advertiser-page > .card {
+    #advertiser-page > .card,
+    #cs-page > .card {
       margin-bottom: 18px;
     }
 
@@ -270,6 +277,10 @@
       margin-bottom: 10px;
     }
 
+    .cs-main-card .advertiser-metric span {
+      color: #ffffff;
+    }
+
     .advertiser-metric strong {
       display: block;
       color: #ffffff;
@@ -280,6 +291,152 @@
 
     .advertiser-chart-card {
       color: #082b45;
+    }
+
+    .cs-chart-card {
+      color: #2d145f;
+    }
+
+    .cs-panel-title {
+      color: #2d145f;
+    }
+
+    .panel-action {
+      height: 34px;
+      border: 0;
+      border-radius: var(--radius);
+      background: #2d145f;
+      color: #ffffff;
+      padding: 0 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .status-table {
+      min-width: 620px;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-weight: 800;
+    }
+
+    .status-success { background: #dcfce7; color: #166534; }
+    .status-delivery { background: #dbeafe; color: #1e3a8a; }
+    .status-packing { background: #ffedd5; color: #9a3412; }
+    .status-waiting { background: #ede9fe; color: #4c1d95; }
+    .status-return { background: #ffe4e6; color: #9f1239; }
+
+    .status-progress {
+      display: grid;
+      gap: 6px;
+      min-width: 150px;
+    }
+
+    .status-progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-weight: 800;
+    }
+
+    .status-progress-track {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e5ebf2;
+    }
+
+    .status-progress-track i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+    }
+
+    .status-progress-success { color: #166534; }
+    .status-progress-success i { background: #166534; }
+    .status-progress-delivery { color: #1e3a8a; }
+    .status-progress-delivery i { background: #1e3a8a; }
+    .status-progress-packing { color: #9a3412; }
+    .status-progress-packing i { background: #9a3412; }
+    .status-progress-waiting { color: #4c1d95; }
+    .status-progress-waiting i { background: #4c1d95; }
+    .status-progress-return { color: #9f1239; }
+    .status-progress-return i { background: #9f1239; }
+
+    .daily-table.cs-daily-table th {
+      background: #2d145f !important;
+      color: #ffffff !important;
+    }
+
+    .daily-table.cs-daily-table th:first-child {
+      background: #2d145f !important;
+      color: #ffffff !important;
+    }
+
+    .daily-table.cs-daily-table .total-row td,
+    .daily-table.cs-daily-table .total-row td:first-child {
+      color: #ffd84d !important;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: grid;
+      place-items: center;
+      background: rgba(8, 18, 31, 0.48);
+      padding: 18px;
+    }
+
+    .modal {
+      width: min(420px, 100%);
+      background: #ffffff;
+      border-radius: var(--radius);
+      box-shadow: 0 28px 70px rgba(0,0,0,0.24);
+      padding: 20px;
+    }
+
+    .modal h2 {
+      color: #2d145f;
+      margin-bottom: 16px;
+    }
+
+    .modal input {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0 12px;
+      font: inherit;
+      margin-bottom: 16px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .modal-actions button {
+      height: 38px;
+      border-radius: var(--radius);
+      padding: 0 14px;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .modal-actions .primary {
+      border-color: #2d145f;
+      background: #2d145f;
+      color: #ffffff;
+      font-weight: 800;
     }
 
     .daily-table-wrap {
@@ -1049,6 +1206,107 @@
         </section>
       </section>
 
+      <section id="cs-page" class="hidden">
+        <div class="topbar">
+          <div>
+            <h1>Performa Customer Service Soscom</h1>
+            <p class="subtitle">Ringkasan performa CS dari kanal Soscom</p>
+          </div>
+          <div class="status-pill" id="csStatus">Menunggu data CS...</div>
+        </div>
+
+        <section class="filters" aria-label="Filter customer service">
+          <div class="date-row">
+            <label>Tanggal awal
+              <input id="csStartDate" type="date">
+            </label>
+            <label>Tanggal akhir
+              <input id="csEndDate" type="date">
+            </label>
+            <label>Nama CS
+              <select id="csSelect">
+                <option value="all">Semua CS</option>
+              </select>
+            </label>
+            <button class="apply-btn" id="applyCsFilter">Terapkan</button>
+          </div>
+          <div class="quick-row" id="csQuickFilters">
+            <button data-range="thisMonth" class="active">Bulan ini</button>
+            <button data-range="lastMonth">Bulan lalu</button>
+            <button data-range="last3">3 bulan lalu</button>
+            <button data-range="last6">6 bulan lalu</button>
+            <button data-range="thisYear">Tahun ini</button>
+            <button data-range="lastYear">Tahun lalu</button>
+          </div>
+        </section>
+
+        <section class="card panel cs-main-card">
+          <div class="advertiser-main-grid">
+            <div class="advertiser-metric"><span>Gross Omset</span><strong id="csGross">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Lead CS</span><strong id="csLead">0</strong></div>
+            <div class="advertiser-metric"><span>Closing</span><strong id="csClosing">0 (0%)</strong></div>
+            <div class="advertiser-metric"><span>Proyeksi Omset</span><strong id="csProjection">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Return</span><strong id="csReturn">Rp0 (0%)</strong></div>
+            <div class="advertiser-metric"><span>Beban Return</span><strong id="csReturnCost">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Nett Omset</span><strong id="csNett">Rp0</strong></div>
+          </div>
+        </section>
+
+        <section class="card panel cs-chart-card">
+          <div class="panel-header">
+            <h2>Closing Rate Harian vs Target Closing Rate</h2>
+            <button class="panel-action" id="openCrTarget">Set Target CR</button>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="csChart"></canvas>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="cs-panel-title">Status Pesanan</h2>
+            <span class="panel-note">berdasarkan order CS Soscom</span>
+          </div>
+          <div class="table-scroll">
+            <table class="status-table">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Jumlah</th>
+                  <th>Omset</th>
+                  <th>Persentase</th>
+                </tr>
+              </thead>
+              <tbody id="csStatusBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="cs-panel-title">Daily Report</h2>
+            <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table cs-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Lead CS</th>
+                  <th>Closing</th>
+                  <th>Quantity</th>
+                  <th>Closing Rate</th>
+                  <th>Upsell</th>
+                  <th>Omset</th>
+                  <th>Growth</th>
+                </tr>
+              </thead>
+              <tbody id="csDailyReportBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
       <section id="coming-page" class="empty-page hidden">
         <article class="card">
           <h2 id="comingTitle">Coming soon ....</h2>
@@ -1059,6 +1317,16 @@
   </div>
 
   <div class="tooltip" id="tooltip"></div>
+  <div class="modal-backdrop hidden" id="crTargetModal">
+    <div class="modal">
+      <h2>Target Closing Rate Harian</h2>
+      <input id="crTargetInput" type="number" min="0" step="1" placeholder="Contoh: 80">
+      <div class="modal-actions">
+        <button id="closeCrTarget">Batal</button>
+        <button class="primary" id="saveCrTarget">Input</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const SHEETS = {
@@ -1076,15 +1344,21 @@
     const els = {
       sourceStatus: document.getElementById("sourceStatus"),
       advertiserStatus: document.getElementById("advertiserStatus"),
+      csStatus: document.getElementById("csStatus"),
       startDate: document.getElementById("startDate"),
       endDate: document.getElementById("endDate"),
       advStartDate: document.getElementById("advStartDate"),
       advEndDate: document.getElementById("advEndDate"),
+      csStartDate: document.getElementById("csStartDate"),
+      csEndDate: document.getElementById("csEndDate"),
       advertiserSelect: document.getElementById("advertiserSelect"),
+      csSelect: document.getElementById("csSelect"),
       applyFilter: document.getElementById("applyFilter"),
       applyAdvertiserFilter: document.getElementById("applyAdvertiserFilter"),
+      applyCsFilter: document.getElementById("applyCsFilter"),
       quickFilters: document.getElementById("quickFilters"),
       advertiserQuickFilters: document.getElementById("advertiserQuickFilters"),
+      csQuickFilters: document.getElementById("csQuickFilters"),
       grossOmset: document.getElementById("grossOmset"),
       grossMeta: document.getElementById("grossMeta"),
       growthOmset: document.getElementById("growthOmset"),
@@ -1113,9 +1387,24 @@
       advNett: document.getElementById("advNett"),
       advChartPeriod: document.getElementById("advChartPeriod"),
       dailyReportBody: document.getElementById("dailyReportBody"),
+      csGross: document.getElementById("csGross"),
+      csLead: document.getElementById("csLead"),
+      csClosing: document.getElementById("csClosing"),
+      csProjection: document.getElementById("csProjection"),
+      csReturn: document.getElementById("csReturn"),
+      csReturnCost: document.getElementById("csReturnCost"),
+      csNett: document.getElementById("csNett"),
+      csStatusBody: document.getElementById("csStatusBody"),
+      csDailyReportBody: document.getElementById("csDailyReportBody"),
+      crTargetModal: document.getElementById("crTargetModal"),
+      crTargetInput: document.getElementById("crTargetInput"),
+      openCrTarget: document.getElementById("openCrTarget"),
+      closeCrTarget: document.getElementById("closeCrTarget"),
+      saveCrTarget: document.getElementById("saveCrTarget"),
       tooltip: document.getElementById("tooltip"),
       comingPage: document.getElementById("coming-page"),
       advertiserPage: document.getElementById("advertiser-page"),
+      csPage: document.getElementById("cs-page"),
       dashboardPage: document.getElementById("dashboard-page"),
       comingTitle: document.getElementById("comingTitle")
     };
@@ -1581,6 +1870,76 @@
 
     function percentRatio(numerator, denominator) {
       return denominator > 0 ? numerator / denominator * 100 : 0;
+    }
+
+    function csSourceRows() {
+      return allRows.filter(row => {
+        const name = normalizeCompare(row.cs);
+        return row.source === "Webot" &&
+          normalizeCompare(row.channel) === "soscom" &&
+          name.startsWith("cs ") &&
+          name !== "cs niagakara";
+      });
+    }
+
+    function populateCsFilter() {
+      const currentValue = els.csSelect.value || "all";
+      const names = [...new Set(csSourceRows().map(row => row.cs))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.csSelect.innerHTML = `<option value="all">Semua CS</option>` +
+        names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+      els.csSelect.value = names.includes(currentValue) ? currentValue : "all";
+    }
+
+    function updateCsInputs(start, end) {
+      els.csStartDate.value = toInputDate(start);
+      els.csEndDate.value = toInputDate(end);
+    }
+
+    function getCsRange() {
+      return [parseDateValue(els.csStartDate.value), parseDateValue(els.csEndDate.value)];
+    }
+
+    function csRowsInRange(start, end) {
+      const selectedCs = els.csSelect.value;
+      return csSourceRows().filter(row =>
+        row.date >= startOfDay(start) &&
+        row.date <= startOfDay(end) &&
+        (selectedCs === "all" || row.cs === selectedCs)
+      );
+    }
+
+    function buildCsDailyRows(rows, start, end) {
+      const validRows = grossAdvertiserRows(rows);
+      const byDate = new Map();
+      validRows.forEach(row => {
+        const key = dateKey(row.date);
+        const item = byDate.get(key) || {
+          date: row.date, revenue: 0, leadCs: 0, closing: 0, quantity: 0
+        };
+        item.revenue += row.revenue || 0;
+        item.closing += row.closing || 0;
+        item.quantity += row.quantity || 0;
+        byDate.set(key, item);
+      });
+      return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
+        date, revenue: 0, leadCs: 0, closing: 0, quantity: 0
+      });
+    }
+
+    function getCrTarget() {
+      const value = Number(localStorage.getItem("niagakaraTargetCr") || 0);
+      return Number.isFinite(value) ? value : 0;
+    }
+
+    function csStatusGroup(status) {
+      const value = String(status || "").toLowerCase();
+      if (value.includes("success")) return "Success";
+      if (value.includes("delivery") || value.includes("delivered") || value.includes("on delivery")) return "On Delivery";
+      if (value.includes("packing")) return "Packing";
+      if (value.includes("waiting")) return "Waiting for Payment";
+      if (value.includes("return")) return "Return";
+      return "";
     }
 
     function render() {
@@ -2055,6 +2414,187 @@
       els.dailyReportBody.innerHTML = totalRow + bodyRows;
     }
 
+    function renderCsReport() {
+      const [start, end] = getCsRange();
+      if (!start || !end) return;
+      const rows = csRowsInRange(start, end);
+      const grossRows = grossAdvertiserRows(rows);
+      const gross = sumRows(grossRows);
+      const leadCs = 0;
+      const closing = grossRows.reduce((total, row) => total + (row.closing || 0), 0);
+      const returnRows = grossRows.filter(row => isReturnStatus(row.status));
+      const returnRevenue = sumRows(returnRows);
+      const returnRate = percentRatio(returnRevenue, gross);
+      const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
+      const nett = gross - returnRevenue - returnCost;
+      const projection = projectionFrom(grossRows, start, end).value;
+
+      els.csGross.textContent = currency(gross);
+      els.csLead.textContent = leadCs.toLocaleString("id-ID");
+      els.csClosing.textContent = `${closing.toLocaleString("id-ID")} (${percent(percentRatio(closing, leadCs))})`;
+      els.csProjection.textContent = currency(projection);
+      els.csReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
+      els.csReturnCost.textContent = currency(returnCost);
+      els.csNett.textContent = currency(nett);
+      els.csStatus.textContent = `${grossRows.length.toLocaleString("id-ID")} baris CS Soscom terbaca`;
+
+      const dailyRows = buildCsDailyRows(rows, start, end);
+      drawCsChart(dailyRows);
+      renderCsStatusTable(rows);
+      renderCsDailyReport(dailyRows);
+    }
+
+    function drawCsChart(rows) {
+      const canvas = document.getElementById("csChart");
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      const padLeft = 58;
+      const padRight = 22;
+      const padTop = 24;
+      const padBottom = 42;
+      const width = rect.width - padLeft - padRight;
+      const height = rect.height - padTop - padBottom;
+      const target = getCrTarget();
+      const rates = rows.map(row => percentRatio(row.closing, row.leadCs));
+      const max = Math.max(100, target, ...rates);
+      const step = rows.length > 1 ? width / (rows.length - 1) : width;
+
+      ctx.strokeStyle = "#dde4ee";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#697586";
+      ctx.font = "12px Inter, Arial";
+      for (let i = 0; i <= 4; i++) {
+        const y = padTop + height * i / 4;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(rect.width - padRight, y);
+        ctx.stroke();
+        ctx.fillText(percent(max - max * i / 4), 0, y + 4);
+      }
+
+      const targetY = padTop + height - (target / max) * height;
+      ctx.beginPath();
+      ctx.moveTo(padLeft, targetY);
+      ctx.lineTo(rect.width - padRight, targetY);
+      ctx.strokeStyle = "#dc2626";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 5]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const points = rows.map((row, index) => ({
+        x: padLeft + index * step,
+        y: padTop + height - (percentRatio(row.closing, row.leadCs) / max) * height,
+        row
+      }));
+      if (points.length) {
+        ctx.beginPath();
+        points.forEach((point, index) => index === 0 ? ctx.moveTo(point.x, point.y) : ctx.lineTo(point.x, point.y));
+        ctx.strokeStyle = "#2d145f";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        points.forEach((point, index) => {
+          if (rows.length > 32 && index % 3 !== 0) return;
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+          ctx.fillStyle = "#2d145f";
+          ctx.fill();
+        });
+        const labelEvery = Math.max(1, Math.ceil(points.length / 8));
+        ctx.fillStyle = "#697586";
+        points.forEach((point, index) => {
+          if (index % labelEvery !== 0 && index !== points.length - 1) return;
+          ctx.fillText(`${pad(point.row.date.getDate())}/${pad(point.row.date.getMonth() + 1)}`, point.x - 16, rect.height - 14);
+        });
+      }
+    }
+
+    function renderCsStatusTable(rows) {
+      const validRows = rows.filter(row => {
+        const group = csStatusGroup(row.status);
+        return ["Success", "On Delivery", "Packing", "Waiting for Payment", "Return"].includes(group);
+      });
+      const totalRevenue = sumRows(validRows);
+      const statusOrder = [
+        ["Success", "status-success", "status-progress-success"],
+        ["On Delivery", "status-delivery", "status-progress-delivery"],
+        ["Packing", "status-packing", "status-progress-packing"],
+        ["Waiting for Payment", "status-waiting", "status-progress-waiting"],
+        ["Return", "status-return", "status-progress-return"]
+      ];
+      els.csStatusBody.innerHTML = statusOrder.map(([name, className, progressClass]) => {
+        const statusRows = validRows.filter(row => csStatusGroup(row.status) === name);
+        const amount = sumRows(statusRows);
+        const count = countUniqueOrders(statusRows);
+        const pct = percentRatio(amount, totalRevenue);
+        return `
+          <tr>
+            <td><span class="status-chip ${className}">${name}</span></td>
+            <td>${count.toLocaleString("id-ID")}</td>
+            <td>${currency(amount)}</td>
+            <td>
+              <div class="status-progress ${progressClass}">
+                <div class="status-progress-top"><span>${percent(pct)}</span></div>
+                <div class="status-progress-track"><i style="width:${Math.min(100, Math.max(0, pct))}%"></i></div>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderCsDailyReport(rows) {
+      const totals = rows.reduce((acc, row) => {
+        acc.leadCs += row.leadCs;
+        acc.closing += row.closing;
+        acc.quantity += row.quantity;
+        acc.revenue += row.revenue;
+        return acc;
+      }, { leadCs: 0, closing: 0, quantity: 0, revenue: 0 });
+      const totalClosingRate = percentRatio(totals.closing, totals.leadCs);
+      const totalUpsell = totals.closing > 0 ? totals.quantity / totals.closing : 0;
+      const totalRow = `
+        <tr class="total-row">
+          ${reportCell("TOTAL")}
+          ${reportCell(totals.leadCs.toLocaleString("id-ID"))}
+          ${reportCell(totals.closing.toLocaleString("id-ID"))}
+          ${reportCell(totals.quantity.toLocaleString("id-ID"))}
+          ${reportCell(percent(totalClosingRate))}
+          ${reportCell(totalUpsell.toFixed(2))}
+          ${reportCell(currency(totals.revenue))}
+          ${reportCell("-")}
+        </tr>
+      `;
+      let previousRevenue = 0;
+      const bodyRows = rows.map(row => {
+        const closingRate = percentRatio(row.closing, row.leadCs);
+        const upsell = row.closing > 0 ? row.quantity / row.closing : 0;
+        const growth = previousRevenue > 0 ? ((row.revenue - previousRevenue) / previousRevenue) * 100 : (row.revenue > 0 ? 100 : 0);
+        const growthClass = growth >= 0 ? "positive-cell" : "negative-cell";
+        const growthText = row.revenue || previousRevenue ? `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}` : "-";
+        previousRevenue = row.revenue;
+        return `
+          <tr>
+            ${reportCell(longIndonesianDate(row.date), isHolidayDate(row.date) ? "holiday-cell" : "")}
+            ${reportCell(row.leadCs.toLocaleString("id-ID"))}
+            ${reportCell(row.closing.toLocaleString("id-ID"))}
+            ${reportCell(row.quantity.toLocaleString("id-ID"))}
+            ${reportCell(percent(closingRate))}
+            ${reportCell(upsell.toFixed(2))}
+            ${reportCell(currency(row.revenue))}
+            ${reportCell(growthText, growthClass)}
+          </tr>
+        `;
+      }).join("");
+      els.csDailyReportBody.innerHTML = totalRow + bodyRows;
+    }
+
     function setupChartHover() {
       const canvas = document.getElementById("revenueChart");
       canvas.addEventListener("mousemove", event => {
@@ -2100,6 +2640,7 @@
           const page = button.dataset.page;
           els.dashboardPage.classList.add("hidden");
           els.advertiserPage.classList.add("hidden");
+          els.csPage.classList.add("hidden");
           els.comingPage.classList.add("hidden");
           if (page === "dashboard") {
             els.dashboardPage.classList.remove("hidden");
@@ -2108,6 +2649,11 @@
           if (page === "advertiser") {
             els.advertiserPage.classList.remove("hidden");
             renderAdvertiserReport();
+            return;
+          }
+          if (page === "cs") {
+            els.csPage.classList.remove("hidden");
+            renderCsReport();
             return;
           }
           els.comingPage.classList.remove("hidden");
@@ -2142,9 +2688,34 @@
         renderAdvertiserReport();
       });
       els.advertiserSelect.addEventListener("change", renderAdvertiserReport);
+      els.csQuickFilters.addEventListener("click", event => {
+        const button = event.target.closest("button[data-range]");
+        if (!button) return;
+        els.csQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        updateCsInputs(...rangePreset(button.dataset.range));
+        renderCsReport();
+      });
+      els.applyCsFilter.addEventListener("click", () => {
+        els.csQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        renderCsReport();
+      });
+      els.csSelect.addEventListener("change", renderCsReport);
+      els.openCrTarget.addEventListener("click", () => {
+        els.crTargetInput.value = getCrTarget() || "";
+        els.crTargetModal.classList.remove("hidden");
+      });
+      els.closeCrTarget.addEventListener("click", () => els.crTargetModal.classList.add("hidden"));
+      els.saveCrTarget.addEventListener("click", () => {
+        const value = Number(els.crTargetInput.value || 0);
+        localStorage.setItem("niagakaraTargetCr", Number.isFinite(value) ? String(value) : "0");
+        els.crTargetModal.classList.add("hidden");
+        renderCsReport();
+      });
       window.addEventListener("resize", () => {
         drawChart();
         renderAdvertiserReport();
+        renderCsReport();
       });
     }
 
@@ -2170,12 +2741,23 @@
       return true;
     }
 
+    function useLatestCsMonthIfCurrentIsEmpty() {
+      const [start, end] = getCsRange();
+      const source = csSourceRows();
+      if (csRowsInRange(start, end).length || !source.length) return false;
+      const latest = source.reduce((max, row) => row.date > max ? row.date : max, source[0].date);
+      updateCsInputs(new Date(latest.getFullYear(), latest.getMonth(), 1), new Date(latest.getFullYear(), latest.getMonth() + 1, 0));
+      els.csQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+      return true;
+    }
+
     async function init() {
       setupNavigation();
       setupFilters();
       setupChartHover();
       updateInputs(...rangePreset("thisMonth"));
       updateAdvertiserInputs(...rangePreset("thisMonth"));
+      updateCsInputs(...rangePreset("thisMonth"));
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
         const [webotRows, marketplaceRows] = await Promise.all([
@@ -2185,12 +2767,16 @@
         allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
         if (!allRows.length) throw new Error("Kolom data belum terbaca");
         populateAdvertiserFilter();
+        populateCsFilter();
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets`;
         if (useLatestDataMonthIfCurrentIsEmpty()) {
           els.sourceStatus.textContent += ", menampilkan bulan data terakhir";
         }
         if (useLatestAdvertiserMonthIfCurrentIsEmpty()) {
           els.advertiserStatus.textContent = "Menampilkan bulan data Soscom terakhir";
+        }
+        if (useLatestCsMonthIfCurrentIsEmpty()) {
+          els.csStatus.textContent = "Menampilkan bulan data CS Soscom terakhir";
         }
       } catch (error) {
         console.warn(error);
@@ -2199,6 +2785,7 @@
       }
       render();
       renderAdvertiserReport();
+      renderCsReport();
     }
 
     init();

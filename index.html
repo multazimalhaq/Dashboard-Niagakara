@@ -249,6 +249,12 @@
       border-color: rgba(255,255,255,0.10);
     }
 
+    .card.crm-main-card {
+      background: #14532d;
+      color: #ffffff;
+      border-color: rgba(255,255,255,0.10);
+    }
+
     .advertiser-main-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -256,7 +262,8 @@
     }
 
     #advertiser-page > .card,
-    #cs-page > .card {
+    #cs-page > .card,
+    #crm-page > .card {
       margin-bottom: 18px;
     }
 
@@ -281,6 +288,10 @@
       color: #ffffff;
     }
 
+    .crm-main-card .advertiser-metric span {
+      color: #ffffff;
+    }
+
     .advertiser-metric strong {
       display: block;
       color: #ffffff;
@@ -297,8 +308,16 @@
       color: #2d145f;
     }
 
+    .crm-chart-card {
+      color: #14532d;
+    }
+
     .cs-panel-title {
       color: #2d145f;
+    }
+
+    .crm-panel-title {
+      color: #14532d;
     }
 
     .panel-action {
@@ -383,6 +402,54 @@
     .daily-table.cs-daily-table .total-row td:first-child {
       color: #ffd84d !important;
     }
+
+    .daily-table.crm-daily-table th,
+    .daily-table.crm-daily-table th:first-child {
+      background: #14532d !important;
+      color: #ffffff !important;
+    }
+
+    .daily-table.crm-daily-table .total-row td,
+    .daily-table.crm-daily-table .total-row td:first-child {
+      color: #ffd84d !important;
+    }
+
+    .stack-tooltip {
+      position: fixed;
+      z-index: 20;
+      width: min(340px, calc(100vw - 28px));
+      pointer-events: none;
+      background: #ffffff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+      padding: 12px;
+      opacity: 0;
+      transform: translate(14px, 14px);
+      transition: opacity 120ms ease;
+      font-size: 12px;
+    }
+
+    .stack-tooltip h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+    }
+
+    .stack-tooltip .line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 4px 0;
+      border-bottom: 1px solid #eef2f7;
+    }
+
+    .stack-tooltip .line:last-child {
+      border-bottom: 0;
+    }
+
+    .tooltip-main { color: #15803d; font-weight: 900; }
+    .tooltip-cross { color: #2563eb; font-weight: 900; }
 
     .modal-backdrop {
       position: fixed;
@@ -1307,6 +1374,118 @@
         </section>
       </section>
 
+      <section id="crm-page" class="hidden">
+        <div class="topbar">
+          <div>
+            <h1>Performa Customer Relationship Management</h1>
+            <p class="subtitle">Ringkasan performa CRM dan retensi pelanggan</p>
+          </div>
+          <div class="status-pill" id="crmStatus">Menunggu data CRM...</div>
+        </div>
+
+        <section class="filters" aria-label="Filter CRM">
+          <div class="date-row">
+            <label>Tanggal awal
+              <input id="crmStartDate" type="date">
+            </label>
+            <label>Tanggal akhir
+              <input id="crmEndDate" type="date">
+            </label>
+            <label>Nama CRM
+              <select id="crmSelect">
+                <option value="all">Semua CRM</option>
+              </select>
+            </label>
+            <button class="apply-btn" id="applyCrmFilter">Terapkan</button>
+          </div>
+          <div class="quick-row" id="crmQuickFilters">
+            <button data-range="thisMonth" class="active">Bulan ini</button>
+            <button data-range="lastMonth">Bulan lalu</button>
+            <button data-range="last3">3 bulan lalu</button>
+            <button data-range="last6">6 bulan lalu</button>
+            <button data-range="thisYear">Tahun ini</button>
+            <button data-range="lastYear">Tahun lalu</button>
+          </div>
+        </section>
+
+        <section class="card panel crm-main-card">
+          <div class="advertiser-main-grid">
+            <div class="advertiser-metric"><span>Gross Omset</span><strong id="crmGross">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Omset New Customer</span><strong id="crmNewGross">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Retention Rate</span><strong id="crmRetention">0%</strong></div>
+            <div class="advertiser-metric"><span>Proyeksi Gross Omset</span><strong id="crmProjection">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Return</span><strong id="crmReturn">Rp0 (0%)</strong></div>
+            <div class="advertiser-metric"><span>Beban Return</span><strong id="crmReturnCost">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Nett Omset</span><strong id="crmNett">Rp0</strong></div>
+          </div>
+        </section>
+
+        <section class="card panel crm-chart-card">
+          <div class="panel-header">
+            <h2>Omset Harian vs Target Omset</h2>
+            <span class="panel-note" id="crmChartPeriod">Target sementara Rp0</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="crmRevenueChart"></canvas>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="crm-panel-title">Omset Produk Utama vs Crosselling</h2>
+            <span class="panel-note">berdasarkan tanggal harian</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="crmStackChart"></canvas>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="crm-panel-title">Status Pesanan</h2>
+            <span class="panel-note">berdasarkan order CRM</span>
+          </div>
+          <div class="table-scroll">
+            <table class="status-table">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Jumlah</th>
+                  <th>Omset</th>
+                  <th>Persentase</th>
+                </tr>
+              </thead>
+              <tbody id="crmStatusBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="crm-panel-title">Daily Report CRM</h2>
+            <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table crm-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Budget Iklan</th>
+                  <th>Omset CRM</th>
+                  <th>Omset New Customer</th>
+                  <th>Retention</th>
+                  <th>Total Omset</th>
+                  <th>CAC after CRM</th>
+                  <th>PAM (%)</th>
+                  <th>Growth</th>
+                </tr>
+              </thead>
+              <tbody id="crmDailyReportBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
       <section id="coming-page" class="empty-page hidden">
         <article class="card">
           <h2 id="comingTitle">Coming soon ....</h2>
@@ -1317,6 +1496,7 @@
   </div>
 
   <div class="tooltip" id="tooltip"></div>
+  <div class="stack-tooltip" id="crmStackTooltip"></div>
   <div class="modal-backdrop hidden" id="crTargetModal">
     <div class="modal">
       <h2>Target Closing Rate Harian</h2>
@@ -1345,20 +1525,26 @@
       sourceStatus: document.getElementById("sourceStatus"),
       advertiserStatus: document.getElementById("advertiserStatus"),
       csStatus: document.getElementById("csStatus"),
+      crmStatus: document.getElementById("crmStatus"),
       startDate: document.getElementById("startDate"),
       endDate: document.getElementById("endDate"),
       advStartDate: document.getElementById("advStartDate"),
       advEndDate: document.getElementById("advEndDate"),
       csStartDate: document.getElementById("csStartDate"),
       csEndDate: document.getElementById("csEndDate"),
+      crmStartDate: document.getElementById("crmStartDate"),
+      crmEndDate: document.getElementById("crmEndDate"),
       advertiserSelect: document.getElementById("advertiserSelect"),
       csSelect: document.getElementById("csSelect"),
+      crmSelect: document.getElementById("crmSelect"),
       applyFilter: document.getElementById("applyFilter"),
       applyAdvertiserFilter: document.getElementById("applyAdvertiserFilter"),
       applyCsFilter: document.getElementById("applyCsFilter"),
+      applyCrmFilter: document.getElementById("applyCrmFilter"),
       quickFilters: document.getElementById("quickFilters"),
       advertiserQuickFilters: document.getElementById("advertiserQuickFilters"),
       csQuickFilters: document.getElementById("csQuickFilters"),
+      crmQuickFilters: document.getElementById("crmQuickFilters"),
       grossOmset: document.getElementById("grossOmset"),
       grossMeta: document.getElementById("grossMeta"),
       growthOmset: document.getElementById("growthOmset"),
@@ -1396,6 +1582,17 @@
       csNett: document.getElementById("csNett"),
       csStatusBody: document.getElementById("csStatusBody"),
       csDailyReportBody: document.getElementById("csDailyReportBody"),
+      crmGross: document.getElementById("crmGross"),
+      crmNewGross: document.getElementById("crmNewGross"),
+      crmRetention: document.getElementById("crmRetention"),
+      crmProjection: document.getElementById("crmProjection"),
+      crmReturn: document.getElementById("crmReturn"),
+      crmReturnCost: document.getElementById("crmReturnCost"),
+      crmNett: document.getElementById("crmNett"),
+      crmStatusBody: document.getElementById("crmStatusBody"),
+      crmDailyReportBody: document.getElementById("crmDailyReportBody"),
+      crmChartPeriod: document.getElementById("crmChartPeriod"),
+      crmStackTooltip: document.getElementById("crmStackTooltip"),
       crTargetModal: document.getElementById("crTargetModal"),
       crTargetInput: document.getElementById("crTargetInput"),
       openCrTarget: document.getElementById("openCrTarget"),
@@ -1405,6 +1602,7 @@
       comingPage: document.getElementById("coming-page"),
       advertiserPage: document.getElementById("advertiser-page"),
       csPage: document.getElementById("cs-page"),
+      crmPage: document.getElementById("crm-page"),
       dashboardPage: document.getElementById("dashboard-page"),
       comingTitle: document.getElementById("comingTitle")
     };
@@ -1940,6 +2138,122 @@
       if (value.includes("waiting")) return "Waiting for Payment";
       if (value.includes("return")) return "Return";
       return "";
+    }
+
+    const MAIN_PRODUCTS = ["vitameal less sugar", "vitameal", "you & milk diabalance", "eyebost pro", "eyebost", "waji"];
+
+    function crmSourceRows() {
+      return allRows.filter(row => {
+        const name = normalizeCompare(row.cs);
+        return row.source === "Webot" && name.startsWith("crm ");
+      });
+    }
+
+    function crmNewCustomerSourceRows() {
+      return allRows.filter(row => {
+        const name = normalizeCompare(row.cs);
+        return row.source === "Webot" &&
+          normalizeCompare(row.channel) === "soscom" &&
+          name.startsWith("cs ") &&
+          name !== "cs niagakara";
+      });
+    }
+
+    function populateCrmFilter() {
+      const currentValue = els.crmSelect.value || "all";
+      const names = [...new Set(crmSourceRows().map(row => row.cs))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.crmSelect.innerHTML = `<option value="all">Semua CRM</option>` +
+        names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+      els.crmSelect.value = names.includes(currentValue) ? currentValue : "all";
+    }
+
+    function updateCrmInputs(start, end) {
+      els.crmStartDate.value = toInputDate(start);
+      els.crmEndDate.value = toInputDate(end);
+    }
+
+    function getCrmRange() {
+      return [parseDateValue(els.crmStartDate.value), parseDateValue(els.crmEndDate.value)];
+    }
+
+    function crmRowsInRange(start, end) {
+      const selectedCrm = els.crmSelect.value;
+      return crmSourceRows().filter(row =>
+        row.date >= startOfDay(start) &&
+        row.date <= startOfDay(end) &&
+        (selectedCrm === "all" || row.cs === selectedCrm)
+      );
+    }
+
+    function crmNewCustomerRowsInRange(start, end) {
+      return crmNewCustomerSourceRows().filter(row =>
+        row.date >= startOfDay(start) &&
+        row.date <= startOfDay(end)
+      );
+    }
+
+    function isMainProduct(product) {
+      const name = normalizeCompare(product);
+      return MAIN_PRODUCTS.some(item => name.includes(item));
+    }
+
+    function buildCrmDailyRows(crmRows, newCustomerRows, start, end) {
+      const validCrmRows = grossAdvertiserRows(crmRows);
+      const validNewCustomerRows = grossAdvertiserRows(newCustomerRows);
+      const byDate = new Map();
+
+      validCrmRows.forEach(row => {
+        const key = dateKey(row.date);
+        const item = byDate.get(key) || {
+          date: row.date, budget: 0, crmRevenue: 0, newRevenue: 0, totalRevenue: 0,
+          mainRevenue: 0, crossRevenue: 0, transactions: new Set(), mainProducts: new Map(), crossProducts: new Map()
+        };
+        const revenue = row.revenue || 0;
+        item.crmRevenue += revenue;
+        item.totalRevenue += revenue;
+        item.transactions.add(uniqueOrderKey(row));
+        const productMap = isMainProduct(row.product) ? item.mainProducts : item.crossProducts;
+        const existing = productMap.get(row.product) || 0;
+        productMap.set(row.product, existing + revenue);
+        if (isMainProduct(row.product)) item.mainRevenue += revenue;
+        else item.crossRevenue += revenue;
+        byDate.set(key, item);
+      });
+
+      validNewCustomerRows.forEach(row => {
+        const key = dateKey(row.date);
+        const item = byDate.get(key) || {
+          date: row.date, budget: 0, crmRevenue: 0, newRevenue: 0, totalRevenue: 0,
+          mainRevenue: 0, crossRevenue: 0, transactions: new Set(), mainProducts: new Map(), crossProducts: new Map()
+        };
+        const revenue = row.revenue || 0;
+        item.newRevenue += revenue;
+        item.totalRevenue += revenue;
+        item.transactions.add(uniqueOrderKey(row));
+        const productMap = isMainProduct(row.product) ? item.mainProducts : item.crossProducts;
+        const existing = productMap.get(row.product) || 0;
+        productMap.set(row.product, existing + revenue);
+        if (isMainProduct(row.product)) item.mainRevenue += revenue;
+        else item.crossRevenue += revenue;
+        byDate.set(key, item);
+      });
+      return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
+        date, budget: 0, crmRevenue: 0, newRevenue: 0, totalRevenue: 0,
+        mainRevenue: 0, crossRevenue: 0, transactions: new Set(), mainProducts: new Map(), crossProducts: new Map()
+      });
+    }
+
+    function useLatestCrmMonthIfCurrentIsEmpty() {
+      const [start, end] = getCrmRange();
+      const source = crmSourceRows();
+      const newCustomerSource = crmNewCustomerSourceRows();
+      const combinedSource = source.concat(newCustomerSource);
+      if ((crmRowsInRange(start, end).length || crmNewCustomerRowsInRange(start, end).length) || !combinedSource.length) return false;
+      const latest = combinedSource.reduce((max, row) => row.date > max ? row.date : max, combinedSource[0].date);
+      updateCrmInputs(new Date(latest.getFullYear(), latest.getMonth(), 1), new Date(latest.getFullYear(), latest.getMonth() + 1, 0));
+      els.crmQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+      return true;
     }
 
     function render() {
@@ -2595,6 +2909,296 @@
       els.csDailyReportBody.innerHTML = totalRow + bodyRows;
     }
 
+    function renderCrmReport() {
+      const [start, end] = getCrmRange();
+      if (!start || !end) return;
+      const crmRows = crmRowsInRange(start, end);
+      const newCustomerRows = crmNewCustomerRowsInRange(start, end);
+      const grossRows = grossAdvertiserRows(crmRows);
+      const newRows = grossAdvertiserRows(newCustomerRows);
+      const combinedRows = grossRows.concat(newRows);
+      const allStatusRows = crmRows.concat(newCustomerRows);
+      const gross = sumRows(grossRows);
+      const newGross = sumRows(newRows);
+      const totalGross = gross + newGross;
+      const returnRows = combinedRows.filter(row => isReturnStatus(row.status));
+      const returnRevenue = sumRows(returnRows);
+      const returnRate = percentRatio(returnRevenue, totalGross);
+      const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
+      const nett = totalGross - returnRevenue - returnCost;
+      const projection = projectionFrom(grossRows, start, end).value;
+      const retention = percentRatio(gross, newGross);
+      const dailyRows = buildCrmDailyRows(crmRows, newCustomerRows, start, end);
+
+      els.crmGross.textContent = currency(gross);
+      els.crmNewGross.textContent = currency(newGross);
+      els.crmRetention.textContent = percent(retention);
+      els.crmProjection.textContent = currency(projection);
+      els.crmReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
+      els.crmReturnCost.textContent = currency(returnCost);
+      els.crmNett.textContent = currency(nett);
+      els.crmChartPeriod.textContent = `${start.toLocaleDateString("id-ID")} - ${end.toLocaleDateString("id-ID")}`;
+      els.crmStatus.textContent = `${combinedRows.length.toLocaleString("id-ID")} baris CRM dan CS terbaca`;
+
+      drawCrmRevenueChart(dailyRows);
+      drawCrmStackChart(dailyRows);
+      renderCrmStatusTable(allStatusRows);
+      renderCrmDailyReport(dailyRows);
+    }
+
+    function drawCrmRevenueChart(rows) {
+      const canvas = document.getElementById("crmRevenueChart");
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      const padLeft = 58, padRight = 22, padTop = 24, padBottom = 42;
+      const width = rect.width - padLeft - padRight;
+      const height = rect.height - padTop - padBottom;
+      const target = 0;
+      const max = Math.max(1, target, ...rows.map(row => row.crmRevenue));
+      const step = rows.length > 1 ? width / (rows.length - 1) : width;
+
+      ctx.strokeStyle = "#dde4ee";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#697586";
+      ctx.font = "12px Inter, Arial";
+      for (let i = 0; i <= 4; i++) {
+        const y = padTop + height * i / 4;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(rect.width - padRight, y);
+        ctx.stroke();
+        ctx.fillText(shortMoney(max - max * i / 4), 0, y + 4);
+      }
+
+      const targetY = padTop + height - (target / max) * height;
+      ctx.beginPath();
+      ctx.moveTo(padLeft, targetY);
+      ctx.lineTo(rect.width - padRight, targetY);
+      ctx.strokeStyle = "#dc2626";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 5]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const points = rows.map((row, index) => ({
+        x: padLeft + index * step,
+        y: padTop + height - (row.crmRevenue / max) * height,
+        row
+      }));
+      ctx.beginPath();
+      points.forEach((point, index) => index === 0 ? ctx.moveTo(point.x, point.y) : ctx.lineTo(point.x, point.y));
+      ctx.strokeStyle = "#14532d";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      points.forEach((point, index) => {
+        if (rows.length > 32 && index % 3 !== 0) return;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = "#14532d";
+        ctx.fill();
+      });
+      const labelEvery = Math.max(1, Math.ceil(points.length / 8));
+      ctx.fillStyle = "#697586";
+      points.forEach((point, index) => {
+        if (index % labelEvery !== 0 && index !== points.length - 1) return;
+        ctx.fillText(`${pad(point.row.date.getDate())}/${pad(point.row.date.getMonth() + 1)}`, point.x - 16, rect.height - 14);
+      });
+    }
+
+    function drawCrmStackChart(rows) {
+      const canvas = document.getElementById("crmStackChart");
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      const padLeft = 58, padRight = 22, padTop = 24, padBottom = 58;
+      const width = rect.width - padLeft - padRight;
+      const height = rect.height - padTop - padBottom;
+      const max = Math.max(1, ...rows.map(row => row.mainRevenue + row.crossRevenue));
+      const slot = rows.length ? width / rows.length : width;
+      const barWidth = Math.max(8, Math.min(28, slot * 0.58));
+      const bars = [];
+
+      ctx.strokeStyle = "#dde4ee";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#697586";
+      ctx.font = "12px Inter, Arial";
+      for (let i = 0; i <= 4; i++) {
+        const y = padTop + height * i / 4;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(rect.width - padRight, y);
+        ctx.stroke();
+        ctx.fillText(shortMoney(max - max * i / 4), 0, y + 4);
+      }
+
+      rows.forEach((row, index) => {
+        const total = row.mainRevenue + row.crossRevenue;
+        const x = padLeft + index * slot + (slot - barWidth) / 2;
+        const baseY = padTop + height;
+        const mainH = total ? (row.mainRevenue / max) * height : 0;
+        const crossH = total ? (row.crossRevenue / max) * height : 0;
+        const mainY = baseY - mainH;
+        const crossY = mainY - crossH;
+
+        ctx.fillStyle = "#15803d";
+        ctx.fillRect(x, mainY, barWidth, mainH);
+        ctx.fillStyle = "#2563eb";
+        ctx.fillRect(x, crossY, barWidth, crossH);
+
+        if (total > 0) {
+          ctx.fillStyle = "#18212f";
+          ctx.font = "11px Inter, Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(shortMoney(total), x + barWidth / 2, Math.max(12, crossY - 6));
+          if (mainH > 26) {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(`${shortMoney(row.mainRevenue)} ${percent(percentRatio(row.mainRevenue, total))}`, x + barWidth / 2, mainY + mainH / 2 + 4);
+          }
+          if (crossH > 26) {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(`${shortMoney(row.crossRevenue)} ${percent(percentRatio(row.crossRevenue, total))}`, x + barWidth / 2, crossY + crossH / 2 + 4);
+          }
+        }
+        bars.push({ x, y: crossY, width: barWidth, height: mainH + crossH, row });
+      });
+
+      ctx.textAlign = "left";
+      const labelEvery = Math.max(1, Math.ceil(rows.length / 8));
+      rows.forEach((row, index) => {
+        if (index % labelEvery !== 0 && index !== rows.length - 1) return;
+        const x = padLeft + index * slot + (slot - barWidth) / 2;
+        ctx.fillStyle = "#697586";
+        ctx.fillText(`${pad(row.date.getDate())}/${pad(row.date.getMonth() + 1)}`, x - 8, rect.height - 32);
+      });
+
+      ctx.fillStyle = "#15803d";
+      ctx.fillRect(padLeft, rect.height - 18, 10, 10);
+      ctx.fillStyle = "#18212f";
+      ctx.fillText("Produk Utama", padLeft + 16, rect.height - 9);
+      ctx.fillStyle = "#2563eb";
+      ctx.fillRect(padLeft + 125, rect.height - 18, 10, 10);
+      ctx.fillStyle = "#18212f";
+      ctx.fillText("Cross Selling", padLeft + 141, rect.height - 9);
+
+      canvas._crmBars = bars;
+    }
+
+    function productBreakdownLines(map) {
+      return [...map.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([name, value]) => `<div class="line"><span>${escapeHtml(name)}</span><strong>${currency(value)}</strong></div>`)
+        .join("") || `<div class="line"><span>Tidak ada</span><strong>${currency(0)}</strong></div>`;
+    }
+
+    function showCrmStackTooltip(event, bar) {
+      const row = bar.row;
+      const total = row.mainRevenue + row.crossRevenue;
+      els.crmStackTooltip.innerHTML = `
+        <h3>${longIndonesianDate(row.date)}</h3>
+        <div class="line"><span>Total omzet</span><strong>${currency(total)}</strong></div>
+        <div class="line"><span>Jumlah transaksi</span><strong>${row.transactions.size.toLocaleString("id-ID")}</strong></div>
+        <div class="line tooltip-cross"><span>Cross Selling</span><strong>${currency(row.crossRevenue)} (${percent(percentRatio(row.crossRevenue, total))})</strong></div>
+        ${productBreakdownLines(row.crossProducts)}
+        <div class="line tooltip-main"><span>Produk Utama</span><strong>${currency(row.mainRevenue)} (${percent(percentRatio(row.mainRevenue, total))})</strong></div>
+        ${productBreakdownLines(row.mainProducts)}
+        <div class="line"><span>Total keseluruhan</span><strong>${currency(total)}</strong></div>
+      `;
+      els.crmStackTooltip.style.left = `${event.clientX}px`;
+      els.crmStackTooltip.style.top = `${event.clientY}px`;
+      els.crmStackTooltip.style.opacity = "1";
+    }
+
+    function renderCrmStatusTable(rows) {
+      const validRows = rows.filter(row => ["Success", "On Delivery", "Packing", "Waiting for Payment", "Return"].includes(csStatusGroup(row.status)));
+      const totalRevenue = sumRows(validRows);
+      const statusOrder = [
+        ["Success", "status-success", "status-progress-success"],
+        ["On Delivery", "status-delivery", "status-progress-delivery"],
+        ["Packing", "status-packing", "status-progress-packing"],
+        ["Waiting for Payment", "status-waiting", "status-progress-waiting"],
+        ["Return", "status-return", "status-progress-return"]
+      ];
+      els.crmStatusBody.innerHTML = statusOrder.map(([name, className, progressClass]) => {
+        const statusRows = validRows.filter(row => csStatusGroup(row.status) === name);
+        const amount = sumRows(statusRows);
+        const count = countUniqueOrders(statusRows);
+        const pct = percentRatio(amount, totalRevenue);
+        return `
+          <tr>
+            <td><span class="status-chip ${className}">${name}</span></td>
+            <td>${count.toLocaleString("id-ID")}</td>
+            <td>${currency(amount)}</td>
+            <td><div class="status-progress ${progressClass}"><div class="status-progress-top"><span>${percent(pct)}</span></div><div class="status-progress-track"><i style="width:${Math.min(100, Math.max(0, pct))}%"></i></div></div></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderCrmDailyReport(rows) {
+      const totals = rows.reduce((acc, row) => {
+        acc.budget += row.budget;
+        acc.crmRevenue += row.crmRevenue;
+        acc.newRevenue += row.newRevenue;
+        acc.totalRevenue += row.totalRevenue;
+        return acc;
+      }, { budget: 0, crmRevenue: 0, newRevenue: 0, totalRevenue: 0 });
+      const totalRetention = percentRatio(totals.crmRevenue, totals.newRevenue);
+      const totalCac = percentRatio(totals.budget, totals.totalRevenue);
+      const totalPamValue = totals.totalRevenue - (totals.totalRevenue * 0.455) - totals.budget;
+      const totalPamPct = percentRatio(totalPamValue, totals.totalRevenue);
+      const totalRow = `
+        <tr class="total-row">
+          ${reportCell("TOTAL")}
+          ${reportCell(currency(totals.budget))}
+          ${reportCell(currency(totals.crmRevenue))}
+          ${reportCell(currency(totals.newRevenue))}
+          ${reportCell(percent(totalRetention))}
+          ${reportCell(currency(totals.totalRevenue))}
+          ${reportCell(percent(totalCac))}
+          ${reportCell(`${currency(totalPamValue)} (${percent(totalPamPct)})`, totalPamValue >= 0 ? "positive-cell" : "negative-cell")}
+          ${reportCell("-")}
+        </tr>
+      `;
+      let previousRevenue = 0;
+      const bodyRows = rows.map(row => {
+        const retention = percentRatio(row.crmRevenue, row.newRevenue);
+        const totalRevenue = row.totalRevenue;
+        const cac = percentRatio(row.budget, totalRevenue);
+        const pamValue = totalRevenue - (totalRevenue * 0.455) - row.budget;
+        const pamPct = percentRatio(pamValue, totalRevenue);
+        const growth = previousRevenue > 0 ? ((totalRevenue - previousRevenue) / previousRevenue) * 100 : (totalRevenue > 0 ? 100 : 0);
+        const growthText = totalRevenue || previousRevenue ? `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}` : "-";
+        const growthClass = growth >= 0 ? "positive-cell" : "negative-cell";
+        previousRevenue = totalRevenue;
+        return `
+          <tr>
+            ${reportCell(longIndonesianDate(row.date), isHolidayDate(row.date) ? "holiday-cell" : "")}
+            ${reportCell(currency(row.budget))}
+            ${reportCell(currency(row.crmRevenue))}
+            ${reportCell(currency(row.newRevenue))}
+            ${reportCell(percent(retention))}
+            ${reportCell(currency(totalRevenue))}
+            ${reportCell(percent(cac))}
+            ${reportCell(`${currency(pamValue)} (${percent(pamPct)})`, pamValue >= 0 ? "positive-cell" : "negative-cell")}
+            ${reportCell(growthText, growthClass)}
+          </tr>
+        `;
+      }).join("");
+      els.crmDailyReportBody.innerHTML = totalRow + bodyRows;
+    }
+
     function setupChartHover() {
       const canvas = document.getElementById("revenueChart");
       canvas.addEventListener("mousemove", event => {
@@ -2641,6 +3245,7 @@
           els.dashboardPage.classList.add("hidden");
           els.advertiserPage.classList.add("hidden");
           els.csPage.classList.add("hidden");
+          els.crmPage.classList.add("hidden");
           els.comingPage.classList.add("hidden");
           if (page === "dashboard") {
             els.dashboardPage.classList.remove("hidden");
@@ -2654,6 +3259,11 @@
           if (page === "cs") {
             els.csPage.classList.remove("hidden");
             renderCsReport();
+            return;
+          }
+          if (page === "crm") {
+            els.crmPage.classList.remove("hidden");
+            renderCrmReport();
             return;
           }
           els.comingPage.classList.remove("hidden");
@@ -2701,6 +3311,19 @@
         renderCsReport();
       });
       els.csSelect.addEventListener("change", renderCsReport);
+      els.crmQuickFilters.addEventListener("click", event => {
+        const button = event.target.closest("button[data-range]");
+        if (!button) return;
+        els.crmQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        updateCrmInputs(...rangePreset(button.dataset.range));
+        renderCrmReport();
+      });
+      els.applyCrmFilter.addEventListener("click", () => {
+        els.crmQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        renderCrmReport();
+      });
+      els.crmSelect.addEventListener("change", renderCrmReport);
       els.openCrTarget.addEventListener("click", () => {
         els.crTargetInput.value = getCrTarget() || "";
         els.crTargetModal.classList.remove("hidden");
@@ -2716,6 +3339,25 @@
         drawChart();
         renderAdvertiserReport();
         renderCsReport();
+        renderCrmReport();
+      });
+    }
+
+    function setupCrmStackTooltip() {
+      const canvas = document.getElementById("crmStackChart");
+      canvas.addEventListener("mousemove", event => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const bar = (canvas._crmBars || []).find(item =>
+          x >= item.x && x <= item.x + item.width &&
+          y >= item.y && y <= item.y + item.height
+        );
+        if (bar) showCrmStackTooltip(event, bar);
+        else els.crmStackTooltip.style.opacity = "0";
+      });
+      canvas.addEventListener("mouseleave", () => {
+        els.crmStackTooltip.style.opacity = "0";
       });
     }
 
@@ -2755,9 +3397,11 @@
       setupNavigation();
       setupFilters();
       setupChartHover();
+      setupCrmStackTooltip();
       updateInputs(...rangePreset("thisMonth"));
       updateAdvertiserInputs(...rangePreset("thisMonth"));
       updateCsInputs(...rangePreset("thisMonth"));
+      updateCrmInputs(...rangePreset("thisMonth"));
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
         const [webotRows, marketplaceRows] = await Promise.all([
@@ -2768,6 +3412,7 @@
         if (!allRows.length) throw new Error("Kolom data belum terbaca");
         populateAdvertiserFilter();
         populateCsFilter();
+        populateCrmFilter();
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets`;
         if (useLatestDataMonthIfCurrentIsEmpty()) {
           els.sourceStatus.textContent += ", menampilkan bulan data terakhir";
@@ -2778,6 +3423,9 @@
         if (useLatestCsMonthIfCurrentIsEmpty()) {
           els.csStatus.textContent = "Menampilkan bulan data CS Soscom terakhir";
         }
+        if (useLatestCrmMonthIfCurrentIsEmpty()) {
+          els.crmStatus.textContent = "Menampilkan bulan data CRM terakhir";
+        }
       } catch (error) {
         console.warn(error);
         allRows = [];
@@ -2786,6 +3434,7 @@
       render();
       renderAdvertiserReport();
       renderCsReport();
+      renderCrmReport();
     }
 
     init();

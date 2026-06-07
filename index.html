@@ -3740,7 +3740,16 @@
         const exclusiveAccessFee = parseMoney(getField(row, ["Biaya akses keuntungan eksklusif", "Biaya Akses Keuntungan Eksklusif", "Exclusive Benefit Fee", "I", "Column 9"]));
         const cashbackFee = parseMoney(getField(row, ["Bonus Cashback Service Fee", "Cashback Service Fee", "J", "Column 10"]));
         const orderProcessingFee = parseMoney(getField(row, ["Order Processing Fee", "Processing Fee", "K", "Column 11"]));
-        const totalBiayaAdmin = platformFee + shippingCost + affiliateCommision + affiliateStoreAds + dynamicCommision + exclusiveAccessFee + cashbackFee + orderProcessingFee;
+        const totalBiayaAdmin = [
+          platformFee,
+          shippingCost,
+          affiliateCommision,
+          affiliateStoreAds,
+          dynamicCommision,
+          exclusiveAccessFee,
+          cashbackFee,
+          orderProcessingFee
+        ].reduce((total, value) => total + Math.abs(value || 0), 0);
         const totalPendapatan = revenue - totalBiayaAdmin;
         return {
           id: `admin-tiktok-${date ? dateKey(date) : "blank"}-${index}`,

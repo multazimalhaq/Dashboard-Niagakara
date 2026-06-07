@@ -174,6 +174,13 @@
       box-shadow: 0 12px 24px rgba(0,0,0,0.18);
     }
 
+    .nav button.nav-sub {
+      min-height: 38px;
+      margin-left: 18px;
+      font-size: 13px;
+      opacity: 0.92;
+    }
+
     .nav .dot {
       width: 8px;
       height: 8px;
@@ -929,6 +936,24 @@
       font-size: 15px;
     }
 
+    #adminMarketplaceInputForm h2,
+    #adminMarketplaceInputForm label {
+      color: #0b3551;
+    }
+
+    #adminMarketplaceInputForm .primary {
+      border-color: #0b3551;
+      background: #0b3551;
+      font-weight: 400;
+    }
+
+    .step-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
     .daily-table-wrap {
       max-height: 540px;
       overflow: auto;
@@ -1470,6 +1495,8 @@
         <button data-page="weekly-budgeting"><span class="dot"></span><span class="nav-full">Review weekly & Budgeting</span><span class="nav-short">W&B</span></button>
         <button data-page="product"><span class="dot"></span><span class="nav-full">Product</span><span class="nav-short">Pro</span></button>
         <button data-page="customer-management"><span class="dot"></span><span class="nav-full">Customer Management</span><span class="nav-short">Cust</span></button>
+        <button data-page="finance"><span class="dot"></span><span class="nav-full">Finance</span><span class="nav-short">Fin</span></button>
+        <button class="nav-sub" data-page="admin-marketplace"><span class="dot"></span><span class="nav-full">Admin Marketplace</span><span class="nav-short">Admin</span></button>
       </nav>
     </aside>
 
@@ -2690,6 +2717,136 @@
         </section>
       </section>
 
+      <section id="finance-page" class="hidden">
+        <div class="topbar">
+          <div>
+            <h1>Finance</h1>
+            <p class="subtitle">Dummy ringkasan biaya, margin, dan arus kas operasional</p>
+          </div>
+          <div class="status-pill">Konsep awal</div>
+        </div>
+
+        <section class="kpi-grid">
+          <article class="card kpi"><div><span>Total Revenue</span><strong>Rp 483.250.000</strong></div><small>Dummy semua channel</small></article>
+          <article class="card kpi"><div><span>Biaya Marketplace</span><strong>Rp 31.850.000</strong></div><small>Estimasi admin dan komisi</small></article>
+          <article class="card kpi"><div><span>Budget Marketing</span><strong>Rp 74.200.000</strong></div><small>Dummy spend periode aktif</small></article>
+          <article class="card kpi"><div><span>Net Margin</span><strong>18,4%</strong></div><small>Dummy margin setelah biaya utama</small></article>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2>Finance Snapshot</h2>
+            <span class="panel-note">dummy kontrol biaya dan profitabilitas</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table">
+              <thead>
+                <tr>
+                  <th>Channel</th>
+                  <th>Revenue</th>
+                  <th>Marketing Cost</th>
+                  <th>Marketplace Admin</th>
+                  <th>COGS</th>
+                  <th>Gross Profit</th>
+                  <th>Margin</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="total-row">
+                  <td>Total</td>
+                  <td>Rp 483.250.000</td>
+                  <td>Rp 74.200.000</td>
+                  <td>Rp 31.850.000</td>
+                  <td>Rp 219.878.750</td>
+                  <td>Rp 157.321.250</td>
+                  <td>32,6%</td>
+                </tr>
+                <tr>
+                  <td>Soscom</td>
+                  <td>Rp 253.000.000</td>
+                  <td>Rp 38.000.000</td>
+                  <td>Rp 0</td>
+                  <td>Rp 115.115.000</td>
+                  <td>Rp 99.885.000</td>
+                  <td>39,5%</td>
+                </tr>
+                <tr>
+                  <td>Shopee</td>
+                  <td>Rp 146.750.000</td>
+                  <td>Rp 21.600.000</td>
+                  <td>Rp 21.150.000</td>
+                  <td>Rp 66.771.250</td>
+                  <td>Rp 37.228.750</td>
+                  <td>25,4%</td>
+                </tr>
+                <tr>
+                  <td>Tiktokshop</td>
+                  <td>Rp 83.500.000</td>
+                  <td>Rp 14.600.000</td>
+                  <td>Rp 10.700.000</td>
+                  <td>Rp 37.992.500</td>
+                  <td>Rp 20.207.500</td>
+                  <td>24,2%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="admin-marketplace-page" class="hidden">
+        <div class="topbar">
+          <div>
+            <h1>Admin Marketplace</h1>
+            <p class="subtitle">Input dan kontrol biaya admin marketplace</p>
+          </div>
+          <div class="status-pill" id="adminMarketplaceStatus">Menunggu data Marketplace...</div>
+        </div>
+
+        <section class="filters" aria-label="Filter Admin Marketplace">
+          <div class="date-row">
+            <label>Tanggal awal
+              <input id="adminMarketplaceStartDate" type="date">
+            </label>
+            <label>Tanggal akhir
+              <input id="adminMarketplaceEndDate" type="date">
+            </label>
+            <label>Platform
+              <select id="adminMarketplacePlatformFilter">
+                <option value="all">Semua Platform</option>
+              </select>
+            </label>
+            <label>Toko
+              <select id="adminMarketplaceStoreFilter">
+                <option value="all">Semua Toko</option>
+              </select>
+            </label>
+            <button class="apply-btn" id="applyAdminMarketplaceFilter">Terapkan</button>
+            <button class="panel-action" id="openAdminMarketplaceInput" type="button">Input Admin Marketplace</button>
+          </div>
+          <div class="quick-row" id="adminMarketplaceQuickFilters">
+            <button data-range="thisMonth" class="active">Bulan ini</button>
+            <button data-range="lastMonth">Bulan lalu</button>
+            <button data-range="last3">3 bulan lalu</button>
+            <button data-range="last6">6 bulan lalu</button>
+            <button data-range="thisYear">Tahun ini</button>
+            <button data-range="lastYear">Tahun lalu</button>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2>Ringkasan Admin Marketplace</h2>
+            <span class="panel-note">dummy sementara, hasil input menyusul</span>
+          </div>
+          <div class="tracking-grid">
+            <div class="tracking-stat"><span>Total Platform</span><strong id="adminMarketplacePlatformCount">0</strong></div>
+            <div class="tracking-stat"><span>Total Toko</span><strong id="adminMarketplaceStoreCount">0</strong></div>
+            <div class="tracking-stat"><span>Baris Marketplace</span><strong id="adminMarketplaceRowCount">0</strong></div>
+          </div>
+        </section>
+      </section>
+
       <section id="coming-page" class="empty-page hidden">
         <article class="card">
           <h2 id="comingTitle">Coming soon ....</h2>
@@ -2835,6 +2992,35 @@
         <button id="closeTiktokBudgetInput" type="button">Batal</button>
         <button class="primary" type="submit">Simpan</button>
       </div>
+    </form>
+  </div>
+  <div class="modal-backdrop hidden" id="adminMarketplaceInputModal">
+    <form class="modal wide-modal" id="adminMarketplaceInputForm">
+      <h2>Input Admin Marketplace</h2>
+      <section id="adminMarketplaceStepOne">
+        <div class="form-grid">
+          <label>Tanggal
+            <input id="adminMarketplaceDateInput" type="date" required>
+          </label>
+          <label>Platform
+            <select id="adminMarketplacePlatformInput" required></select>
+          </label>
+          <label>Toko
+            <select id="adminMarketplaceStoreInput" required></select>
+          </label>
+        </div>
+        <div class="step-actions">
+          <button id="closeAdminMarketplaceInput" type="button">Batal</button>
+          <button class="primary" id="nextAdminMarketplaceInput" type="button">Next</button>
+        </div>
+      </section>
+      <section id="adminMarketplaceStepTwo" class="hidden">
+        <div id="adminMarketplaceDynamicFields" class="form-grid"></div>
+        <div class="modal-actions">
+          <button id="backAdminMarketplaceInput" type="button">Kembali</button>
+          <button class="primary" type="submit">Simpan</button>
+        </div>
+      </section>
     </form>
   </div>
 
@@ -3102,6 +3288,30 @@
       weeklyBudgetingPage: document.getElementById("weekly-budgeting-page"),
       productPage: document.getElementById("product-page"),
       customerManagementPage: document.getElementById("customer-management-page"),
+      financePage: document.getElementById("finance-page"),
+      adminMarketplacePage: document.getElementById("admin-marketplace-page"),
+      adminMarketplaceStatus: document.getElementById("adminMarketplaceStatus"),
+      adminMarketplaceStartDate: document.getElementById("adminMarketplaceStartDate"),
+      adminMarketplaceEndDate: document.getElementById("adminMarketplaceEndDate"),
+      adminMarketplacePlatformFilter: document.getElementById("adminMarketplacePlatformFilter"),
+      adminMarketplaceStoreFilter: document.getElementById("adminMarketplaceStoreFilter"),
+      applyAdminMarketplaceFilter: document.getElementById("applyAdminMarketplaceFilter"),
+      adminMarketplaceQuickFilters: document.getElementById("adminMarketplaceQuickFilters"),
+      openAdminMarketplaceInput: document.getElementById("openAdminMarketplaceInput"),
+      adminMarketplaceInputModal: document.getElementById("adminMarketplaceInputModal"),
+      adminMarketplaceInputForm: document.getElementById("adminMarketplaceInputForm"),
+      closeAdminMarketplaceInput: document.getElementById("closeAdminMarketplaceInput"),
+      nextAdminMarketplaceInput: document.getElementById("nextAdminMarketplaceInput"),
+      backAdminMarketplaceInput: document.getElementById("backAdminMarketplaceInput"),
+      adminMarketplaceStepOne: document.getElementById("adminMarketplaceStepOne"),
+      adminMarketplaceStepTwo: document.getElementById("adminMarketplaceStepTwo"),
+      adminMarketplaceDateInput: document.getElementById("adminMarketplaceDateInput"),
+      adminMarketplacePlatformInput: document.getElementById("adminMarketplacePlatformInput"),
+      adminMarketplaceStoreInput: document.getElementById("adminMarketplaceStoreInput"),
+      adminMarketplaceDynamicFields: document.getElementById("adminMarketplaceDynamicFields"),
+      adminMarketplacePlatformCount: document.getElementById("adminMarketplacePlatformCount"),
+      adminMarketplaceStoreCount: document.getElementById("adminMarketplaceStoreCount"),
+      adminMarketplaceRowCount: document.getElementById("adminMarketplaceRowCount"),
       dashboardPage: document.getElementById("dashboard-page"),
       comingTitle: document.getElementById("comingTitle")
     };
@@ -4806,6 +5016,170 @@
       return allRows.filter(row => row.source === "Marketplace" && normalizeCompare(row.type).includes("tiktok"));
     }
 
+    function marketplaceRows() {
+      return allRows.filter(row => row.source === "Marketplace");
+    }
+
+    function marketplacePlatforms() {
+      return [...new Set(marketplaceRows().map(row => row.type))]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+    }
+
+    function marketplaceStores(platform = "all") {
+      return [...new Set(marketplaceRows()
+        .filter(row => platform === "all" || row.type === platform)
+        .map(row => row.store || row.type))]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+    }
+
+    function updateAdminMarketplaceInputs(start, end) {
+      els.adminMarketplaceStartDate.value = toInputDate(start);
+      els.adminMarketplaceEndDate.value = toInputDate(end);
+    }
+
+    function getAdminMarketplaceRange() {
+      return [parseDateValue(els.adminMarketplaceStartDate.value), parseDateValue(els.adminMarketplaceEndDate.value)];
+    }
+
+    function populateAdminMarketplaceFilters() {
+      const currentPlatform = els.adminMarketplacePlatformFilter.value || "all";
+      const currentStore = els.adminMarketplaceStoreFilter.value || "all";
+      const platforms = marketplacePlatforms();
+      els.adminMarketplacePlatformFilter.innerHTML = `<option value="all">Semua Platform</option>` +
+        platforms.map(platform => `<option value="${escapeHtml(platform)}">${escapeHtml(platform)}</option>`).join("");
+      els.adminMarketplacePlatformFilter.value = platforms.includes(currentPlatform) ? currentPlatform : "all";
+      populateAdminMarketplaceStoreFilter(currentStore);
+    }
+
+    function populateAdminMarketplaceStoreFilter(currentStore = "all") {
+      const stores = marketplaceStores(els.adminMarketplacePlatformFilter.value || "all");
+      els.adminMarketplaceStoreFilter.innerHTML = `<option value="all">Semua Toko</option>` +
+        stores.map(store => `<option value="${escapeHtml(store)}">${escapeHtml(store)}</option>`).join("");
+      els.adminMarketplaceStoreFilter.value = stores.includes(currentStore) ? currentStore : "all";
+    }
+
+    function adminMarketplaceRowsInRange(start, end) {
+      const platform = els.adminMarketplacePlatformFilter.value;
+      const store = els.adminMarketplaceStoreFilter.value;
+      return marketplaceRows().filter(row =>
+        row.date >= startOfDay(start) &&
+        row.date <= startOfDay(end) &&
+        (platform === "all" || row.type === platform) &&
+        (store === "all" || row.store === store)
+      );
+    }
+
+    function renderAdminMarketplacePage() {
+      const [start, end] = getAdminMarketplaceRange();
+      if (!start || !end) return;
+      const rows = adminMarketplaceRowsInRange(start, end);
+      els.adminMarketplacePlatformCount.textContent = new Set(rows.map(row => row.type)).size.toLocaleString("id-ID");
+      els.adminMarketplaceStoreCount.textContent = new Set(rows.map(row => row.store)).size.toLocaleString("id-ID");
+      els.adminMarketplaceRowCount.textContent = rows.length.toLocaleString("id-ID");
+      els.adminMarketplaceStatus.textContent = `${rows.length.toLocaleString("id-ID")} baris marketplace terbaca`;
+    }
+
+    function populateAdminMarketplaceInputOptions() {
+      const [start, end] = getAdminMarketplaceRange();
+      if (start && end) {
+        els.adminMarketplaceDateInput.min = dateKey(start);
+        els.adminMarketplaceDateInput.max = dateKey(end);
+      }
+      const today = startOfDay(new Date());
+      const defaultDate = start && end && today >= startOfDay(start) && today <= startOfDay(end) ? today : start;
+      els.adminMarketplaceDateInput.value = defaultDate ? dateKey(defaultDate) : "";
+
+      const platforms = marketplacePlatforms();
+      els.adminMarketplacePlatformInput.innerHTML = platforms.map(platform =>
+        `<option value="${escapeHtml(platform)}">${escapeHtml(platform)}</option>`
+      ).join("");
+      if (els.adminMarketplacePlatformFilter.value !== "all") els.adminMarketplacePlatformInput.value = els.adminMarketplacePlatformFilter.value;
+      populateAdminMarketplaceInputStores();
+    }
+
+    function populateAdminMarketplaceInputStores() {
+      const platform = els.adminMarketplacePlatformInput.value;
+      const stores = marketplaceStores(platform);
+      els.adminMarketplaceStoreInput.innerHTML = stores.map(store =>
+        `<option value="${escapeHtml(store)}">${escapeHtml(store)}</option>`
+      ).join("");
+    }
+
+    function adminMarketplaceFieldsFor(platform) {
+      const value = normalizeCompare(platform);
+      if (value.includes("shopee")) {
+        return [
+          "Subtotal Pesanan",
+          "Voucher & Potongan Harga",
+          "Subtotal Ongkir",
+          "Biaya Lainnya",
+          "Biaya AMS",
+          "Biaya Live Extra",
+          "Affiliate Free Sample Shipping Fee",
+          "Penyesuaian saldo pengembalian barang/dana setelah dana dilepaskan",
+          "Penyesuaian Saldo Penjual untuk Biaya Premi"
+        ];
+      }
+      if (value.includes("tiktok")) {
+        return [
+          "Revenue",
+          "Shipping Cost",
+          "Affiliate Commision",
+          "Komisi Iklan Toko afiliasi",
+          "Dynamic Comission",
+          "Biaya akses keuntungan eksklusif",
+          "Bonus Cashback Service Fee",
+          "Order Processing Fee"
+        ];
+      }
+      return [];
+    }
+
+    function renderAdminMarketplaceDynamicFields() {
+      const fields = adminMarketplaceFieldsFor(els.adminMarketplacePlatformInput.value);
+      els.adminMarketplaceDynamicFields.innerHTML = fields.map((field, index) => `
+        <label>${escapeHtml(field)}
+          <input data-admin-marketplace-field="${index}" type="text" inputmode="numeric" placeholder="Contoh: 100,000">
+        </label>
+      `).join("") || `<p class="panel-note">Field belum tersedia untuk platform ini.</p>`;
+      els.adminMarketplaceDynamicFields.querySelectorAll("input").forEach(input => {
+        input.addEventListener("input", () => normalizePlainNumberInput(input));
+      });
+    }
+
+    function openAdminMarketplaceInputModal() {
+      populateAdminMarketplaceInputOptions();
+      els.adminMarketplaceStepOne.classList.remove("hidden");
+      els.adminMarketplaceStepTwo.classList.add("hidden");
+      els.adminMarketplaceInputModal.classList.remove("hidden");
+    }
+
+    function closeAdminMarketplaceInputModal() {
+      els.adminMarketplaceInputForm.reset();
+      els.adminMarketplaceStepOne.classList.remove("hidden");
+      els.adminMarketplaceStepTwo.classList.add("hidden");
+      els.adminMarketplaceInputModal.classList.add("hidden");
+    }
+
+    function goToAdminMarketplaceStepTwo() {
+      renderAdminMarketplaceDynamicFields();
+      els.adminMarketplaceStepOne.classList.add("hidden");
+      els.adminMarketplaceStepTwo.classList.remove("hidden");
+    }
+
+    function backToAdminMarketplaceStepOne() {
+      els.adminMarketplaceStepTwo.classList.add("hidden");
+      els.adminMarketplaceStepOne.classList.remove("hidden");
+    }
+
+    function handleAdminMarketplaceSubmit(event) {
+      event.preventDefault();
+      closeAdminMarketplaceInputModal();
+      renderAdminMarketplacePage();
+    }
+
     function populateTiktokFilter() {
       const currentValue = els.tiktokStoreSelect.value || "all";
       const names = [...new Set(tiktokSourceRows().map(row => row.store || row.type))]
@@ -6361,6 +6735,8 @@
           els.weeklyBudgetingPage.classList.add("hidden");
           els.productPage.classList.add("hidden");
           els.customerManagementPage.classList.add("hidden");
+          els.financePage.classList.add("hidden");
+          els.adminMarketplacePage.classList.add("hidden");
           els.comingPage.classList.add("hidden");
           if (page === "dashboard") {
             els.dashboardPage.classList.remove("hidden");
@@ -6401,6 +6777,15 @@
           }
           if (page === "customer-management") {
             els.customerManagementPage.classList.remove("hidden");
+            return;
+          }
+          if (page === "finance") {
+            els.financePage.classList.remove("hidden");
+            return;
+          }
+          if (page === "admin-marketplace") {
+            els.adminMarketplacePage.classList.remove("hidden");
+            renderAdminMarketplacePage();
             return;
           }
           els.comingPage.classList.remove("hidden");
@@ -6540,6 +6925,32 @@
       [els.tiktokBudgetInput, els.tiktokDashboardRevenueInput, els.tiktokImpressionsInput, els.tiktokLeadDashboardInput].forEach(input => {
         input.addEventListener("input", () => normalizePlainNumberInput(input));
       });
+      els.adminMarketplaceQuickFilters.addEventListener("click", event => {
+        const button = event.target.closest("button[data-range]");
+        if (!button) return;
+        els.adminMarketplaceQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        updateAdminMarketplaceInputs(...rangePreset(button.dataset.range));
+        renderAdminMarketplacePage();
+      });
+      els.applyAdminMarketplaceFilter.addEventListener("click", () => {
+        els.adminMarketplaceQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        renderAdminMarketplacePage();
+      });
+      els.adminMarketplacePlatformFilter.addEventListener("change", () => {
+        populateAdminMarketplaceStoreFilter();
+        renderAdminMarketplacePage();
+      });
+      els.adminMarketplaceStoreFilter.addEventListener("change", renderAdminMarketplacePage);
+      els.openAdminMarketplaceInput.addEventListener("click", openAdminMarketplaceInputModal);
+      els.closeAdminMarketplaceInput.addEventListener("click", closeAdminMarketplaceInputModal);
+      els.adminMarketplaceInputModal.addEventListener("click", event => {
+        if (event.target === els.adminMarketplaceInputModal) closeAdminMarketplaceInputModal();
+      });
+      els.adminMarketplacePlatformInput.addEventListener("change", populateAdminMarketplaceInputStores);
+      els.nextAdminMarketplaceInput.addEventListener("click", goToAdminMarketplaceStepTwo);
+      els.backAdminMarketplaceInput.addEventListener("click", backToAdminMarketplaceStepOne);
+      els.adminMarketplaceInputForm.addEventListener("submit", handleAdminMarketplaceSubmit);
       els.openCrTarget.addEventListener("click", () => {
         els.crTargetInput.value = getCrTarget() || "";
         els.crTargetModal.classList.remove("hidden");
@@ -6640,6 +7051,7 @@
       updateCrmInputs(...rangePreset("thisMonth"));
       updateShopeeInputs(...rangePreset("thisMonth"));
       updateTiktokInputs(...rangePreset("thisMonth"));
+      updateAdminMarketplaceInputs(...rangePreset("thisMonth"));
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
         const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet, shopeeResultMpSheet, tiktokResultSheet, csResultSheet, csReportSheet] = await Promise.allSettled([
@@ -6673,6 +7085,7 @@
         populateCrmFilter();
         populateShopeeFilter();
         populateTiktokFilter();
+        populateAdminMarketplaceFilters();
         const sourceNotes = [];
         if (webotResult.status === "rejected") sourceNotes.push("Webot belum terbaca");
         if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace belum terbaca");

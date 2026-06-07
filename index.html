@@ -374,6 +374,11 @@
       font-weight: 400;
     }
 
+    #openCsReportInput {
+      background: #14532d;
+      font-weight: 400;
+    }
+
     .status-table {
       min-width: 620px;
     }
@@ -747,6 +752,12 @@
     #budgetingInputForm .primary {
       border-color: #0b3551;
       background: #0b3551;
+      font-weight: 400;
+    }
+
+    #csReportInputForm .primary {
+      border-color: #2d145f;
+      background: #2d145f;
       font-weight: 400;
     }
 
@@ -1614,6 +1625,7 @@
               </select>
             </label>
             <button class="apply-btn" id="applyCsFilter">Terapkan</button>
+            <button class="panel-action" id="openCsReportInput" type="button">Input Laporan CS</button>
           </div>
           <div class="quick-row" id="csQuickFilters">
             <button data-range="thisMonth" class="active">Bulan ini</button>
@@ -1690,6 +1702,30 @@
             </table>
           </div>
         </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="cs-panel-title">Data Input Laporan CS</h2>
+            <span class="panel-note">gabungan data sheet dan input web</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table cs-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Nama CS</th>
+                  <th>Nama Adv</th>
+                  <th>Platform</th>
+                  <th>Nama Produk</th>
+                  <th>Lead CS</th>
+                  <th>Sumber</th>
+                </tr>
+              </thead>
+              <tbody id="csReportInputBody"></tbody>
+            </table>
+          </div>
+        </section>
+
         <section class="card panel">
           <div class="panel-header">
             <h2 class="cs-panel-title">Tracking Paket</h2>
@@ -2451,6 +2487,39 @@
       </div>
     </form>
   </div>
+  <div class="modal-backdrop hidden" id="csReportInputModal">
+    <form class="modal" id="csReportInputForm">
+      <h2>Input Laporan CS</h2>
+      <label>Tanggal
+        <input id="csReportDateInput" type="date" required>
+      </label>
+      <label>Nama CS
+        <select id="csReportCsInput" required></select>
+      </label>
+      <label>Nama Adv
+        <select id="csReportAdvertiserInput" required></select>
+      </label>
+      <label>Platform
+        <select id="csReportPlatformInput" required>
+          <option value="Meta">Meta</option>
+          <option value="Meta Interaksi WA">Meta Interaksi WA</option>
+          <option value="Meta Interaksi Bx">Meta Interaksi Bx</option>
+          <option value="Tiktok">Tiktok</option>
+          <option value="Google">Google</option>
+        </select>
+      </label>
+      <label>Nama Produk
+        <select id="csReportProductInput" required></select>
+      </label>
+      <label>Lead CS
+        <input id="csReportLeadInput" type="text" inputmode="numeric" placeholder="Contoh: 120" required>
+      </label>
+      <div class="modal-actions">
+        <button id="closeCsReportInput" type="button">Batal</button>
+        <button class="primary" type="submit">Simpan</button>
+      </div>
+    </form>
+  </div>
 
   <script>
     const SHEETS = {
@@ -2469,6 +2538,14 @@
       advertiserBudget: {
         id: "1aZ_Ern-dJUlmCpMU4IIEdj9lHD7XWfgynB0bnUpkPNs",
         sheet: "Budget Iklan"
+      },
+      csResult: {
+        id: "1xF7qyMgiNPgtBLwps-YqqesZ3GZH9Ta7CoYg51ZHuMU",
+        sheet: "Result"
+      },
+      csReport: {
+        id: "1VacAQil0NY-A7VP9x1uvWijh8bOoIPOOM0t3e0ZpgsM",
+        sheet: "Laporan CS"
       }
     };
 
@@ -2610,6 +2687,17 @@
       csTrackDayFilter: document.getElementById("csTrackDayFilter"),
       csTrackStatusFilter: document.getElementById("csTrackStatusFilter"),
       csTrackingBody: document.getElementById("csTrackingBody"),
+      openCsReportInput: document.getElementById("openCsReportInput"),
+      csReportInputModal: document.getElementById("csReportInputModal"),
+      csReportInputForm: document.getElementById("csReportInputForm"),
+      closeCsReportInput: document.getElementById("closeCsReportInput"),
+      csReportDateInput: document.getElementById("csReportDateInput"),
+      csReportCsInput: document.getElementById("csReportCsInput"),
+      csReportAdvertiserInput: document.getElementById("csReportAdvertiserInput"),
+      csReportPlatformInput: document.getElementById("csReportPlatformInput"),
+      csReportProductInput: document.getElementById("csReportProductInput"),
+      csReportLeadInput: document.getElementById("csReportLeadInput"),
+      csReportInputBody: document.getElementById("csReportInputBody"),
       crmGross: document.getElementById("crmGross"),
       crmNewGross: document.getElementById("crmNewGross"),
       crmRetention: document.getElementById("crmRetention"),
@@ -2678,9 +2766,12 @@
     let hoveredPoint = -1;
     let hoveredAdvertiserPoint = -1;
     let externalBudgetInputs = [];
+    let externalCsReportInputs = [];
     let advertiserBudgetInputs = [];
+    let csReportInputs = [];
     let editingBudgetingId = "";
     const BUDGETING_STORAGE_KEY = "niagakaraAdvertiserBudgetingInputs";
+    const CS_REPORT_STORAGE_KEY = "niagakaraCsReportInputs";
 
     function currency(value) {
       return new Intl.NumberFormat("id-ID", {
@@ -2787,6 +2878,39 @@
           source: sourceName
         };
       }).filter(row => row.date && row.advertiser && row.product);
+    }
+
+    function normalizeCsReportRows(rows, sourceName) {
+      return rows.map((row, index) => {
+        const date = parseDateValue(getField(row, [
+          "Tanggal", "Date", "Tanggal Laporan", "Tanggal Input", "A", "B", "Column 1", "Column 2"
+        ]));
+        const cs = normalizeStaffName(getField(row, [
+          "Nama CS", "CS", "Customer Service", "Nama Customer Service", "B", "C", "Column 2", "Column 3"
+        ]), "");
+        const advertiser = cleanLabel(getField(row, [
+          "Nama Adv", "Nama Advertiser", "Advertiser", "Adv", "C", "D", "Column 3", "Column 4"
+        ]), "");
+        const platform = cleanLabel(getField(row, [
+          "Platform", "Platform Iklan", "Media", "Channel Iklan", "D", "E", "Column 4", "Column 5"
+        ]), "Meta");
+        const product = cleanLabel(getField(row, [
+          "Nama Produk", "Produk", "Product", "ProductName", "E", "F", "Column 5", "Column 6"
+        ]), "");
+        const leadCs = parseMoney(getField(row, [
+          "Lead CS", "Lead", "Leads", "Jumlah Lead CS", "F", "G", "Column 6", "Column 7"
+        ]));
+        return {
+          id: `cs-sheet-${sourceName}-${date ? dateKey(date) : "blank"}-${index}`,
+          date: date ? dateKey(date) : "",
+          cs,
+          advertiser,
+          platform,
+          product,
+          leadCs,
+          source: sourceName
+        };
+      }).filter(row => row.date && row.cs && row.product);
     }
 
     function parseDateValue(raw) {
@@ -3459,6 +3583,148 @@
       els.csSelect.value = names.includes(currentValue) ? currentValue : "all";
     }
 
+    function loadCsReportInputs() {
+      try {
+        csReportInputs = JSON.parse(localStorage.getItem(CS_REPORT_STORAGE_KEY) || "[]")
+          .filter(item => item && item.date && item.cs && item.product)
+          .map(item => ({ ...item, source: "local" }));
+      } catch {
+        csReportInputs = [];
+      }
+    }
+
+    function saveCsReportInputs() {
+      localStorage.setItem(CS_REPORT_STORAGE_KEY, JSON.stringify(csReportInputs));
+    }
+
+    function csReportRowsInRange(start, end) {
+      const selectedCs = els.csSelect.value;
+      return combinedCsReportInputs().filter(item => {
+        const date = parseDateValue(item.date);
+        return date &&
+          date >= startOfDay(start) &&
+          date <= startOfDay(end) &&
+          (selectedCs === "all" || item.cs === selectedCs);
+      });
+    }
+
+    function combinedCsReportInputs() {
+      const map = new Map();
+      [...externalCsReportInputs, ...csReportInputs].forEach(item => {
+        const key = [
+          item.date,
+          normalizeCompare(item.cs),
+          normalizeCompare(item.advertiser),
+          normalizeCompare(item.platform),
+          normalizeCompare(item.product),
+          item.leadCs || 0
+        ].join("|");
+        if (!map.has(key)) map.set(key, item);
+      });
+      return [...map.values()];
+    }
+
+    function populateCsReportInputOptions() {
+      const [start, end] = getCsRange();
+      if (start && end) {
+        els.csReportDateInput.min = dateKey(start);
+        els.csReportDateInput.max = dateKey(end);
+      }
+      const today = startOfDay(new Date());
+      const defaultDate = start && end && today >= startOfDay(start) && today <= startOfDay(end) ? today : start;
+      els.csReportDateInput.value = defaultDate ? dateKey(defaultDate) : "";
+
+      const csNames = [...new Set(csSourceRows().map(row => row.cs))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.csReportCsInput.innerHTML = csNames.map(name =>
+        `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
+      ).join("");
+      if (els.csSelect.value !== "all") els.csReportCsInput.value = els.csSelect.value;
+
+      const advertisers = [...new Set(advertiserSourceRows().map(row => row.advertiser))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.csReportAdvertiserInput.innerHTML = advertisers.map(name =>
+        `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
+      ).join("");
+
+      const products = [...new Set(csSourceRows().map(row => row.product))]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.csReportProductInput.innerHTML = products.map(name =>
+        `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
+      ).join("");
+      els.csReportPlatformInput.value = "Meta";
+    }
+
+    function openCsReportInputModal() {
+      populateCsReportInputOptions();
+      els.csReportLeadInput.value = "";
+      els.csReportInputModal.classList.remove("hidden");
+    }
+
+    function closeCsReportInputModal() {
+      els.csReportInputForm.reset();
+      els.csReportInputModal.classList.add("hidden");
+    }
+
+    function handleCsReportSubmit(event) {
+      event.preventDefault();
+      csReportInputs.push({
+        id: `cs-report-${Date.now()}`,
+        date: els.csReportDateInput.value,
+        cs: els.csReportCsInput.value,
+        advertiser: els.csReportAdvertiserInput.value,
+        platform: els.csReportPlatformInput.value,
+        product: els.csReportProductInput.value,
+        leadCs: parseMoney(els.csReportLeadInput.value),
+        source: "local"
+      });
+      saveCsReportInputs();
+      closeCsReportInputModal();
+      renderCsReport();
+    }
+
+    function renderCsReportInputs() {
+      const [start, end] = getCsRange();
+      if (!start || !end) return;
+      const rows = csReportRowsInRange(start, end)
+        .sort((a, b) => parseDateValue(b.date) - parseDateValue(a.date));
+      const totalLead = rows.reduce((total, row) => total + (row.leadCs || 0), 0);
+      const totalRow = `
+        <tr class="total-row">
+          ${reportCell("TOTAL")}
+          ${reportCell(`${rows.length.toLocaleString("id-ID")} inputan`)}
+          ${reportCell("-")}
+          ${reportCell("-")}
+          ${reportCell("-")}
+          ${reportCell(totalLead.toLocaleString("id-ID"))}
+          ${reportCell("-")}
+        </tr>
+      `;
+      const bodyRows = rows.map(row => `
+        <tr>
+          ${reportCell(longIndonesianDate(parseDateValue(row.date)))}
+          ${reportCell(escapeHtml(row.cs || "-"))}
+          ${reportCell(escapeHtml(row.advertiser || "-"))}
+          ${reportCell(escapeHtml(row.platform || "-"))}
+          ${reportCell(escapeHtml(row.product || "-"))}
+          ${reportCell((row.leadCs || 0).toLocaleString("id-ID"))}
+          ${reportCell(escapeHtml(row.source || "Sheet"))}
+        </tr>
+      `).join("");
+      els.csReportInputBody.innerHTML = totalRow + (bodyRows || `
+        <tr>
+          ${reportCell("Belum ada input laporan CS")}
+          ${reportCell("-")}
+          ${reportCell("-")}
+          ${reportCell("-")}
+          ${reportCell("-")}
+          ${reportCell("0")}
+          ${reportCell("-")}
+        </tr>
+      `);
+    }
+
     function updateCsInputs(start, end) {
       els.csStartDate.value = toInputDate(start);
       els.csEndDate.value = toInputDate(end);
@@ -3488,6 +3754,16 @@
         item.revenue += row.revenue || 0;
         item.closing += row.closing || 0;
         item.quantity += row.quantity || 0;
+        byDate.set(key, item);
+      });
+      csReportRowsInRange(start, end).forEach(row => {
+        const date = parseDateValue(row.date);
+        if (!date) return;
+        const key = dateKey(date);
+        const item = byDate.get(key) || {
+          date, revenue: 0, leadCs: 0, closing: 0, quantity: 0
+        };
+        item.leadCs += row.leadCs || 0;
         byDate.set(key, item);
       });
       return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
@@ -4627,7 +4903,7 @@
       const rows = csRowsInRange(start, end);
       const grossRows = grossAdvertiserRows(rows);
       const gross = sumRows(grossRows);
-      const leadCs = 0;
+      const leadCs = csReportRowsInRange(start, end).reduce((total, row) => total + (row.leadCs || 0), 0);
       const closing = grossRows.reduce((total, row) => total + (row.closing || 0), 0);
       const returnRows = grossRows.filter(row => isReturnStatus(row.status));
       const returnRevenue = sumRows(returnRows);
@@ -4650,6 +4926,7 @@
       renderCsStatusTable(rows);
       renderTrackingSection("cs", rows);
       renderCsDailyReport(dailyRows);
+      renderCsReportInputs();
     }
 
     function drawCsChart(rows) {
@@ -5302,6 +5579,13 @@
       els.csSelect.addEventListener("change", renderCsReport);
       els.csTrackDayFilter.addEventListener("change", renderCsReport);
       els.csTrackStatusFilter.addEventListener("change", renderCsReport);
+      els.openCsReportInput.addEventListener("click", openCsReportInputModal);
+      els.closeCsReportInput.addEventListener("click", closeCsReportInputModal);
+      els.csReportInputModal.addEventListener("click", event => {
+        if (event.target === els.csReportInputModal) closeCsReportInputModal();
+      });
+      els.csReportInputForm.addEventListener("submit", handleCsReportSubmit);
+      els.csReportLeadInput.addEventListener("input", () => normalizePlainNumberInput(els.csReportLeadInput));
       els.crmQuickFilters.addEventListener("click", event => {
         const button = event.target.closest("button[data-range]");
         if (!button) return;
@@ -5430,6 +5714,7 @@
 
     async function init() {
       loadBudgetingInputs();
+      loadCsReportInputs();
       setupNavigation();
       setupFilters();
       setupChartHover();
@@ -5442,18 +5727,24 @@
       updateTiktokInputs(...rangePreset("thisMonth"));
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
-        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet] = await Promise.allSettled([
+        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet, csResultSheet, csReportSheet] = await Promise.allSettled([
           loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, WEBOT_QUERY),
           loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,H,I,K,O,U,Y,AD,AE"),
           loadGoogleSheet(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
-          loadGoogleSheet(SHEETS.advertiserBudget.id, SHEETS.advertiserBudget.sheet, "select *")
+          loadGoogleSheet(SHEETS.advertiserBudget.id, SHEETS.advertiserBudget.sheet, "select *"),
+          loadGoogleSheet(SHEETS.csResult.id, SHEETS.csResult.sheet, "select *"),
+          loadGoogleSheet(SHEETS.csReport.id, SHEETS.csReport.sheet, "select *")
         ]);
         const webotRows = webotResult.status === "fulfilled" ? webotResult.value : [];
         const marketplaceRows = marketplaceResult.status === "fulfilled" ? marketplaceResult.value : [];
         const advertiserResultRows = advertiserResultSheet.status === "fulfilled" ? advertiserResultSheet.value : [];
         const advertiserBudgetRows = advertiserBudgetSheet.status === "fulfilled" ? advertiserBudgetSheet.value : [];
+        const csResultRows = csResultSheet.status === "fulfilled" ? csResultSheet.value : [];
+        const csReportRows = csReportSheet.status === "fulfilled" ? csReportSheet.value : [];
         externalBudgetInputs = normalizeBudgetingRows(advertiserResultRows, "Result")
           .concat(normalizeBudgetingRows(advertiserBudgetRows, "Budget Iklan"));
+        externalCsReportInputs = normalizeCsReportRows(csResultRows, "Result CS")
+          .concat(normalizeCsReportRows(csReportRows, "Laporan CS"));
         allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
         if (!allRows.length) throw new Error("Kolom data belum terbaca");
         populateAdvertiserFilter();
@@ -5466,6 +5757,8 @@
         if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace belum terbaca");
         if (advertiserResultSheet.status === "rejected") sourceNotes.push("Result budgeting belum terbaca");
         if (advertiserBudgetSheet.status === "rejected") sourceNotes.push("Budget Iklan belum terbaca");
+        if (csResultSheet.status === "rejected") sourceNotes.push("Result CS belum terbaca");
+        if (csReportSheet.status === "rejected") sourceNotes.push("Laporan CS belum terbaca");
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
         if (useLatestDataMonthIfCurrentIsEmpty()) {
           els.sourceStatus.textContent += ", menampilkan bulan data terakhir";

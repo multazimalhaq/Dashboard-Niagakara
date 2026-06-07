@@ -2440,105 +2440,116 @@
       <section id="weekly-budgeting-page" class="hidden">
         <div class="topbar">
           <div>
-            <h1>Review weekly & Budgeting</h1>
-            <p class="subtitle">Dummy review mingguan, target, dan kontrol budget</p>
+            <h1 id="weeklyAdvertiserTitle">Performa Advertiser Periode -</h1>
+            <p class="subtitle">Review budgeting otomatis dari Senin sampai Minggu minggu sebelumnya</p>
           </div>
-          <div class="status-pill">Konsep awal</div>
+          <div class="status-pill" id="weeklyAdvertiserStatus">Menunggu data...</div>
         </div>
 
-        <section class="filters" aria-label="Filter Review weekly dan Budgeting">
-          <div class="date-row">
-            <label>Periode awal
-              <input type="date">
-            </label>
-            <label>Periode akhir
-              <input type="date">
-            </label>
-            <label>Channel
-              <select>
-                <option>Semua Channel</option>
-                <option>Soscom</option>
-                <option>CRM</option>
-                <option>Shopee</option>
-                <option>Tiktokshop</option>
-              </select>
-            </label>
-            <button class="apply-btn">Terapkan</button>
-          </div>
-        </section>
-
         <section class="kpi-grid">
-          <article class="card kpi"><div><span>Target Omset</span><strong>Rp 250.000.000</strong></div><small>Dummy target minggu berjalan</small></article>
-          <article class="card kpi"><div><span>Realisasi</span><strong>Rp 183.500.000</strong></div><small>73,4% dari target</small></article>
-          <article class="card kpi"><div><span>Budget Iklan</span><strong>Rp 38.000.000</strong></div><small>Estimasi pemakaian semua channel</small></article>
-          <article class="card kpi"><div><span>Sisa Budget</span><strong>Rp 12.000.000</strong></div><small>Ruang optimasi minggu ini</small></article>
+          <article class="card kpi"><div><span>Total Budget</span><strong id="weeklyTotalBudget">Rp0</strong></div><small>Budget advertiser minggu lalu</small></article>
+          <article class="card kpi"><div><span>Total Gross Revenue</span><strong id="weeklyTotalRevenue">Rp0</strong></div><small>Omset Soscom minggu lalu</small></article>
+          <article class="card kpi"><div><span>Total CAC</span><strong id="weeklyTotalCac">0%</strong></div><small>Budget dibanding gross revenue</small></article>
+          <article class="card kpi"><div><span>PAM</span><strong id="weeklyPamKpi">0%</strong></div><small>Setelah HPP 45,5% dan budget</small></article>
         </section>
 
         <section class="card panel">
           <div class="panel-header">
-            <h2>Weekly Review</h2>
-            <span class="panel-note">dummy perbandingan target dan realisasi</span>
+            <h2>Last Week</h2>
+            <span class="panel-note" id="weeklyPeriodNote">-</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table advertiser-daily-table">
+              <thead>
+                <tr>
+                  <th>Nama ADV</th>
+                  <th>Kanal</th>
+                  <th>Produk</th>
+                  <th>Budget</th>
+                  <th>Gross Revenue</th>
+                  <th>CAC</th>
+                  <th>Total Budget</th>
+                  <th>Total Gross Revenue</th>
+                  <th>Total CAC</th>
+                </tr>
+              </thead>
+              <tbody id="weeklyAdvertiserBody"></tbody>
+            </table>
+          </div>
+          <div class="daily-table-wrap" style="margin-top:18px; max-height:180px;">
+            <table class="daily-table advertiser-daily-table">
+              <tbody id="weeklyPamBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2>Produk</h2>
+            <span class="panel-note">CAC murni dan CAC after CRM</span>
           </div>
           <div class="daily-table-wrap">
             <table class="daily-table">
               <thead>
                 <tr>
-                  <th>Minggu</th>
-                  <th>Target Omset</th>
-                  <th>Realisasi</th>
+                  <th>Produk</th>
                   <th>Budget</th>
-                  <th>CAC</th>
-                  <th>PAM</th>
-                  <th>Catatan</th>
+                  <th>Gross Revenue</th>
+                  <th>Revenue CRM</th>
+                  <th>Total Revenue</th>
+                  <th>CAC Murni</th>
+                  <th>CAC After CRM</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr class="total-row">
-                  <td>Total</td>
-                  <td>Rp 250.000.000</td>
-                  <td>Rp 183.500.000</td>
-                  <td>Rp 38.000.000</td>
-                  <td>20,7%</td>
-                  <td>Rp 61.500.000</td>
-                  <td>Perlu push produk utama</td>
-                </tr>
+              <tbody id="weeklyProductBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <div>
+              <h2 id="nextWeekBudgetTitle">Pengajuan Budget Marketing Advertiser Periode -</h2>
+              <span class="panel-note">rekomendasi berdasarkan performa minggu lalu dan target PAM minimal</span>
+            </div>
+          </div>
+          <div class="form-grid">
+            <label>HPP (%)
+              <input id="weeklyHppInput" type="number" min="0" max="100" step="0.1" value="46">
+            </label>
+            <label>Minimal PAM (%)
+              <input id="weeklyMinPamInput" type="number" min="0" max="100" step="0.1" value="13">
+            </label>
+            <label>Admin Shopee (%)
+              <input id="weeklyShopeeAdminInput" type="number" min="0" max="100" step="0.1" value="18">
+            </label>
+            <label>Pajak Shopee (%)
+              <input id="weeklyShopeeTaxInput" type="number" min="0" max="100" step="0.1" value="11">
+            </label>
+            <label>Admin Tiktokshop (%)
+              <input id="weeklyTiktokAdminInput" type="number" min="0" max="100" step="0.1" value="16">
+            </label>
+          </div>
+          <div class="daily-table-wrap" style="margin-top:16px;">
+            <table class="daily-table advertiser-daily-table">
+              <thead>
                 <tr>
-                  <td>Minggu 1</td>
-                  <td>Rp 60.000.000</td>
-                  <td>Rp 47.800.000</td>
-                  <td>Rp 9.200.000</td>
-                  <td>19,2%</td>
-                  <td class="positive-cell">Rp 16.851.000</td>
-                  <td>CRM stabil, Soscom perlu scale</td>
+                  <th>Nama ADV</th>
+                  <th>Kanal</th>
+                  <th>Produk</th>
+                  <th>Budget Last Week</th>
+                  <th>Revenue Last Week</th>
+                  <th>PAM Last Week</th>
+                  <th>Rekomendasi Budget</th>
+                  <th>Target Revenue</th>
+                  <th>Target CAC</th>
+                  <th>Prakiraan Admin</th>
+                  <th>Budget + Admin</th>
+                  <th>Estimasi PAM</th>
+                  <th>Status</th>
                 </tr>
-                <tr>
-                  <td>Minggu 2</td>
-                  <td>Rp 65.000.000</td>
-                  <td>Rp 52.400.000</td>
-                  <td>Rp 10.500.000</td>
-                  <td>20,0%</td>
-                  <td class="positive-cell">Rp 18.058.000</td>
-                  <td>Return mulai naik</td>
-                </tr>
-                <tr>
-                  <td>Minggu 3</td>
-                  <td>Rp 60.000.000</td>
-                  <td>Rp 38.900.000</td>
-                  <td>Rp 8.100.000</td>
-                  <td>20,8%</td>
-                  <td class="positive-cell">Rp 13.100.500</td>
-                  <td>Perlu cek advertiser rendah</td>
-                </tr>
-                <tr>
-                  <td>Minggu 4</td>
-                  <td>Rp 65.000.000</td>
-                  <td>Rp 44.400.000</td>
-                  <td>Rp 10.200.000</td>
-                  <td>23,0%</td>
-                  <td class="positive-cell">Rp 13.998.000</td>
-                  <td>Dummy forecast belum final</td>
-                </tr>
-              </tbody>
+              </thead>
+              <tbody id="budgetRecommendationBody"></tbody>
             </table>
           </div>
         </section>
@@ -3382,6 +3393,23 @@
       shopeePage: document.getElementById("shopee-page"),
       tiktokPage: document.getElementById("tiktok-page"),
       weeklyBudgetingPage: document.getElementById("weekly-budgeting-page"),
+      weeklyAdvertiserTitle: document.getElementById("weeklyAdvertiserTitle"),
+      weeklyAdvertiserStatus: document.getElementById("weeklyAdvertiserStatus"),
+      weeklyTotalBudget: document.getElementById("weeklyTotalBudget"),
+      weeklyTotalRevenue: document.getElementById("weeklyTotalRevenue"),
+      weeklyTotalCac: document.getElementById("weeklyTotalCac"),
+      weeklyPamKpi: document.getElementById("weeklyPamKpi"),
+      weeklyPeriodNote: document.getElementById("weeklyPeriodNote"),
+      weeklyAdvertiserBody: document.getElementById("weeklyAdvertiserBody"),
+      weeklyPamBody: document.getElementById("weeklyPamBody"),
+      weeklyProductBody: document.getElementById("weeklyProductBody"),
+      nextWeekBudgetTitle: document.getElementById("nextWeekBudgetTitle"),
+      weeklyHppInput: document.getElementById("weeklyHppInput"),
+      weeklyMinPamInput: document.getElementById("weeklyMinPamInput"),
+      weeklyShopeeAdminInput: document.getElementById("weeklyShopeeAdminInput"),
+      weeklyShopeeTaxInput: document.getElementById("weeklyShopeeTaxInput"),
+      weeklyTiktokAdminInput: document.getElementById("weeklyTiktokAdminInput"),
+      budgetRecommendationBody: document.getElementById("budgetRecommendationBody"),
       productPage: document.getElementById("product-page"),
       customerManagementPage: document.getElementById("customer-management-page"),
       financePage: document.getElementById("finance-page"),
@@ -3925,6 +3953,15 @@
       return value && value !== "-" ? value : fallback;
     }
 
+    function canonicalProductName(raw) {
+      const value = cleanLabel(raw, "Tanpa produk");
+      const normalized = normalizeCompare(value).replace(/\s+/g, " ");
+      if (normalized.includes("you & milk diabalance") && normalized.includes("200 gr")) {
+        return "You & Milk Diabalance 200 gr";
+      }
+      return value;
+    }
+
     function cleanPhone(raw) {
       const digits = String(raw || "").replace(/[^\d]/g, "");
       if (!digits) return "";
@@ -4162,6 +4199,17 @@
       return [mondayLastWeek, sundayLastWeek];
     }
 
+    function compactPeriodLabel(start, end) {
+      const month = new Intl.DateTimeFormat("id-ID", { month: "long" });
+      if (start.getFullYear() === end.getFullYear() && start.getMonth() === end.getMonth()) {
+        return `${start.getDate()} - ${end.getDate()} ${month.format(end)} ${end.getFullYear()}`;
+      }
+      if (start.getFullYear() === end.getFullYear()) {
+        return `${start.getDate()} ${month.format(start)} - ${end.getDate()} ${month.format(end)} ${end.getFullYear()}`;
+      }
+      return `${start.getDate()} ${month.format(start)} ${start.getFullYear()} - ${end.getDate()} ${month.format(end)} ${end.getFullYear()}`;
+    }
+
     function activeAdvertiserNames() {
       const [start, end] = previousWeekRange();
       const active = [...new Set(advertiserSourceRows()
@@ -4253,6 +4301,17 @@
         if (!map.has(key)) map.set(key, item);
       });
       return [...map.values()];
+    }
+
+    function allAdvertiserBudgetByDate(start, end) {
+      const byDate = new Map();
+      combinedBudgetInputs().forEach(item => {
+        const date = parseDateValue(item.date);
+        if (!date || date < startOfDay(start) || date > startOfDay(end)) return;
+        const key = dateKey(date);
+        byDate.set(key, (byDate.get(key) || 0) + (item.budget || 0));
+      });
+      return byDate;
     }
 
     function populateBudgetingInputOptions(item = null) {
@@ -4775,6 +4834,16 @@
         productMap.set(row.product, existing + revenue);
         if (isMainProduct(row.product)) item.mainRevenue += revenue;
         else item.crossRevenue += revenue;
+        byDate.set(key, item);
+      });
+      allAdvertiserBudgetByDate(start, end).forEach((budget, key) => {
+        const date = parseDateValue(key);
+        if (!date) return;
+        const item = byDate.get(key) || {
+          date, budget: 0, crmRevenue: 0, newRevenue: 0, totalRevenue: 0,
+          mainRevenue: 0, crossRevenue: 0, transactions: new Set(), mainProducts: new Map(), crossProducts: new Map()
+        };
+        item.budget += budget;
         byDate.set(key, item);
       });
       return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
@@ -5320,6 +5389,281 @@
         tiktokAdmin,
         total: advertiserBudget + shopeeBudget + tiktokBudget + shopeeAdmin + tiktokAdmin
       };
+    }
+
+    function weeklyRowsInRange(start, end) {
+      const budgetRows = combinedBudgetInputs().filter(item => {
+        const date = parseDateValue(item.date);
+        return date && date >= startOfDay(start) && date <= startOfDay(end);
+      });
+      const revenueRows = grossAdvertiserRows(advertiserSourceRows()).filter(row =>
+        row.date >= startOfDay(start) && row.date <= startOfDay(end)
+      );
+      const budgetMap = new Map();
+      budgetRows.forEach(item => {
+        const advertiser = cleanLabel(item.advertiser, "Tanpa advertiser");
+        const product = canonicalProductName(item.product);
+        const platform = cleanLabel(item.platform, "Meta");
+        const key = `${normalizeCompare(advertiser)}|${normalizeCompare(platform)}|${normalizeCompare(product)}`;
+        const current = budgetMap.get(key) || { advertiser, platform, product, budget: 0 };
+        current.budget += item.budget || 0;
+        budgetMap.set(key, current);
+      });
+
+      const revenueByAdvertiserProduct = new Map();
+      const revenueByAdvertiser = new Map();
+      revenueRows.forEach(row => {
+        const advertiser = cleanLabel(row.advertiser, "Tanpa advertiser");
+        const product = canonicalProductName(row.product);
+        const productKeyValue = `${normalizeCompare(advertiser)}|${normalizeCompare(product)}`;
+        revenueByAdvertiserProduct.set(productKeyValue, (revenueByAdvertiserProduct.get(productKeyValue) || 0) + (row.revenue || 0));
+        const advertiserKeyValue = normalizeCompare(advertiser);
+        revenueByAdvertiser.set(advertiserKeyValue, {
+          name: advertiser,
+          revenue: (revenueByAdvertiser.get(advertiserKeyValue)?.revenue || 0) + (row.revenue || 0)
+        });
+      });
+
+      revenueByAdvertiserProduct.forEach((revenue, key) => {
+        const [, productKeyValue] = key.split("|");
+        const hasBudgetRow = [...budgetMap.values()].some(item =>
+          normalizeCompare(item.product) === productKeyValue &&
+          key.startsWith(`${normalizeCompare(item.advertiser)}|`)
+        );
+        if (!hasBudgetRow) {
+          const revenueRow = revenueRows.find(row =>
+            `${normalizeCompare(row.advertiser)}|${normalizeCompare(row.product)}` === key
+          );
+          if (revenueRow) {
+            const mapKey = `${normalizeCompare(revenueRow.advertiser)}|soscom|${normalizeCompare(revenueRow.product)}`;
+            budgetMap.set(mapKey, {
+              advertiser: revenueRow.advertiser,
+              platform: "Soscom",
+            product: canonicalProductName(revenueRow.product),
+              budget: 0
+            });
+          }
+        }
+      });
+
+      const detailRows = [...budgetMap.values()].map(item => {
+        const revenue = revenueByAdvertiserProduct.get(`${normalizeCompare(item.advertiser)}|${normalizeCompare(item.product)}`) || 0;
+        return { ...item, revenue, cac: percentRatio(item.budget, revenue) };
+      }).sort((a, b) =>
+        a.advertiser.localeCompare(b.advertiser, "id-ID") ||
+        a.platform.localeCompare(b.platform, "id-ID") ||
+        a.product.localeCompare(b.product, "id-ID")
+      );
+
+      const advertiserTotals = new Map();
+      detailRows.forEach(row => {
+        const key = normalizeCompare(row.advertiser);
+        const current = advertiserTotals.get(key) || { budget: 0, revenue: revenueByAdvertiser.get(key)?.revenue || 0 };
+        current.budget += row.budget || 0;
+        advertiserTotals.set(key, current);
+      });
+
+      return { detailRows, advertiserTotals };
+    }
+
+    function weeklyProductRowsInRange(start, end) {
+      const budgetByProduct = new Map();
+      combinedBudgetInputs().forEach(item => {
+        const date = parseDateValue(item.date);
+        if (!date || date < startOfDay(start) || date > startOfDay(end)) return;
+        const product = canonicalProductName(item.product);
+        budgetByProduct.set(product, (budgetByProduct.get(product) || 0) + (item.budget || 0));
+      });
+      const grossByProduct = new Map();
+      grossAdvertiserRows(advertiserSourceRows()).filter(row =>
+        row.date >= startOfDay(start) && row.date <= startOfDay(end)
+      ).forEach(row => {
+        const product = canonicalProductName(row.product);
+        grossByProduct.set(product, (grossByProduct.get(product) || 0) + (row.revenue || 0));
+      });
+      const crmByProduct = new Map();
+      grossAdvertiserRows(crmSourceRows()).filter(row =>
+        row.date >= startOfDay(start) && row.date <= startOfDay(end)
+      ).forEach(row => {
+        const product = canonicalProductName(row.product);
+        crmByProduct.set(product, (crmByProduct.get(product) || 0) + (row.revenue || 0));
+      });
+      const products = [...new Set([...budgetByProduct.keys(), ...grossByProduct.keys(), ...crmByProduct.keys()])]
+        .filter(product => product && product !== "Tanpa produk")
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      return products.map(product => {
+        const budget = budgetByProduct.get(product) || 0;
+        const grossRevenue = grossByProduct.get(product) || 0;
+        const crmRevenue = crmByProduct.get(product) || 0;
+        const totalRevenue = grossRevenue + crmRevenue;
+        return {
+          product,
+          budget,
+          grossRevenue,
+          crmRevenue,
+          totalRevenue,
+          pureCac: percentRatio(budget, grossRevenue),
+          afterCrmCac: percentRatio(budget, totalRevenue)
+        };
+      }).sort((a, b) => b.totalRevenue - a.totalRevenue);
+    }
+
+    function nextWeekRangeFrom(start) {
+      const nextStart = addDays(startOfDay(start), 7);
+      return [nextStart, addDays(nextStart, 6)];
+    }
+
+    function budgetScaleFromPam(pamRate, budget, revenue) {
+      if (budget > 0 && revenue <= 0) return { factor: 0.5, status: "Reduce" };
+      if (pamRate >= 20) return { factor: 1.2, status: "Scale" };
+      if (pamRate >= 13) return { factor: 1.1, status: "Scale ringan" };
+      if (pamRate >= 8) return { factor: 1, status: "Maintain" };
+      if (pamRate >= 0) return { factor: 0.8, status: "Optimize" };
+      return { factor: 0.5, status: "Reduce" };
+    }
+
+    function recommendationAdminRate(platform, shopeeAdmin, shopeeTax, tiktokAdmin) {
+      const value = normalizeCompare(platform);
+      if (value.includes("shopee")) return shopeeAdmin + shopeeTax;
+      if (value.includes("tiktok")) return tiktokAdmin;
+      return 0;
+    }
+
+    function buildBudgetRecommendations(detailRows, settings) {
+      return detailRows.map(row => {
+        const adminRate = recommendationAdminRate(row.platform, settings.shopeeAdmin, settings.shopeeTax, settings.tiktokAdmin);
+        const lastPamValue = row.revenue - (row.revenue * settings.hpp / 100) - row.budget;
+        const lastPamRate = percentRatio(lastPamValue, row.revenue);
+        const scale = budgetScaleFromPam(lastPamRate, row.budget, row.revenue);
+        const targetRevenue = row.revenue > 0
+          ? row.revenue * scale.factor
+          : (row.budget > 0 ? row.budget / 0.75 : 0);
+        const baseBudget = row.budget > 0
+          ? row.budget * scale.factor
+          : targetRevenue * 0.1;
+        const maxBudgetRate = Math.max(0, (100 - settings.hpp - settings.minPam - adminRate) / 100);
+        const maxBudget = targetRevenue * maxBudgetRate;
+        const recommendedBudget = Math.min(baseBudget, maxBudget);
+        const adminCost = targetRevenue * adminRate / 100;
+        const budgetAdmin = recommendedBudget + adminCost;
+        const targetCac = percentRatio(recommendedBudget, targetRevenue);
+        const estimatedPamValue = targetRevenue - (targetRevenue * settings.hpp / 100) - adminCost - recommendedBudget;
+        const estimatedPamRate = percentRatio(estimatedPamValue, targetRevenue);
+        const capped = recommendedBudget < baseBudget;
+        const status = targetRevenue <= 0
+          ? "Belum ada data"
+          : (estimatedPamRate >= settings.minPam ? (capped ? `${scale.status} aman` : scale.status) : "Tahan dulu");
+        return {
+          ...row,
+          lastPamRate,
+          recommendedBudget,
+          targetRevenue,
+          targetCac,
+          adminCost,
+          budgetAdmin,
+          estimatedPamRate,
+          status,
+          safe: estimatedPamRate >= settings.minPam
+        };
+      });
+    }
+
+    function renderWeeklyBudgetingPage() {
+      const [start, end] = previousWeekRange();
+      const [nextStart, nextEnd] = nextWeekRangeFrom(start);
+      const label = compactPeriodLabel(start, end);
+      const { detailRows, advertiserTotals } = weeklyRowsInRange(start, end);
+      const productRows = weeklyProductRowsInRange(start, end);
+      const settings = {
+        hpp: Number(els.weeklyHppInput.value || 46),
+        minPam: Number(els.weeklyMinPamInput.value || 13),
+        shopeeAdmin: Number(els.weeklyShopeeAdminInput.value || 18),
+        shopeeTax: Number(els.weeklyShopeeTaxInput.value || 11),
+        tiktokAdmin: Number(els.weeklyTiktokAdminInput.value || 16)
+      };
+      const budgetRecommendations = buildBudgetRecommendations(detailRows, settings);
+      const totalBudget = detailRows.reduce((total, row) => total + (row.budget || 0), 0);
+      const totalRevenue = [...advertiserTotals.values()].reduce((total, row) => total + (row.revenue || 0), 0);
+      const totalCac = percentRatio(totalBudget, totalRevenue);
+      const hppRate = settings.hpp;
+      const pamValue = totalRevenue - (totalRevenue * hppRate / 100) - totalBudget;
+      const pamRate = percentRatio(pamValue, totalRevenue);
+
+      els.weeklyAdvertiserTitle.textContent = `Performa Advertiser Periode ${label}`;
+      els.nextWeekBudgetTitle.textContent = `Pengajuan Budget Marketing Advertiser Periode ${compactPeriodLabel(nextStart, nextEnd)}`;
+      els.weeklyPeriodNote.textContent = `${start.toLocaleDateString("id-ID")} - ${end.toLocaleDateString("id-ID")}`;
+      els.weeklyAdvertiserStatus.textContent = `${detailRows.length.toLocaleString("id-ID")} baris review`;
+      els.weeklyTotalBudget.textContent = currency(totalBudget);
+      els.weeklyTotalRevenue.textContent = currency(totalRevenue);
+      els.weeklyTotalCac.textContent = percent(totalCac);
+      els.weeklyPamKpi.textContent = percent(pamRate);
+      els.weeklyPamKpi.className = pamValue >= 0 ? "delta-up" : "delta-down";
+
+      const rowsByAdvertiser = new Map();
+      detailRows.forEach(row => {
+        const key = normalizeCompare(row.advertiser);
+        if (!rowsByAdvertiser.has(key)) rowsByAdvertiser.set(key, []);
+        rowsByAdvertiser.get(key).push(row);
+      });
+
+      const body = [];
+      rowsByAdvertiser.forEach((rows, key) => {
+        const totals = advertiserTotals.get(key) || { budget: 0, revenue: 0 };
+        rows.forEach((row, index) => {
+          body.push(`
+            <tr>
+              ${index === 0 ? `<td rowspan="${rows.length}">${escapeHtml(row.advertiser)}</td>` : ""}
+              <td>${escapeHtml(row.platform)}</td>
+              <td>${escapeHtml(row.product)}</td>
+              <td>${currency(row.budget)}</td>
+              <td>${currency(row.revenue)}</td>
+              <td>${row.revenue ? percent(row.cac) : "-"}</td>
+              ${index === 0 ? `<td rowspan="${rows.length}">${currency(totals.budget)}</td><td rowspan="${rows.length}">${currency(totals.revenue)}</td><td rowspan="${rows.length}">${totals.revenue ? percent(percentRatio(totals.budget, totals.revenue)) : "-"}</td>` : ""}
+            </tr>
+          `);
+        });
+      });
+      els.weeklyAdvertiserBody.innerHTML = `
+        ${body.join("") || `<tr><td colspan="9">Belum ada data weekly pada periode ini.</td></tr>`}
+        <tr class="total-row">
+          <td colspan="6">Total</td>
+          <td>${currency(totalBudget)}</td>
+          <td>${currency(totalRevenue)}</td>
+          <td>${percent(totalCac)}</td>
+        </tr>
+      `;
+      els.weeklyPamBody.innerHTML = `
+        <tr><td colspan="2">HPP</td><td>${percent(hppRate)}</td></tr>
+        <tr class="total-row"><td colspan="2">PAM</td><td>${percent(pamRate)}</td></tr>
+      `;
+      els.weeklyProductBody.innerHTML = productRows.map(row => `
+        <tr>
+          <td>${escapeHtml(row.product)}</td>
+          <td>${currency(row.budget)}</td>
+          <td>${currency(row.grossRevenue)}</td>
+          <td>${currency(row.crmRevenue)}</td>
+          <td>${currency(row.totalRevenue)}</td>
+          <td>${row.grossRevenue ? percent(row.pureCac) : "-"}</td>
+          <td>${row.totalRevenue ? percent(row.afterCrmCac) : "-"}</td>
+        </tr>
+      `).join("") || `<tr><td colspan="7">Belum ada data produk pada periode ini.</td></tr>`;
+      els.budgetRecommendationBody.innerHTML = budgetRecommendations.map(row => `
+        <tr>
+          <td>${escapeHtml(row.advertiser)}</td>
+          <td>${escapeHtml(row.platform)}</td>
+          <td>${escapeHtml(row.product)}</td>
+          <td>${currency(row.budget)}</td>
+          <td>${currency(row.revenue)}</td>
+          <td class="${row.lastPamRate >= settings.minPam ? "positive-cell" : "negative-cell"}">${row.revenue ? percent(row.lastPamRate) : "-"}</td>
+          <td>${currency(row.recommendedBudget)}</td>
+          <td>${currency(row.targetRevenue)}</td>
+          <td>${row.targetRevenue ? percent(row.targetCac) : "-"}</td>
+          <td>${currency(row.adminCost)}</td>
+          <td>${currency(row.budgetAdmin)}</td>
+          <td class="${row.safe ? "positive-cell" : "negative-cell"}">${row.targetRevenue ? percent(row.estimatedPamRate) : "-"}</td>
+          <td><span class="status-chip ${row.safe ? "status-success" : "status-return"}">${escapeHtml(row.status)}</span></td>
+        </tr>
+      `).join("") || `<tr><td colspan="13">Belum ada data untuk rekomendasi budget.</td></tr>`;
     }
 
     function renderAdminShopeeTable(start, end) {
@@ -7138,6 +7482,7 @@
           }
           if (page === "weekly-budgeting") {
             els.weeklyBudgetingPage.classList.remove("hidden");
+            renderWeeklyBudgetingPage();
             return;
           }
           if (page === "product") {
@@ -7320,6 +7665,13 @@
       els.nextAdminMarketplaceInput.addEventListener("click", goToAdminMarketplaceStepTwo);
       els.backAdminMarketplaceInput.addEventListener("click", backToAdminMarketplaceStepOne);
       els.adminMarketplaceInputForm.addEventListener("submit", handleAdminMarketplaceSubmit);
+      [
+        els.weeklyHppInput,
+        els.weeklyMinPamInput,
+        els.weeklyShopeeAdminInput,
+        els.weeklyShopeeTaxInput,
+        els.weeklyTiktokAdminInput
+      ].forEach(input => input.addEventListener("input", renderWeeklyBudgetingPage));
       els.openCrTarget.addEventListener("click", () => {
         els.crTargetInput.value = getCrTarget() || "";
         els.crTargetModal.classList.remove("hidden");
@@ -7502,6 +7854,7 @@
       renderCrmReport();
       renderShopeeReport();
       renderTiktokReport();
+      renderWeeklyBudgetingPage();
     }
 
     init();

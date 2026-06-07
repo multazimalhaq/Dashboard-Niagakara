@@ -860,6 +860,19 @@
       color: #be123c;
     }
 
+    .table-input {
+      width: 100%;
+      min-width: 120px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0 8px;
+      color: var(--link);
+      background: #ffffff;
+      font: inherit;
+      font-weight: 500;
+    }
+
     .modal-actions {
       display: flex;
       justify-content: flex-end;
@@ -2512,6 +2525,10 @@
               <h2 id="nextWeekBudgetTitle">Pengajuan Budget Marketing Advertiser Periode -</h2>
               <span class="panel-note">rekomendasi berdasarkan performa minggu lalu dan target PAM minimal</span>
             </div>
+            <div class="row-actions">
+              <button class="panel-action" id="addBudgetProposalRow" type="button">Tambah Kanal/Platform</button>
+              <button class="row-action" id="resetBudgetProposalRows" type="button">Reset Rekomendasi</button>
+            </div>
           </div>
           <div class="form-grid">
             <label>HPP (%)
@@ -2537,21 +2554,27 @@
                   <th>Nama ADV</th>
                   <th>Kanal</th>
                   <th>Produk</th>
+                  <th>Mode</th>
                   <th>Budget Last Week</th>
                   <th>Revenue Last Week</th>
                   <th>PAM Last Week</th>
-                  <th>Rekomendasi Budget</th>
+                  <th>Budget Pengajuan</th>
                   <th>Target Revenue</th>
                   <th>Target CAC</th>
                   <th>Prakiraan Admin</th>
+                  <th>Admin %</th>
                   <th>Budget + Admin</th>
                   <th>Estimasi PAM</th>
                   <th>Status</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody id="budgetRecommendationBody"></tbody>
             </table>
           </div>
+          <datalist id="weeklyAdvertiserOptions"></datalist>
+          <datalist id="weeklyPlatformOptions"></datalist>
+          <datalist id="weeklyProductOptions"></datalist>
         </section>
       </section>
 
@@ -3409,7 +3432,12 @@
       weeklyShopeeAdminInput: document.getElementById("weeklyShopeeAdminInput"),
       weeklyShopeeTaxInput: document.getElementById("weeklyShopeeTaxInput"),
       weeklyTiktokAdminInput: document.getElementById("weeklyTiktokAdminInput"),
+      addBudgetProposalRow: document.getElementById("addBudgetProposalRow"),
+      resetBudgetProposalRows: document.getElementById("resetBudgetProposalRows"),
       budgetRecommendationBody: document.getElementById("budgetRecommendationBody"),
+      weeklyAdvertiserOptions: document.getElementById("weeklyAdvertiserOptions"),
+      weeklyPlatformOptions: document.getElementById("weeklyPlatformOptions"),
+      weeklyProductOptions: document.getElementById("weeklyProductOptions"),
       productPage: document.getElementById("product-page"),
       customerManagementPage: document.getElementById("customer-management-page"),
       financePage: document.getElementById("finance-page"),
@@ -3459,6 +3487,8 @@
     let externalTiktokBudgetInputs = [];
     let adminShopeeSummaryRows = [];
     let adminTiktokSummaryRows = [];
+    let weeklyProposalRows = [];
+    let weeklyProposalSeed = "";
     let advertiserBudgetInputs = [];
     let csReportInputs = [];
     let shopeeBudgetInputs = [];
@@ -5432,7 +5462,7 @@
         );
         if (!hasBudgetRow) {
           const revenueRow = revenueRows.find(row =>
-            `${normalizeCompare(row.advertiser)}|${normalizeCompare(row.product)}` === key
+            `${normalizeCompare(row.advertiser)}|${normalizeCompare(canonicalProductName(row.product))}` === key
           );
           if (revenueRow) {
             const mapKey = `${normalizeCompare(revenueRow.advertiser)}|soscom|${normalizeCompare(revenueRow.product)}`;
@@ -5568,20 +5598,223 @@
       });
     }
 
-    function renderWeeklyBudgetingPage() {
-      const [start, end] = previousWeekRange();
-      const [nextStart, nextEnd] = nextWeekRangeFrom(start);
-      const label = compactPeriodLabel(start, end);
-      const { detailRows, advertiserTotals } = weeklyRowsInRange(start, end);
-      const productRows = weeklyProductRowsInRange(start, end);
-      const settings = {
+    function weeklyMarketplaceRowsInRange(start, end) {
+      const marketplaceRows = [];
+      [
+        {
+          platform: "Shopee",
+          rows: shopeeSourceRows().filter(row => row.date >= startOfDay(start) && row.date <= startOfDay(end)),
+          budgets: combinedShopeeBudgetInputs(),
+          budgetValue: item => totalShopeeBudget(item)
+        },
+        {
+          platform: "Tiktokshop",
+          rows: tiktokSourceRows().filter(row => row.date >= startOfDay(start) && row.date <= startOfDay(end)),
+          budgets: combinedTiktokBudgetInputs(),
+          budgetValue: item => item.budget || 0
+        }
+      ].forEach(group => {
+        const revenueMap = new Map();
+        group.rows.forEach(row => {
+          const advertiser = cleanLabel(row.advertiser, group.platform);
+          const key = normalizeCompare(advertiser);
+          const item = revenueMap.get(key) || {
+            advertiser,
+            platform: group.platform,
+            product: group.platform,
+            budget: 0,
+            revenue: 0
+          };
+          item.revenue += row.revenue || 0;
+          revenueMap.set(key, item);
+        });
+        group.budgets.forEach(item => {
+          const date = parseDateValue(item.date);
+          if (!date || date < startOfDay(start) || date > startOfDay(end)) return;
+          const advertiser = cleanLabel(item.advertiser, group.platform);
+          const key = normalizeCompare(advertiser);
+          const row = revenueMap.get(key) || {
+            advertiser,
+            platform: group.platform,
+            product: group.platform,
+            budget: 0,
+            revenue: 0
+          };
+          row.budget += group.budgetValue(item);
+          revenueMap.set(key, row);
+        });
+        marketplaceRows.push(...[...revenueMap.values()].map(row => ({
+          ...row,
+          cac: percentRatio(row.budget, row.revenue)
+        })));
+      });
+      return marketplaceRows;
+    }
+
+    function budgetProposalSeed(rows, settings) {
+      return rows.map(row => `${row.advertiser}|${row.platform}|${row.product}|${Math.round(row.budget)}|${Math.round(row.revenue)}`).join("~");
+    }
+
+    function proposalAdminDefault(platform, settings) {
+      const value = normalizeCompare(platform);
+      if (value.includes("shopee")) return settings.shopeeAdmin + settings.shopeeTax;
+      if (value.includes("tiktok")) return settings.tiktokAdmin;
+      return 0;
+    }
+
+    function makeProposalRow(row, index, settings) {
+      return {
+        id: `proposal-${Date.now()}-${index}-${Math.floor(Math.random() * 10000)}`,
+        mode: "recommendation",
+        advertiser: row.advertiser,
+        platform: row.platform,
+        product: row.product,
+        lastBudget: row.budget || 0,
+        lastRevenue: row.revenue || 0,
+        lastPamRate: row.lastPamRate || 0,
+        recommendationBudget: row.recommendedBudget || 0,
+        recommendationTargetRevenue: row.targetRevenue || 0,
+        recommendationTargetCac: row.targetCac || 0,
+        adminRate: proposalAdminDefault(row.platform, settings),
+        manualBudget: "",
+        manualTargetCac: "",
+        custom: false
+      };
+    }
+
+    function ensureBudgetProposalRows(recommendations, settings) {
+      const seed = budgetProposalSeed(recommendations, settings);
+      if (weeklyProposalSeed === seed && weeklyProposalRows.length) return;
+      weeklyProposalRows = recommendations.map((row, index) => makeProposalRow(row, index, settings));
+      weeklyProposalSeed = seed;
+    }
+
+    function effectiveProposal(row, settings) {
+      const manualBudget = parseMoney(row.manualBudget);
+      const manualTargetCac = Number(row.manualTargetCac || 0);
+      const useRecommendation = row.mode !== "manual";
+      const budget = useRecommendation ? row.recommendationBudget : manualBudget;
+      const targetCac = useRecommendation ? row.recommendationTargetCac : manualTargetCac;
+      const targetRevenue = targetCac > 0 ? budget / (targetCac / 100) : (useRecommendation ? row.recommendationTargetRevenue : 0);
+      const adminRate = Number(row.adminRate || 0);
+      const adminCost = targetRevenue * adminRate / 100;
+      const budgetAdmin = budget + adminCost;
+      const estimatedPamValue = targetRevenue - (targetRevenue * settings.hpp / 100) - budgetAdmin;
+      const estimatedPamRate = percentRatio(estimatedPamValue, targetRevenue);
+      const safe = estimatedPamRate >= settings.minPam;
+      return {
+        budget,
+        targetRevenue,
+        targetCac,
+        adminCost,
+        budgetAdmin,
+        estimatedPamRate,
+        safe,
+        status: targetRevenue ? (safe ? "Aman" : "Cek ulang") : "Manual kosong"
+      };
+    }
+
+    function renderProposalOptions() {
+      const advertisers = [...new Set([
+        ...activeAdvertiserNames(),
+        ...shopeeSourceRows().map(row => row.advertiser),
+        ...tiktokSourceRows().map(row => row.advertiser)
+      ])].filter(name => name && name !== "Tanpa advertiser").sort((a, b) => a.localeCompare(b, "id-ID"));
+      const platforms = ["Meta", "Meta Interaksi WA", "Meta Interaksi Bx", "Tiktok", "Google", "Shopee", "Tiktokshop"];
+      const products = [...new Set([...mainProductNames(allRows), "Shopee", "Tiktokshop"])]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.weeklyAdvertiserOptions.innerHTML = advertisers.map(item => `<option value="${escapeHtml(item)}"></option>`).join("");
+      els.weeklyPlatformOptions.innerHTML = platforms.map(item => `<option value="${escapeHtml(item)}"></option>`).join("");
+      els.weeklyProductOptions.innerHTML = products.map(item => `<option value="${escapeHtml(item)}"></option>`).join("");
+    }
+
+    function renderBudgetProposalRows(settings) {
+      renderProposalOptions();
+      els.budgetRecommendationBody.innerHTML = weeklyProposalRows.map(row => {
+        const calc = effectiveProposal(row, settings);
+        return `
+          <tr data-proposal-id="${escapeHtml(row.id)}">
+            <td><input class="table-input" data-proposal-field="advertiser" list="weeklyAdvertiserOptions" value="${escapeHtml(row.advertiser)}"></td>
+            <td><input class="table-input" data-proposal-field="platform" list="weeklyPlatformOptions" value="${escapeHtml(row.platform)}"></td>
+            <td><input class="table-input" data-proposal-field="product" list="weeklyProductOptions" value="${escapeHtml(row.product)}"></td>
+            <td>
+              <select class="table-input" data-proposal-field="mode">
+                <option value="recommendation"${row.mode !== "manual" ? " selected" : ""}>Pakai rekomendasi</option>
+                <option value="manual"${row.mode === "manual" ? " selected" : ""}>Manual</option>
+              </select>
+            </td>
+            <td>${currency(row.lastBudget)}</td>
+            <td>${currency(row.lastRevenue)}</td>
+            <td class="${row.lastPamRate >= settings.minPam ? "positive-cell" : "negative-cell"}">${row.lastRevenue ? percent(row.lastPamRate) : "-"}</td>
+            <td><input class="table-input" data-proposal-field="manualBudget" type="text" inputmode="numeric" placeholder="${currency(row.recommendationBudget)}" value="${row.mode === "manual" ? escapeHtml(row.manualBudget) : escapeHtml(String(Math.round(row.recommendationBudget || 0)))}"${row.mode !== "manual" ? " readonly" : ""}></td>
+            <td>${currency(calc.targetRevenue)}</td>
+            <td><input class="table-input" data-proposal-field="manualTargetCac" type="number" min="0" step="0.1" placeholder="${percent(row.recommendationTargetCac)}" value="${row.mode === "manual" ? escapeHtml(row.manualTargetCac) : (row.recommendationTargetCac || 0).toFixed(1)}"${row.mode !== "manual" ? " readonly" : ""}></td>
+            <td>${currency(calc.adminCost)}</td>
+            <td><input class="table-input" data-proposal-field="adminRate" type="number" min="0" step="0.1" value="${Number(row.adminRate || 0)}"></td>
+            <td>${currency(calc.budgetAdmin)}</td>
+            <td class="${calc.safe ? "positive-cell" : "negative-cell"}">${calc.targetRevenue ? percent(calc.estimatedPamRate) : "-"}</td>
+            <td><span class="status-chip ${calc.safe ? "status-success" : "status-return"}">${escapeHtml(calc.status)}</span></td>
+            <td><button class="row-action danger" data-delete-proposal type="button">Hapus</button></td>
+          </tr>
+        `;
+      }).join("") || `<tr><td colspan="16">Belum ada draft pengajuan.</td></tr>`;
+    }
+
+    function currentWeeklySettings() {
+      return {
         hpp: Number(els.weeklyHppInput.value || 46),
         minPam: Number(els.weeklyMinPamInput.value || 13),
         shopeeAdmin: Number(els.weeklyShopeeAdminInput.value || 18),
         shopeeTax: Number(els.weeklyShopeeTaxInput.value || 11),
         tiktokAdmin: Number(els.weeklyTiktokAdminInput.value || 16)
       };
-      const budgetRecommendations = buildBudgetRecommendations(detailRows, settings);
+    }
+
+    function addManualBudgetProposalRow() {
+      const settings = currentWeeklySettings();
+      weeklyProposalRows.push({
+        id: `manual-proposal-${Date.now()}`,
+        mode: "manual",
+        advertiser: "",
+        platform: "Meta",
+        product: "",
+        lastBudget: 0,
+        lastRevenue: 0,
+        lastPamRate: 0,
+        recommendationBudget: 0,
+        recommendationTargetRevenue: 0,
+        recommendationTargetCac: 0,
+        adminRate: proposalAdminDefault("Meta", settings),
+        manualBudget: "",
+        manualTargetCac: "",
+        custom: true
+      });
+      renderWeeklyBudgetingPage();
+    }
+
+    function updateProposalRow(id, field, value, shouldRender = false) {
+      const row = weeklyProposalRows.find(item => item.id === id);
+      if (!row) return;
+      row[field] = value;
+      if (field === "platform") row.adminRate = proposalAdminDefault(value, currentWeeklySettings());
+      if (field === "mode" && value === "manual") {
+        row.manualBudget = "";
+        row.manualTargetCac = "";
+      }
+      if (shouldRender) renderWeeklyBudgetingPage();
+    }
+
+    function renderWeeklyBudgetingPage() {
+      const [start, end] = previousWeekRange();
+      const [nextStart, nextEnd] = nextWeekRangeFrom(start);
+      const label = compactPeriodLabel(start, end);
+      const { detailRows, advertiserTotals } = weeklyRowsInRange(start, end);
+      const proposalSourceRows = detailRows.concat(weeklyMarketplaceRowsInRange(start, end));
+      const productRows = weeklyProductRowsInRange(start, end);
+      const settings = currentWeeklySettings();
+      const budgetRecommendations = buildBudgetRecommendations(proposalSourceRows, settings);
+      ensureBudgetProposalRows(budgetRecommendations, settings);
       const totalBudget = detailRows.reduce((total, row) => total + (row.budget || 0), 0);
       const totalRevenue = [...advertiserTotals.values()].reduce((total, row) => total + (row.revenue || 0), 0);
       const totalCac = percentRatio(totalBudget, totalRevenue);
@@ -5647,23 +5880,7 @@
           <td>${row.totalRevenue ? percent(row.afterCrmCac) : "-"}</td>
         </tr>
       `).join("") || `<tr><td colspan="7">Belum ada data produk pada periode ini.</td></tr>`;
-      els.budgetRecommendationBody.innerHTML = budgetRecommendations.map(row => `
-        <tr>
-          <td>${escapeHtml(row.advertiser)}</td>
-          <td>${escapeHtml(row.platform)}</td>
-          <td>${escapeHtml(row.product)}</td>
-          <td>${currency(row.budget)}</td>
-          <td>${currency(row.revenue)}</td>
-          <td class="${row.lastPamRate >= settings.minPam ? "positive-cell" : "negative-cell"}">${row.revenue ? percent(row.lastPamRate) : "-"}</td>
-          <td>${currency(row.recommendedBudget)}</td>
-          <td>${currency(row.targetRevenue)}</td>
-          <td>${row.targetRevenue ? percent(row.targetCac) : "-"}</td>
-          <td>${currency(row.adminCost)}</td>
-          <td>${currency(row.budgetAdmin)}</td>
-          <td class="${row.safe ? "positive-cell" : "negative-cell"}">${row.targetRevenue ? percent(row.estimatedPamRate) : "-"}</td>
-          <td><span class="status-chip ${row.safe ? "status-success" : "status-return"}">${escapeHtml(row.status)}</span></td>
-        </tr>
-      `).join("") || `<tr><td colspan="13">Belum ada data untuk rekomendasi budget.</td></tr>`;
+      renderBudgetProposalRows(settings);
     }
 
     function renderAdminShopeeTable(start, end) {
@@ -7672,6 +7889,31 @@
         els.weeklyShopeeTaxInput,
         els.weeklyTiktokAdminInput
       ].forEach(input => input.addEventListener("input", renderWeeklyBudgetingPage));
+      els.addBudgetProposalRow.addEventListener("click", addManualBudgetProposalRow);
+      els.resetBudgetProposalRows.addEventListener("click", () => {
+        weeklyProposalRows = [];
+        weeklyProposalSeed = "";
+        renderWeeklyBudgetingPage();
+      });
+      els.budgetRecommendationBody.addEventListener("input", event => {
+        const input = event.target.closest("[data-proposal-field]");
+        const row = event.target.closest("[data-proposal-id]");
+        if (!input || !row) return;
+        updateProposalRow(row.dataset.proposalId, input.dataset.proposalField, input.value);
+      });
+      els.budgetRecommendationBody.addEventListener("change", event => {
+        const input = event.target.closest("[data-proposal-field]");
+        const row = event.target.closest("[data-proposal-id]");
+        if (!input || !row) return;
+        updateProposalRow(row.dataset.proposalId, input.dataset.proposalField, input.value, true);
+      });
+      els.budgetRecommendationBody.addEventListener("click", event => {
+        const button = event.target.closest("[data-delete-proposal]");
+        const row = event.target.closest("[data-proposal-id]");
+        if (!button || !row) return;
+        weeklyProposalRows = weeklyProposalRows.filter(item => item.id !== row.dataset.proposalId);
+        renderWeeklyBudgetingPage();
+      });
       els.openCrTarget.addEventListener("click", () => {
         els.crTargetInput.value = getCrTarget() || "";
         els.crTargetModal.classList.remove("hidden");

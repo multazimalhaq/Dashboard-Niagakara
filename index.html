@@ -717,6 +717,34 @@
     .tooltip-main { color: #15803d; font-weight: 900; }
     .tooltip-cross { color: #2563eb; font-weight: 900; }
 
+    .projection-value {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .projection-growth {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 800;
+      cursor: help;
+    }
+
+    .projection-growth.positive {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .projection-growth.negative {
+      background: #ffe4e6;
+      color: #9f1239;
+    }
+
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -2120,6 +2148,7 @@
             <div class="advertiser-metric"><span>Budget Iklan + Admin</span><strong id="shopeeBudgetAdmin">Rp0</strong></div>
             <div class="advertiser-metric"><span>CAC</span><strong id="shopeeCac">0%</strong></div>
             <div class="advertiser-metric"><span>ROAS</span><strong id="shopeeRoas">0.00x</strong></div>
+            <div class="advertiser-metric"><span>Proyeksi</span><strong id="shopeeProjection">Rp0</strong></div>
             <div class="advertiser-metric"><span>Return</span><strong id="shopeeReturn">Rp0 (0%)</strong></div>
             <div class="advertiser-metric"><span>Beban Return</span><strong id="shopeeReturnCost">Rp0</strong></div>
             <div class="advertiser-metric"><span>Nett Omset</span><strong id="shopeeNett">Rp0</strong></div>
@@ -2246,6 +2275,7 @@
             <div class="advertiser-metric"><span>Budget Iklan + Admin</span><strong id="tiktokBudgetAdmin">Rp0</strong></div>
             <div class="advertiser-metric"><span>CAC</span><strong id="tiktokCac">0%</strong></div>
             <div class="advertiser-metric"><span>ROAS</span><strong id="tiktokRoas">0.00x</strong></div>
+            <div class="advertiser-metric"><span>Proyeksi</span><strong id="tiktokProjection">Rp0</strong></div>
             <div class="advertiser-metric"><span>Return</span><strong id="tiktokReturn">Rp0 (0%)</strong></div>
             <div class="advertiser-metric"><span>Beban Return</span><strong id="tiktokReturnCost">Rp0</strong></div>
             <div class="advertiser-metric"><span>Nett Omset</span><strong id="tiktokNett">Rp0</strong></div>
@@ -2989,6 +3019,7 @@
       shopeeBudgetAdmin: document.getElementById("shopeeBudgetAdmin"),
       shopeeCac: document.getElementById("shopeeCac"),
       shopeeRoas: document.getElementById("shopeeRoas"),
+      shopeeProjection: document.getElementById("shopeeProjection"),
       shopeeReturn: document.getElementById("shopeeReturn"),
       shopeeReturnCost: document.getElementById("shopeeReturnCost"),
       shopeeNett: document.getElementById("shopeeNett"),
@@ -3010,6 +3041,7 @@
       tiktokBudgetAdmin: document.getElementById("tiktokBudgetAdmin"),
       tiktokCac: document.getElementById("tiktokCac"),
       tiktokRoas: document.getElementById("tiktokRoas"),
+      tiktokProjection: document.getElementById("tiktokProjection"),
       tiktokReturn: document.getElementById("tiktokReturn"),
       tiktokReturnCost: document.getElementById("tiktokReturnCost"),
       tiktokNett: document.getElementById("tiktokNett"),
@@ -3992,6 +4024,24 @@
       return denominator > 0 ? numerator / denominator * 100 : 0;
     }
 
+    function projectionGrowth(currentProjection, previousProjection) {
+      return previousProjection > 0
+        ? ((currentProjection - previousProjection) / previousProjection) * 100
+        : (currentProjection > 0 ? 100 : 0);
+    }
+
+    function setProjectionMetric(element, currentProjection, previousProjection) {
+      const growth = projectionGrowth(currentProjection, previousProjection);
+      const positive = growth >= 0;
+      const detail = `Growth proyeksi dari periode sebelumnya (${currency(previousProjection)})`;
+      element.innerHTML = `
+        <span class="projection-value">
+          <span>${currency(currentProjection)}</span>
+          <span class="projection-growth ${positive ? "positive" : "negative"}" title="${escapeHtml(detail)}">${positive ? "&uarr;" : "&darr;"} ${percent(growth)}</span>
+        </span>
+      `;
+    }
+
     function csSourceRows() {
       return allRows.filter(row => {
         const name = normalizeCompare(row.cs);
@@ -4629,6 +4679,9 @@
       const returnRate = percentRatio(returnRevenue, gross);
       const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
       const nett = gross - returnRevenue - returnCost;
+      const projection = projectionFrom(rows, start, end).value;
+      const [prevStart, prevEnd] = previousRange(start, end);
+      const previousProjection = projectionFrom(shopeeRowsInRange(prevStart, prevEnd), prevStart, prevEnd).value;
       const cac = percentRatio(totalBudgetAdmin, gross);
       const roasValue = totalBudgetAdmin > 0 ? gross / totalBudgetAdmin : 0;
 
@@ -4636,6 +4689,7 @@
       els.shopeeBudgetAdmin.textContent = currency(totalBudgetAdmin);
       els.shopeeCac.textContent = percent(cac);
       els.shopeeRoas.textContent = roas(roasValue);
+      setProjectionMetric(els.shopeeProjection, projection, previousProjection);
       els.shopeeReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
       els.shopeeReturnCost.textContent = currency(returnCost);
       els.shopeeNett.textContent = currency(nett);
@@ -4966,6 +5020,9 @@
       const returnRate = percentRatio(returnRevenue, gross);
       const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
       const nett = gross - returnRevenue - returnCost;
+      const projection = projectionFrom(rows, start, end).value;
+      const [prevStart, prevEnd] = previousRange(start, end);
+      const previousProjection = projectionFrom(tiktokRowsInRange(prevStart, prevEnd), prevStart, prevEnd).value;
       const cac = percentRatio(totalBudgetAdmin, gross);
       const roasValue = totalBudgetAdmin > 0 ? gross / totalBudgetAdmin : 0;
 
@@ -4973,6 +5030,7 @@
       els.tiktokBudgetAdmin.textContent = currency(totalBudgetAdmin);
       els.tiktokCac.textContent = percent(cac);
       els.tiktokRoas.textContent = roas(roasValue);
+      setProjectionMetric(els.tiktokProjection, projection, previousProjection);
       els.tiktokReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
       els.tiktokReturnCost.textContent = currency(returnCost);
       els.tiktokNett.textContent = currency(nett);
@@ -5078,6 +5136,7 @@
       const prevGross = sumRows(previous);
       const growth = prevGross > 0 ? ((gross - prevGross) / prevGross) * 100 : (gross > 0 ? 100 : 0);
       const projected = projectionFrom(current, start, end);
+      const previousProjected = projectionFrom(previous, prevStart, prevEnd);
       const totalOrder = countUniqueOrders(current);
       const returnRows = current.filter(row => isReturnStatus(row.status));
       const returnRevenue = sumRows(returnRows);
@@ -5098,7 +5157,7 @@
       els.growthOmset.textContent = percent(growth);
       els.growthOmset.className = growth >= 0 ? "delta-up" : "delta-down";
       els.growthMeta.textContent = `${currency(prevGross)} pada periode sebelumnya`;
-      els.projection.textContent = currency(projected.value);
+      setProjectionMetric(els.projection, projected.value, previousProjected.value);
       els.projectionMeta.textContent = projected.note;
       els.totalOrder.textContent = totalOrder.toLocaleString("id-ID");
       els.aov.textContent = currency(aov);
@@ -5373,11 +5432,13 @@
       const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
       const nett = gross - returnRevenue - returnCost;
       const projection = advertiserProjection(rows, start, end);
+      const [prevStart, prevEnd] = previousRange(start, end);
+      const previousProjection = advertiserProjection(advertiserRowsInRange(prevStart, prevEnd), prevStart, prevEnd);
 
       els.advGross.textContent = currency(gross);
       els.advBudget.textContent = currency(budget);
       els.advCac.textContent = percent(percentRatio(budget, gross));
-      els.advProjection.textContent = currency(projection);
+      setProjectionMetric(els.advProjection, projection, previousProjection);
       els.advReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
       els.advReturnCost.textContent = currency(returnCost);
       els.advNett.textContent = currency(nett);
@@ -5707,11 +5768,13 @@
       const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
       const nett = gross - returnRevenue - returnCost;
       const projection = projectionFrom(grossRows, start, end).value;
+      const [prevStart, prevEnd] = previousRange(start, end);
+      const previousProjection = projectionFrom(grossAdvertiserRows(csRowsInRange(prevStart, prevEnd)), prevStart, prevEnd).value;
 
       els.csGross.textContent = currency(gross);
       els.csLead.textContent = leadCs.toLocaleString("id-ID");
       els.csClosing.textContent = `${closing.toLocaleString("id-ID")} (${percent(percentRatio(closing, leadCs))})`;
-      els.csProjection.textContent = currency(projection);
+      setProjectionMetric(els.csProjection, projection, previousProjection);
       els.csReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
       els.csReturnCost.textContent = currency(returnCost);
       els.csNett.textContent = currency(nett);
@@ -5894,13 +5957,15 @@
       const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
       const nett = totalGross - returnRevenue - returnCost;
       const projection = projectionFrom(grossRows, start, end).value;
+      const [prevStart, prevEnd] = previousRange(start, end);
+      const previousProjection = projectionFrom(grossAdvertiserRows(crmRowsInRange(prevStart, prevEnd)), prevStart, prevEnd).value;
       const retention = percentRatio(gross, newGross);
       const dailyRows = buildCrmDailyRows(crmRows, newCustomerRows, start, end);
 
       els.crmGross.textContent = currency(gross);
       els.crmNewGross.textContent = currency(newGross);
       els.crmRetention.textContent = percent(retention);
-      els.crmProjection.textContent = currency(projection);
+      setProjectionMetric(els.crmProjection, projection, previousProjection);
       els.crmReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
       els.crmReturnCost.textContent = currency(returnCost);
       els.crmNett.textContent = currency(nett);

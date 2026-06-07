@@ -1547,6 +1547,27 @@
           </article>
           <article class="card kpi">
             <div>
+              <span>Budget Iklan</span>
+              <strong id="dashboardBudget">Rp0</strong>
+            </div>
+            <small>Advertiser + Shopee + Tiktokshop</small>
+          </article>
+          <article class="card kpi">
+            <div>
+              <span>CAC</span>
+              <strong id="dashboardCac">0%</strong>
+            </div>
+            <small>Budget dibanding gross omset</small>
+          </article>
+          <article class="card kpi">
+            <div>
+              <span>ROAS</span>
+              <strong id="dashboardRoas">0.00x</strong>
+            </div>
+            <small>Gross omset dibanding budget</small>
+          </article>
+          <article class="card kpi">
+            <div>
               <span>Proyeksi Omset</span>
               <strong id="projection">Rp0</strong>
             </div>
@@ -3220,6 +3241,9 @@
       grossMeta: document.getElementById("grossMeta"),
       growthOmset: document.getElementById("growthOmset"),
       growthMeta: document.getElementById("growthMeta"),
+      dashboardBudget: document.getElementById("dashboardBudget"),
+      dashboardCac: document.getElementById("dashboardCac"),
+      dashboardRoas: document.getElementById("dashboardRoas"),
       projection: document.getElementById("projection"),
       projectionMeta: document.getElementById("projectionMeta"),
       totalOrder: document.getElementById("totalOrder"),
@@ -5259,6 +5283,36 @@
       return byDate;
     }
 
+    function dashboardBudgetInRange(start, end) {
+      const advertiserBudget = combinedBudgetInputs().reduce((total, item) => {
+        const date = parseDateValue(item.date);
+        if (!date || date < startOfDay(start) || date > startOfDay(end)) return total;
+        return total + (item.budget || 0);
+      }, 0);
+      const shopeeBudget = combinedShopeeBudgetInputs().reduce((total, item) => {
+        const date = parseDateValue(item.date);
+        if (!date || date < startOfDay(start) || date > startOfDay(end)) return total;
+        return total + totalShopeeBudget(item);
+      }, 0);
+      const tiktokBudget = combinedTiktokBudgetInputs().reduce((total, item) => {
+        const date = parseDateValue(item.date);
+        if (!date || date < startOfDay(start) || date > startOfDay(end)) return total;
+        return total + (item.budget || 0);
+      }, 0);
+      const shopeeAdmin = adminShopeeSummaryRows.reduce((total, row) =>
+        row.date >= startOfDay(start) && row.date <= startOfDay(end) ? total + (row.totalAdmin || 0) : total, 0);
+      const tiktokAdmin = adminTiktokSummaryRows.reduce((total, row) =>
+        row.date >= startOfDay(start) && row.date <= startOfDay(end) ? total + (row.totalBiayaAdmin || 0) : total, 0);
+      return {
+        advertiserBudget,
+        shopeeBudget,
+        tiktokBudget,
+        shopeeAdmin,
+        tiktokAdmin,
+        total: advertiserBudget + shopeeBudget + tiktokBudget + shopeeAdmin + tiktokAdmin
+      };
+    }
+
     function renderAdminShopeeTable(start, end) {
       const platform = normalizeCompare(els.adminMarketplacePlatformFilter.value);
       if (platform !== "all" && !platform.includes("shopee")) {
@@ -5843,6 +5897,9 @@
       const returnRevenue = sumRows(returnRows);
       const returnRate = gross > 0 ? returnRevenue / gross * 100 : 0;
       const aov = totalOrder > 0 ? gross / totalOrder : 0;
+      const dashboardBudget = dashboardBudgetInRange(start, end);
+      const dashboardCac = percentRatio(dashboardBudget.total, gross);
+      const dashboardRoas = dashboardBudget.total > 0 ? gross / dashboardBudget.total : 0;
 
       const buckets = {
         new: sumRows(current.filter(row => row.source === "Webot" && row.type.toLowerCase() === "new")),
@@ -5858,6 +5915,9 @@
       els.growthOmset.textContent = percent(growth);
       els.growthOmset.className = growth >= 0 ? "delta-up" : "delta-down";
       els.growthMeta.textContent = `${currency(prevGross)} pada periode sebelumnya`;
+      els.dashboardBudget.textContent = currency(dashboardBudget.total);
+      els.dashboardCac.textContent = percent(dashboardCac);
+      els.dashboardRoas.textContent = roas(dashboardRoas);
       setProjectionMetric(els.projection, projected.value, previousProjected.value);
       els.projectionMeta.textContent = projected.note;
       els.totalOrder.textContent = totalOrder.toLocaleString("id-ID");

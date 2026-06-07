@@ -2372,29 +2372,29 @@
     function normalizeWebot(rows) {
       return rows.map(row => {
         const status = normalizeStatus(getField(row, ["Status", "AG"]));
-        const customerType = getField(row, ["Type Customer", "Type Transaksi", "K"]) || "-";
-        const phoneRaw = getField(row, ["N", "__col_14", "Customer Phone Number", "Customer Phone", "Phone Number"]);
+        const customerType = getField(row, ["Type Transaksi", "Type Customer", "K"]) || "-";
+        const phoneRaw = getField(row, ["Customer Phone Number", "N", "__col_14", "Customer Phone", "Phone Number"]);
         return {
           source: "Webot",
-          orderId: cleanLabel(getField(row, ["Order Number", "invoice_number", "L"]), ""),
-          resi: cleanLabel(getField(row, ["Nomor Resi", "No Resi", "Resi", "AWB", "M", "Column 6"]), "-"),
+          orderId: cleanLabel(getField(row, ["Order Number", "L", "invoice_number"]), ""),
+          resi: cleanLabel(getField(row, ["Awb", "AWB", "M", "Nomor Resi", "No Resi", "Resi", "Column 6"]), "-"),
           date: parseDateValue(getField(row, ["Date", "A"])),
           revenue: parseMoney(getField(row, ["Total Perline", "V"])),
           status,
           channel: cleanLabel(getField(row, ["Kanal", "kanal", "C"]), "Tanpa kanal"),
           type: normalizeCustomerType(customerType),
-          product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk", "S"]), "Tanpa produk"),
+          product: cleanLabel(getField(row, ["ProductName", "Product Name", "S", "name_produk"]), "Tanpa produk"),
           quantity: parseMoney(getField(row, ["Quantity", "quantity", "T"])),
           returnCost: parseMoney(getField(row, ["Ongkir", "ongkir", "AB"])),
-          trackingCost: parseMoney(getField(row, ["Total Ongkir", "Ongkir Tracking", "Ongkir Customer", "AC", "Column 15"])),
+          trackingCost: parseMoney(getField(row, ["Total Ongkir", "Ongkir Tracking", "Total + Ongkir", "AC", "Ongkir Customer", "Column 15"])),
           closing: parseMoney(getField(row, ["Closing", "closing", "AH"])),
-          province: extractProvince(getField(row, ["Provinsi", "provinsi", "Billing Address"])),
-          expedition: cleanExpedition(getField(row, ["Ekspedisi", "ship_via", "Ship Via", "W"])),
-          advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv", "G"]), "Tanpa advertiser"),
-          cs: normalizeStaffName(getField(row, ["Nama CS", "name_cs", "CS", "AF"]), "Tanpa CS"),
+          province: extractProvince(getField(row, ["Billing Address", "Provinsi", "provinsi", "P"])),
+          expedition: cleanExpedition(getField(row, ["Ekspedisi", "W", "ship_via", "Ship Via"])),
+          advertiser: cleanLabel(getField(row, ["Adv", "adv", "G", "Advertiser"]), "Tanpa advertiser"),
+          cs: normalizeStaffName(getField(row, ["Nama CS", "AF", "name_cs", "CS"]), "Tanpa CS"),
           customerPhoneRaw: cleanLabel(phoneRaw, ""),
           customerPhone: cleanPhone(phoneRaw),
-          customerName: cleanLabel(getField(row, ["Nama Customer", "Customer Name", "Nama Penerima", "O", "Column 8"]), "Tanpa nama"),
+          customerName: cleanLabel(getField(row, ["Customer Display Name", "O", "Nama Customer", "Customer Name", "Nama Penerima", "Column 8"]), "Tanpa nama"),
           valid: !EXCLUDED_WEBOT_STATUS.has(status.toLowerCase())
         };
       }).filter(row => row.date && row.revenue > 0 && row.valid);
@@ -3767,17 +3767,23 @@
           ${reportCell("-")}
         </tr>
       `;
-      const bodyRows = sorted.map(row => `
+      const bodyRows = sorted.map(row => {
+        const phoneDisplay = displayCustomerPhone(row);
+        const phoneCell = row.customerPhone
+          ? `<a class="wa-link" href="https://wa.me/${row.customerPhone}" target="_blank">${escapeHtml(phoneDisplay)}</a>`
+          : escapeHtml(phoneDisplay || "-");
+        return `
         <tr>
           ${reportCell(longIndonesianDate(row.date), isHolidayDate(row.date) ? "holiday-cell" : "")}
-          ${reportCell(escapeHtml(displayCustomerPhone(row)))}
+          ${reportCell(phoneCell)}
           ${reportCell(escapeHtml(row.customerName || "-"))}
           ${reportCell(escapeHtml(row.product || "-"))}
           ${reportCell((row.quantity || 0).toLocaleString("id-ID"))}
           ${reportCell(currency(row.revenue))}
           ${reportCell(escapeHtml(row.status || "-"))}
         </tr>
-      `).join("");
+        `;
+      }).join("");
       els.advTransactionBody.innerHTML = totalRow + bodyRows;
     }
 

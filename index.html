@@ -438,6 +438,12 @@
       font-weight: 400;
     }
 
+    #openTiktokBudgetInput {
+      background: #14532d;
+      color: #ffffff;
+      font-weight: 400;
+    }
+
     .status-table {
       min-width: 620px;
     }
@@ -835,6 +841,17 @@
     #shopeeBudgetInputForm h2,
     #shopeeBudgetInputForm label {
       color: #c2410c;
+    }
+
+    #tiktokBudgetInputForm .primary {
+      border-color: #080b12;
+      background: #080b12;
+      font-weight: 400;
+    }
+
+    #tiktokBudgetInputForm h2,
+    #tiktokBudgetInputForm label {
+      color: #080b12;
     }
 
     .form-grid {
@@ -2211,6 +2228,7 @@
               </select>
             </label>
             <button class="apply-btn" id="applyTiktokFilter">Terapkan</button>
+            <button class="panel-action" id="openTiktokBudgetInput" type="button">Input Budget Tiktokshop</button>
           </div>
           <div class="quick-row" id="tiktokQuickFilters">
             <button data-range="thisMonth" class="active">Bulan ini</button>
@@ -2285,6 +2303,30 @@
                 </tr>
               </thead>
               <tbody id="tiktokDailyReportBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="tiktok-panel-title">Hasil Input Budget Tiktokshop</h2>
+            <span class="panel-note">gabungan data sheet dan input web</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table tiktok-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Nama Advertiser</th>
+                  <th>Toko Tiktokshop</th>
+                  <th>Budget Iklan</th>
+                  <th>Omset Dashboard</th>
+                  <th>Impresi</th>
+                  <th>Lead Dashboard</th>
+                  <th>Sumber</th>
+                </tr>
+              </thead>
+              <tbody id="tiktokBudgetInputBody"></tbody>
             </table>
           </div>
         </section>
@@ -2708,6 +2750,36 @@
       </div>
     </form>
   </div>
+  <div class="modal-backdrop hidden" id="tiktokBudgetInputModal">
+    <form class="modal" id="tiktokBudgetInputForm">
+      <h2>Input Budget Tiktokshop</h2>
+      <label>Tanggal
+        <input id="tiktokBudgetDateInput" type="date" required>
+      </label>
+      <label>Nama Advertiser
+        <select id="tiktokBudgetAdvertiserInput" required></select>
+      </label>
+      <label>Toko Tiktokshop
+        <select id="tiktokBudgetStoreInput" required></select>
+      </label>
+      <label>Budget Iklan Tiktokshop
+        <input id="tiktokBudgetInput" type="text" inputmode="numeric" placeholder="Contoh: 359,520">
+      </label>
+      <label>Omset Dashboard Tiktokshop
+        <input id="tiktokDashboardRevenueInput" type="text" inputmode="numeric" placeholder="Contoh: 2,500,000">
+      </label>
+      <label>Impresi Tiktokshop
+        <input id="tiktokImpressionsInput" type="text" inputmode="numeric" placeholder="Contoh: 25,000">
+      </label>
+      <label>Lead Dashboard Tiktokshop
+        <input id="tiktokLeadDashboardInput" type="text" inputmode="numeric" placeholder="Contoh: 120">
+      </label>
+      <div class="modal-actions">
+        <button id="closeTiktokBudgetInput" type="button">Batal</button>
+        <button class="primary" type="submit">Simpan</button>
+      </div>
+    </form>
+  </div>
 
   <script>
     const SHEETS = {
@@ -2730,6 +2802,10 @@
       shopeeResultMp: {
         id: "1kpUwBKVZ_WA78Z8oGuK4NALH8as11-QL4IM48uaQUkk",
         sheet: "Result MP"
+      },
+      tiktokResult: {
+        id: "1kpUwBKVZ_WA78Z8oGuK4NALH8as11-QL4IM48uaQUkk",
+        sheet: "Result Tiktokshop"
       },
       csResult: {
         id: "1xF7qyMgiNPgtBLwps-YqqesZ3GZH9Ta7CoYg51ZHuMU",
@@ -2939,6 +3015,18 @@
       tiktokNett: document.getElementById("tiktokNett"),
       tiktokStatusBody: document.getElementById("tiktokStatusBody"),
       tiktokDailyReportBody: document.getElementById("tiktokDailyReportBody"),
+      openTiktokBudgetInput: document.getElementById("openTiktokBudgetInput"),
+      tiktokBudgetInputModal: document.getElementById("tiktokBudgetInputModal"),
+      tiktokBudgetInputForm: document.getElementById("tiktokBudgetInputForm"),
+      closeTiktokBudgetInput: document.getElementById("closeTiktokBudgetInput"),
+      tiktokBudgetDateInput: document.getElementById("tiktokBudgetDateInput"),
+      tiktokBudgetAdvertiserInput: document.getElementById("tiktokBudgetAdvertiserInput"),
+      tiktokBudgetStoreInput: document.getElementById("tiktokBudgetStoreInput"),
+      tiktokBudgetInput: document.getElementById("tiktokBudgetInput"),
+      tiktokDashboardRevenueInput: document.getElementById("tiktokDashboardRevenueInput"),
+      tiktokImpressionsInput: document.getElementById("tiktokImpressionsInput"),
+      tiktokLeadDashboardInput: document.getElementById("tiktokLeadDashboardInput"),
+      tiktokBudgetInputBody: document.getElementById("tiktokBudgetInputBody"),
       crmStackTooltip: document.getElementById("crmStackTooltip"),
       crTargetModal: document.getElementById("crTargetModal"),
       crTargetInput: document.getElementById("crTargetInput"),
@@ -2973,13 +3061,16 @@
     let externalBudgetInputs = [];
     let externalCsReportInputs = [];
     let externalShopeeBudgetInputs = [];
+    let externalTiktokBudgetInputs = [];
     let advertiserBudgetInputs = [];
     let csReportInputs = [];
     let shopeeBudgetInputs = [];
+    let tiktokBudgetInputs = [];
     let editingBudgetingId = "";
     const BUDGETING_STORAGE_KEY = "niagakaraAdvertiserBudgetingInputs";
     const CS_REPORT_STORAGE_KEY = "niagakaraCsReportInputs";
     const SHOPEE_BUDGET_STORAGE_KEY = "niagakaraShopeeBudgetInputs";
+    const TIKTOK_BUDGET_STORAGE_KEY = "niagakaraTiktokBudgetInputs";
     const SHOPEE_BUDGET_PRODUCTS = [
       "Vitameal", "Waji", "Eyebost", "Eyebost Pro", "Vitasma", "Vitummy", "Bruv"
     ];
@@ -3187,6 +3278,43 @@
           storeAds,
           storeRevenue,
           products,
+          source: sourceName
+        };
+      }).filter(row => row.date && row.store);
+    }
+
+    function normalizeTiktokBudgetRows(rows, sourceName) {
+      return rows.map((row, index) => {
+        const date = parseDateValue(getField(row, [
+          "Tanggal", "Date", "Tanggal Iklan", "Tanggal Budget", "A", "B", "Column 1", "Column 2"
+        ]));
+        const advertiser = cleanLabel(getField(row, [
+          "Nama Advertiser", "Advertiser", "Nama Adv", "Adv", "B", "C", "Column 2", "Column 3"
+        ]), "");
+        const store = cleanLabel(getField(row, [
+          "Toko Tiktokshop", "Toko TikTokshop", "Toko", "Nama Toko", "Store", "Shop", "C", "D", "Column 3", "Column 4"
+        ]), "");
+        const budget = parseMoney(getField(row, [
+          "Budget Iklan Tiktokshop", "Budget Tiktokshop", "Budget Iklan", "Budget", "D", "E", "Column 4", "Column 5"
+        ]));
+        const dashboardRevenue = parseMoney(getField(row, [
+          "Omset Dashboard Tiktokshop", "Omset Dashboard", "Dashboard Revenue", "Omset", "E", "F", "Column 5", "Column 6"
+        ]));
+        const impressions = parseMoney(getField(row, [
+          "Impresi Tiktokshop", "Impresi", "Impressions", "F", "G", "Column 6", "Column 7"
+        ]));
+        const leadDashboard = parseMoney(getField(row, [
+          "Lead Dashboard Tiktokshop", "Lead Dashboard", "Lead", "Leads", "G", "H", "Column 7", "Column 8"
+        ]));
+        return {
+          id: `tiktok-sheet-${sourceName}-${date ? dateKey(date) : "blank"}-${index}`,
+          date: date ? dateKey(date) : "",
+          advertiser,
+          store,
+          budget,
+          dashboardRevenue,
+          impressions,
+          leadDashboard,
           source: sourceName
         };
       }).filter(row => row.date && row.store);
@@ -4625,6 +4753,157 @@
       );
     }
 
+    function loadTiktokBudgetInputs() {
+      try {
+        tiktokBudgetInputs = JSON.parse(localStorage.getItem(TIKTOK_BUDGET_STORAGE_KEY) || "[]")
+          .filter(item => item && item.date && item.store)
+          .map(item => ({ ...item, source: "local" }));
+      } catch {
+        tiktokBudgetInputs = [];
+      }
+    }
+
+    function saveTiktokBudgetInputs() {
+      localStorage.setItem(TIKTOK_BUDGET_STORAGE_KEY, JSON.stringify(tiktokBudgetInputs));
+    }
+
+    function combinedTiktokBudgetInputs() {
+      const map = new Map();
+      [...externalTiktokBudgetInputs, ...tiktokBudgetInputs].forEach(item => {
+        const key = [
+          item.date,
+          normalizeCompare(item.advertiser),
+          normalizeCompare(item.store),
+          item.budget || 0,
+          item.dashboardRevenue || 0,
+          item.impressions || 0,
+          item.leadDashboard || 0
+        ].join("|");
+        if (!map.has(key)) map.set(key, item);
+      });
+      return [...map.values()];
+    }
+
+    function tiktokBudgetRowsInRange(start, end) {
+      const selectedStore = els.tiktokStoreSelect.value;
+      return combinedTiktokBudgetInputs().filter(item => {
+        const date = parseDateValue(item.date);
+        return date &&
+          date >= startOfDay(start) &&
+          date <= startOfDay(end) &&
+          (selectedStore === "all" || item.store === selectedStore);
+      });
+    }
+
+    function populateTiktokBudgetInputOptions() {
+      const [start, end] = getTiktokRange();
+      if (start && end) {
+        els.tiktokBudgetDateInput.min = dateKey(start);
+        els.tiktokBudgetDateInput.max = dateKey(end);
+      }
+      const today = startOfDay(new Date());
+      const defaultDate = start && end && today >= startOfDay(start) && today <= startOfDay(end) ? today : start;
+      els.tiktokBudgetDateInput.value = defaultDate ? dateKey(defaultDate) : "";
+
+      const tiktokMarketplaceRows = tiktokSourceRows();
+      const advertisers = [...new Set(tiktokMarketplaceRows.map(row => row.advertiser))]
+        .filter(name => name && name !== "Tanpa advertiser")
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.tiktokBudgetAdvertiserInput.innerHTML = advertisers.map(name =>
+        `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
+      ).join("");
+
+      const stores = [...new Set(tiktokMarketplaceRows.map(row => row.store || row.type))]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.tiktokBudgetStoreInput.innerHTML = stores.map(name =>
+        `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
+      ).join("");
+      if (els.tiktokStoreSelect.value !== "all") els.tiktokBudgetStoreInput.value = els.tiktokStoreSelect.value;
+    }
+
+    function openTiktokBudgetInputModal() {
+      populateTiktokBudgetInputOptions();
+      els.tiktokBudgetInput.value = "";
+      els.tiktokDashboardRevenueInput.value = "";
+      els.tiktokImpressionsInput.value = "";
+      els.tiktokLeadDashboardInput.value = "";
+      els.tiktokBudgetInputModal.classList.remove("hidden");
+    }
+
+    function closeTiktokBudgetInputModal() {
+      els.tiktokBudgetInputForm.reset();
+      els.tiktokBudgetInputModal.classList.add("hidden");
+    }
+
+    function handleTiktokBudgetSubmit(event) {
+      event.preventDefault();
+      tiktokBudgetInputs.push({
+        id: `tiktok-budget-${Date.now()}`,
+        date: els.tiktokBudgetDateInput.value,
+        advertiser: els.tiktokBudgetAdvertiserInput.value,
+        store: els.tiktokBudgetStoreInput.value,
+        budget: parseMoney(els.tiktokBudgetInput.value),
+        dashboardRevenue: parseMoney(els.tiktokDashboardRevenueInput.value),
+        impressions: parseMoney(els.tiktokImpressionsInput.value),
+        leadDashboard: parseMoney(els.tiktokLeadDashboardInput.value),
+        source: "local"
+      });
+      saveTiktokBudgetInputs();
+      closeTiktokBudgetInputModal();
+      renderTiktokReport();
+    }
+
+    function renderTiktokBudgetInputs() {
+      const [start, end] = getTiktokRange();
+      if (!start || !end) return;
+      const rows = tiktokBudgetRowsInRange(start, end)
+        .sort((a, b) => parseDateValue(b.date) - parseDateValue(a.date));
+      const totals = rows.reduce((acc, row) => {
+        acc.budget += row.budget || 0;
+        acc.dashboardRevenue += row.dashboardRevenue || 0;
+        acc.impressions += row.impressions || 0;
+        acc.leadDashboard += row.leadDashboard || 0;
+        return acc;
+      }, { budget: 0, dashboardRevenue: 0, impressions: 0, leadDashboard: 0 });
+      const totalRow = `
+        <tr class="total-row">
+          ${reportCell("TOTAL")}
+          ${reportCell(`${rows.length.toLocaleString("id-ID")} inputan`)}
+          ${reportCell("-")}
+          ${reportCell(currency(totals.budget))}
+          ${reportCell(currency(totals.dashboardRevenue))}
+          ${reportCell(totals.impressions.toLocaleString("id-ID"))}
+          ${reportCell(totals.leadDashboard.toLocaleString("id-ID"))}
+          ${reportCell("-")}
+        </tr>
+      `;
+      const bodyRows = rows.map(row => `
+        <tr>
+          ${reportCell(longIndonesianDate(parseDateValue(row.date)))}
+          ${reportCell(escapeHtml(row.advertiser || "-"))}
+          ${reportCell(escapeHtml(row.store || "-"))}
+          ${reportCell(currency(row.budget))}
+          ${reportCell(currency(row.dashboardRevenue))}
+          ${reportCell((row.impressions || 0).toLocaleString("id-ID"))}
+          ${reportCell((row.leadDashboard || 0).toLocaleString("id-ID"))}
+          ${reportCell(escapeHtml(row.source || "Sheet"))}
+        </tr>
+      `).join("");
+      els.tiktokBudgetInputBody.innerHTML = totalRow + (bodyRows || `
+        <tr>
+          ${reportCell("Belum ada input budget Tiktokshop")}
+          ${reportCell("-")}
+          ${reportCell("-")}
+          ${reportCell(currency(0))}
+          ${reportCell(currency(0))}
+          ${reportCell("0")}
+          ${reportCell("0")}
+          ${reportCell("-")}
+        </tr>
+      `);
+    }
+
     function useLatestTiktokMonthIfCurrentIsEmpty() {
       const [start, end] = getTiktokRange();
       const source = tiktokSourceRows();
@@ -4650,6 +4929,20 @@
         }
         byDate.set(key, item);
       });
+      tiktokBudgetRowsInRange(start, end).forEach(row => {
+        const date = parseDateValue(row.date);
+        if (!date) return;
+        const key = dateKey(date);
+        const item = byDate.get(key) || {
+          date, budget: 0, dashgoRevenue: 0, dashboardRevenue: 0,
+          impressions: 0, leadDashboard: 0, admin: 0, returnRevenue: 0, returnCost: 0
+        };
+        item.budget += row.budget || 0;
+        item.dashboardRevenue += row.dashboardRevenue || 0;
+        item.impressions += row.impressions || 0;
+        item.leadDashboard += row.leadDashboard || 0;
+        byDate.set(key, item);
+      });
       return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
         date, budget: 0, dashgoRevenue: 0, dashboardRevenue: 0,
         impressions: 0, leadDashboard: 0, admin: 0, returnRevenue: 0, returnCost: 0
@@ -4661,9 +4954,13 @@
       if (!start || !end) return;
       const rows = tiktokRowsInRange(start, end);
       const gross = sumRows(rows);
-      const budget = 0;
-      const admin = 0;
-      const totalBudgetAdmin = budget + admin;
+      const dailyRows = buildTiktokDailyRows(rows, start, end);
+      const tiktokBudgetTotals = dailyRows.reduce((acc, row) => {
+        acc.budget += row.budget || 0;
+        acc.admin += row.admin || 0;
+        return acc;
+      }, { budget: 0, admin: 0 });
+      const totalBudgetAdmin = tiktokBudgetTotals.budget + tiktokBudgetTotals.admin;
       const returnRows = rows.filter(row => isReturnStatus(row.status));
       const returnRevenue = sumRows(returnRows);
       const returnRate = percentRatio(returnRevenue, gross);
@@ -4671,7 +4968,6 @@
       const nett = gross - returnRevenue - returnCost;
       const cac = percentRatio(totalBudgetAdmin, gross);
       const roasValue = totalBudgetAdmin > 0 ? gross / totalBudgetAdmin : 0;
-      const dailyRows = buildTiktokDailyRows(rows, start, end);
 
       els.tiktokGross.textContent = currency(gross);
       els.tiktokBudgetAdmin.textContent = currency(totalBudgetAdmin);
@@ -4684,6 +4980,7 @@
 
       renderMarketplaceStatusTable(rows, els.tiktokStatusBody);
       renderTiktokDailyReport(dailyRows);
+      renderTiktokBudgetInputs();
     }
 
     function renderTiktokDailyReport(rows) {
@@ -6142,6 +6439,15 @@
         renderTiktokReport();
       });
       els.tiktokStoreSelect.addEventListener("change", renderTiktokReport);
+      els.openTiktokBudgetInput.addEventListener("click", openTiktokBudgetInputModal);
+      els.closeTiktokBudgetInput.addEventListener("click", closeTiktokBudgetInputModal);
+      els.tiktokBudgetInputModal.addEventListener("click", event => {
+        if (event.target === els.tiktokBudgetInputModal) closeTiktokBudgetInputModal();
+      });
+      els.tiktokBudgetInputForm.addEventListener("submit", handleTiktokBudgetSubmit);
+      [els.tiktokBudgetInput, els.tiktokDashboardRevenueInput, els.tiktokImpressionsInput, els.tiktokLeadDashboardInput].forEach(input => {
+        input.addEventListener("input", () => normalizePlainNumberInput(input));
+      });
       els.openCrTarget.addEventListener("click", () => {
         els.crTargetInput.value = getCrTarget() || "";
         els.crTargetModal.classList.remove("hidden");
@@ -6231,6 +6537,7 @@
       loadBudgetingInputs();
       loadCsReportInputs();
       loadShopeeBudgetInputs();
+      loadTiktokBudgetInputs();
       setupNavigation();
       setupFilters();
       setupChartHover();
@@ -6243,12 +6550,13 @@
       updateTiktokInputs(...rangePreset("thisMonth"));
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
-        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet, shopeeResultMpSheet, csResultSheet, csReportSheet] = await Promise.allSettled([
+        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet, shopeeResultMpSheet, tiktokResultSheet, csResultSheet, csReportSheet] = await Promise.allSettled([
           loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, WEBOT_QUERY),
           loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,G,H,I,K,O,U,Y,AD,AE"),
           loadGoogleSheet(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
           loadGoogleSheet(SHEETS.advertiserBudget.id, SHEETS.advertiserBudget.sheet, "select *"),
           loadGoogleSheet(SHEETS.shopeeResultMp.id, SHEETS.shopeeResultMp.sheet, "select *"),
+          loadGoogleSheet(SHEETS.tiktokResult.id, SHEETS.tiktokResult.sheet, "select *"),
           loadGoogleSheet(SHEETS.csResult.id, SHEETS.csResult.sheet, "select *"),
           loadGoogleSheet(SHEETS.csReport.id, SHEETS.csReport.sheet, "select *")
         ]);
@@ -6257,11 +6565,13 @@
         const advertiserResultRows = advertiserResultSheet.status === "fulfilled" ? advertiserResultSheet.value : [];
         const advertiserBudgetRows = advertiserBudgetSheet.status === "fulfilled" ? advertiserBudgetSheet.value : [];
         const shopeeResultMpRows = shopeeResultMpSheet.status === "fulfilled" ? shopeeResultMpSheet.value : [];
+        const tiktokResultRows = tiktokResultSheet.status === "fulfilled" ? tiktokResultSheet.value : [];
         const csResultRows = csResultSheet.status === "fulfilled" ? csResultSheet.value : [];
         const csReportRows = csReportSheet.status === "fulfilled" ? csReportSheet.value : [];
         externalBudgetInputs = normalizeBudgetingRows(advertiserResultRows, "Result")
           .concat(normalizeBudgetingRows(advertiserBudgetRows, "Budget Iklan"));
         externalShopeeBudgetInputs = normalizeShopeeBudgetRows(shopeeResultMpRows, "Result MP");
+        externalTiktokBudgetInputs = normalizeTiktokBudgetRows(tiktokResultRows, "Result Tiktokshop");
         externalCsReportInputs = normalizeCsReportRows(csResultRows, "Result CS")
           .concat(normalizeCsReportRows(csReportRows, "Laporan CS"));
         allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
@@ -6277,6 +6587,7 @@
         if (advertiserResultSheet.status === "rejected") sourceNotes.push("Result budgeting belum terbaca");
         if (advertiserBudgetSheet.status === "rejected") sourceNotes.push("Budget Iklan belum terbaca");
         if (shopeeResultMpSheet.status === "rejected") sourceNotes.push("Result MP Shopee belum terbaca");
+        if (tiktokResultSheet.status === "rejected") sourceNotes.push("Result Tiktokshop belum terbaca");
         if (csResultSheet.status === "rejected") sourceNotes.push("Result CS belum terbaca");
         if (csReportSheet.status === "rejected") sourceNotes.push("Laporan CS belum terbaca");
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;

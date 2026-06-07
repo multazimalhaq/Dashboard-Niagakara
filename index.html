@@ -5017,6 +5017,17 @@
         item.dataOrderRevenue += row.storeRevenue || 0;
         byDate.set(key, item);
       });
+      const adminByDate = adminAmountByDate(adminShopeeSummaryRows, start, end, els.shopeeStoreSelect.value, "totalAdmin");
+      adminByDate.forEach((amount, key) => {
+        const date = parseDateValue(key);
+        if (!date) return;
+        const item = byDate.get(key) || {
+          date, budget: 0, dashgoRevenue: 0, dataOrderRevenue: 0,
+          admin: 0, returnRevenue: 0, returnCost: 0
+        };
+        item.admin += amount;
+        byDate.set(key, item);
+      });
       return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
         date, budget: 0, dashgoRevenue: 0, dataOrderRevenue: 0, admin: 0, returnRevenue: 0, returnCost: 0
       });
@@ -5232,6 +5243,20 @@
 
     function adminTotal(rows, field) {
       return rows.reduce((total, row) => total + (row[field] || 0), 0);
+    }
+
+    function adminAmountByDate(rows, start, end, selectedStore, field) {
+      const byDate = new Map();
+      rows.forEach(row => {
+        if (
+          row.date < startOfDay(start) ||
+          row.date > startOfDay(end) ||
+          (selectedStore !== "all" && row.store !== selectedStore)
+        ) return;
+        const key = dateKey(row.date);
+        byDate.set(key, (byDate.get(key) || 0) + (row[field] || 0));
+      });
+      return byDate;
     }
 
     function renderAdminShopeeTable(start, end) {
@@ -5660,6 +5685,17 @@
         item.dashboardRevenue += row.dashboardRevenue || 0;
         item.impressions += row.impressions || 0;
         item.leadDashboard += row.leadDashboard || 0;
+        byDate.set(key, item);
+      });
+      const adminByDate = adminAmountByDate(adminTiktokSummaryRows, start, end, els.tiktokStoreSelect.value, "totalBiayaAdmin");
+      adminByDate.forEach((amount, key) => {
+        const date = parseDateValue(key);
+        if (!date) return;
+        const item = byDate.get(key) || {
+          date, budget: 0, dashgoRevenue: 0, dashboardRevenue: 0,
+          impressions: 0, leadDashboard: 0, admin: 0, returnRevenue: 0, returnCost: 0
+        };
+        item.admin += amount;
         byDate.set(key, item);
       });
       return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {

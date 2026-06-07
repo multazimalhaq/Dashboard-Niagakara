@@ -2845,6 +2845,70 @@
             <div class="tracking-stat"><span>Baris Marketplace</span><strong id="adminMarketplaceRowCount">0</strong></div>
           </div>
         </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <div>
+              <h2>Admin Shopee</h2>
+              <span class="panel-note">berdasarkan Summary Admin MP - Admin Shopee</span>
+            </div>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table shopee-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Toko</th>
+                  <th>Subtotal Pesanan</th>
+                  <th>Voucher & Potongan Harga</th>
+                  <th>Subtotal Ongkir</th>
+                  <th>Biaya Lainnya</th>
+                  <th>Total Penghasilan</th>
+                  <th>Admin (PDF)</th>
+                  <th>Biaya AMS</th>
+                  <th>Biaya Live Extra</th>
+                  <th>Affiliate Free Sample Shipping Fee</th>
+                  <th>Penyesuaian Pengembalian Barang/Dana</th>
+                  <th>Penyesuaian Biaya Premi</th>
+                  <th>Admin (Excel)</th>
+                  <th>Total Admin</th>
+                </tr>
+              </thead>
+              <tbody id="adminShopeeBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <div>
+              <h2>Admin Tiktokshop</h2>
+              <span class="panel-note">berdasarkan Summary Admin MP - Admin Tiktokshop</span>
+            </div>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table tiktok-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Toko</th>
+                  <th>Revenue</th>
+                  <th>Platform Fee</th>
+                  <th>Shipping Cost</th>
+                  <th>Affiliate Commision</th>
+                  <th>Komisi Iklan Toko Afiliasi</th>
+                  <th>Dynamic Commision</th>
+                  <th>Biaya Akses Keuntungan Eksklusif</th>
+                  <th>Bonus Cashback Service Fee</th>
+                  <th>Order Processing Fee</th>
+                  <th>Total Biaya Admin</th>
+                  <th>Total Pendapatan</th>
+                </tr>
+              </thead>
+              <tbody id="adminTiktokBody"></tbody>
+            </table>
+          </div>
+        </section>
       </section>
 
       <section id="coming-page" class="empty-page hidden">
@@ -3057,6 +3121,14 @@
       csReport: {
         id: "1VacAQil0NY-A7VP9x1uvWijh8bOoIPOOM0t3e0ZpgsM",
         sheet: "Laporan CS"
+      },
+      adminShopeeSummary: {
+        id: "12QWmjnuqQs2j1TTKHChWENy4WrrzKFrWMxpWZMQ1uW0",
+        sheet: "Admin Shopee"
+      },
+      adminTiktokSummary: {
+        id: "12QWmjnuqQs2j1TTKHChWENy4WrrzKFrWMxpWZMQ1uW0",
+        sheet: "Admin Tiktokshop"
       }
     };
 
@@ -3312,6 +3384,8 @@
       adminMarketplacePlatformCount: document.getElementById("adminMarketplacePlatformCount"),
       adminMarketplaceStoreCount: document.getElementById("adminMarketplaceStoreCount"),
       adminMarketplaceRowCount: document.getElementById("adminMarketplaceRowCount"),
+      adminShopeeBody: document.getElementById("adminShopeeBody"),
+      adminTiktokBody: document.getElementById("adminTiktokBody"),
       dashboardPage: document.getElementById("dashboard-page"),
       comingTitle: document.getElementById("comingTitle")
     };
@@ -3331,6 +3405,8 @@
     let externalCsReportInputs = [];
     let externalShopeeBudgetInputs = [];
     let externalTiktokBudgetInputs = [];
+    let adminShopeeSummaryRows = [];
+    let adminTiktokSummaryRows = [];
     let advertiserBudgetInputs = [];
     let csReportInputs = [];
     let shopeeBudgetInputs = [];
@@ -3585,6 +3661,78 @@
           impressions,
           leadDashboard,
           source: sourceName
+        };
+      }).filter(row => row.date && row.store);
+    }
+
+    function normalizeAdminShopeeRows(rows) {
+      return rows.map((row, index) => {
+        const date = parseDateValue(getField(row, ["Tanggal", "Date", "A", "Column 1"]));
+        const store = cleanLabel(getField(row, ["Toko", "Toko Shopee", "Nama Toko", "Store", "B", "Column 2"]), "");
+        const subtotalPesanan = parseMoney(getField(row, ["Subtotal Pesanan", "Subtotal Order", "Revenue", "C", "Column 3"]));
+        const voucher = parseMoney(getField(row, ["Voucher & Potongan Harga", "Voucher dan Potongan Harga", "Voucher", "Potongan Harga", "D", "Column 4"]));
+        const subtotalOngkir = parseMoney(getField(row, ["Subtotal Ongkir", "Ongkir", "Shipping", "Shipping Fee", "E", "Column 5"]));
+        const biayaLainnya = parseMoney(getField(row, ["Biaya Lainnya", "Biaya Lain", "Other Fee", "F", "Column 6"]));
+        const biayaAms = parseMoney(getField(row, ["Biaya AMS", "AMS", "G", "Column 7"]));
+        const biayaLiveExtra = parseMoney(getField(row, ["Biaya Live Extra", "Live Extra", "H", "Column 8"]));
+        const affiliateFreeSampleShippingFee = parseMoney(getField(row, ["Affiliate Free Sample Shipping Fee", "Free Sample Shipping Fee", "Affiliate Free Sample", "I", "Column 9"]));
+        const adjustmentReturn = parseMoney(getField(row, ["Penyesuaian saldo pengembalian barang/dana setelah dana dilepaskan", "Penyesuaian Pengembalian Barang/Dana", "Penyesuaian Saldo Pengembalian", "J", "Column 10"]));
+        const adjustmentPremium = parseMoney(getField(row, ["Penyesuaian Saldo Penjual untuk Biaya Premi", "Penyesuaian Biaya Premi", "Biaya Premi", "K", "Column 11"]));
+        const totalPenghasilan = subtotalPesanan - voucher - subtotalOngkir - biayaLainnya;
+        const adminPdf = subtotalPesanan - totalPenghasilan;
+        const adminExcel = biayaAms + biayaLiveExtra + affiliateFreeSampleShippingFee + adjustmentReturn + adjustmentPremium;
+        const totalAdmin = adminPdf + adminExcel;
+        return {
+          id: `admin-shopee-${date ? dateKey(date) : "blank"}-${index}`,
+          date,
+          store,
+          subtotalPesanan,
+          voucher,
+          subtotalOngkir,
+          biayaLainnya,
+          totalPenghasilan,
+          adminPdf,
+          biayaAms,
+          biayaLiveExtra,
+          affiliateFreeSampleShippingFee,
+          adjustmentReturn,
+          adjustmentPremium,
+          adminExcel,
+          totalAdmin
+        };
+      }).filter(row => row.date && row.store);
+    }
+
+    function normalizeAdminTiktokRows(rows) {
+      return rows.map((row, index) => {
+        const date = parseDateValue(getField(row, ["Tanggal", "Date", "A", "Column 1"]));
+        const store = cleanLabel(getField(row, ["Toko", "Toko Tiktokshop", "Toko TikTokshop", "Nama Toko", "Store", "B", "Column 2"]), "");
+        const revenue = parseMoney(getField(row, ["Revenue", "Omset", "Subtotal", "C", "Column 3"]));
+        const platformFee = parseMoney(getField(row, ["Platform Fee", "Biaya Platform", "D", "Column 4"]));
+        const shippingCost = parseMoney(getField(row, ["Shipping Cost", "Ongkir", "Biaya Ongkir", "E", "Column 5"]));
+        const affiliateCommision = parseMoney(getField(row, ["Affiliate Commision", "Affiliate Commission", "Komisi Affiliate", "F", "Column 6"]));
+        const affiliateStoreAds = parseMoney(getField(row, ["Komisi Iklan Toko afiliasi", "Komisi Iklan Toko Afiliasi", "Iklan Toko Afiliasi", "G", "Column 7"]));
+        const dynamicCommision = parseMoney(getField(row, ["Dynamic Commision", "Dynamic Commission", "H", "Column 8"]));
+        const exclusiveAccessFee = parseMoney(getField(row, ["Biaya akses keuntungan eksklusif", "Biaya Akses Keuntungan Eksklusif", "Exclusive Benefit Fee", "I", "Column 9"]));
+        const cashbackFee = parseMoney(getField(row, ["Bonus Cashback Service Fee", "Cashback Service Fee", "J", "Column 10"]));
+        const orderProcessingFee = parseMoney(getField(row, ["Order Processing Fee", "Processing Fee", "K", "Column 11"]));
+        const totalBiayaAdmin = platformFee + shippingCost + affiliateCommision + affiliateStoreAds + dynamicCommision + exclusiveAccessFee + cashbackFee + orderProcessingFee;
+        const totalPendapatan = revenue - totalBiayaAdmin;
+        return {
+          id: `admin-tiktok-${date ? dateKey(date) : "blank"}-${index}`,
+          date,
+          store,
+          revenue,
+          platformFee,
+          shippingCost,
+          affiliateCommision,
+          affiliateStoreAds,
+          dynamicCommision,
+          exclusiveAccessFee,
+          cashbackFee,
+          orderProcessingFee,
+          totalBiayaAdmin,
+          totalPendapatan
         };
       }).filter(row => row.date && row.store);
     }
@@ -5071,6 +5219,119 @@
       );
     }
 
+    function adminSummaryRowsInRange(rows, start, end) {
+      const store = els.adminMarketplaceStoreFilter.value;
+      return rows
+        .filter(row =>
+          row.date >= startOfDay(start) &&
+          row.date <= startOfDay(end) &&
+          (store === "all" || row.store === store)
+        )
+        .sort((a, b) => b.date - a.date);
+    }
+
+    function adminTotal(rows, field) {
+      return rows.reduce((total, row) => total + (row[field] || 0), 0);
+    }
+
+    function renderAdminShopeeTable(start, end) {
+      const platform = normalizeCompare(els.adminMarketplacePlatformFilter.value);
+      if (platform !== "all" && !platform.includes("shopee")) {
+        els.adminShopeeBody.innerHTML = `<tr><td colspan="15">Filter platform sedang bukan Shopee.</td></tr>`;
+        return;
+      }
+      const rows = adminSummaryRowsInRange(adminShopeeSummaryRows, start, end);
+      if (!rows.length) {
+        els.adminShopeeBody.innerHTML = `<tr><td colspan="15">Belum ada data Admin Shopee pada filter ini.</td></tr>`;
+        return;
+      }
+      els.adminShopeeBody.innerHTML = `
+        <tr class="total-row">
+          <td>Total</td>
+          <td>${rows.length.toLocaleString("id-ID")} baris</td>
+          <td>${currency(adminTotal(rows, "subtotalPesanan"))}</td>
+          <td>${currency(adminTotal(rows, "voucher"))}</td>
+          <td>${currency(adminTotal(rows, "subtotalOngkir"))}</td>
+          <td>${currency(adminTotal(rows, "biayaLainnya"))}</td>
+          <td>${currency(adminTotal(rows, "totalPenghasilan"))}</td>
+          <td>${currency(adminTotal(rows, "adminPdf"))}</td>
+          <td>${currency(adminTotal(rows, "biayaAms"))}</td>
+          <td>${currency(adminTotal(rows, "biayaLiveExtra"))}</td>
+          <td>${currency(adminTotal(rows, "affiliateFreeSampleShippingFee"))}</td>
+          <td>${currency(adminTotal(rows, "adjustmentReturn"))}</td>
+          <td>${currency(adminTotal(rows, "adjustmentPremium"))}</td>
+          <td>${currency(adminTotal(rows, "adminExcel"))}</td>
+          <td>${currency(adminTotal(rows, "totalAdmin"))}</td>
+        </tr>
+        ${rows.map(row => `
+          <tr>
+            <td>${longIndonesianDate(row.date)}</td>
+            <td>${escapeHtml(row.store)}</td>
+            <td>${currency(row.subtotalPesanan)}</td>
+            <td>${currency(row.voucher)}</td>
+            <td>${currency(row.subtotalOngkir)}</td>
+            <td>${currency(row.biayaLainnya)}</td>
+            <td>${currency(row.totalPenghasilan)}</td>
+            <td>${currency(row.adminPdf)}</td>
+            <td>${currency(row.biayaAms)}</td>
+            <td>${currency(row.biayaLiveExtra)}</td>
+            <td>${currency(row.affiliateFreeSampleShippingFee)}</td>
+            <td>${currency(row.adjustmentReturn)}</td>
+            <td>${currency(row.adjustmentPremium)}</td>
+            <td>${currency(row.adminExcel)}</td>
+            <td>${currency(row.totalAdmin)}</td>
+          </tr>
+        `).join("")}
+      `;
+    }
+
+    function renderAdminTiktokTable(start, end) {
+      const platform = normalizeCompare(els.adminMarketplacePlatformFilter.value);
+      if (platform !== "all" && !platform.includes("tiktok")) {
+        els.adminTiktokBody.innerHTML = `<tr><td colspan="13">Filter platform sedang bukan Tiktokshop.</td></tr>`;
+        return;
+      }
+      const rows = adminSummaryRowsInRange(adminTiktokSummaryRows, start, end);
+      if (!rows.length) {
+        els.adminTiktokBody.innerHTML = `<tr><td colspan="13">Belum ada data Admin Tiktokshop pada filter ini.</td></tr>`;
+        return;
+      }
+      els.adminTiktokBody.innerHTML = `
+        <tr class="total-row">
+          <td>Total</td>
+          <td>${rows.length.toLocaleString("id-ID")} baris</td>
+          <td>${currency(adminTotal(rows, "revenue"))}</td>
+          <td>${currency(adminTotal(rows, "platformFee"))}</td>
+          <td>${currency(adminTotal(rows, "shippingCost"))}</td>
+          <td>${currency(adminTotal(rows, "affiliateCommision"))}</td>
+          <td>${currency(adminTotal(rows, "affiliateStoreAds"))}</td>
+          <td>${currency(adminTotal(rows, "dynamicCommision"))}</td>
+          <td>${currency(adminTotal(rows, "exclusiveAccessFee"))}</td>
+          <td>${currency(adminTotal(rows, "cashbackFee"))}</td>
+          <td>${currency(adminTotal(rows, "orderProcessingFee"))}</td>
+          <td>${currency(adminTotal(rows, "totalBiayaAdmin"))}</td>
+          <td>${currency(adminTotal(rows, "totalPendapatan"))}</td>
+        </tr>
+        ${rows.map(row => `
+          <tr>
+            <td>${longIndonesianDate(row.date)}</td>
+            <td>${escapeHtml(row.store)}</td>
+            <td>${currency(row.revenue)}</td>
+            <td>${currency(row.platformFee)}</td>
+            <td>${currency(row.shippingCost)}</td>
+            <td>${currency(row.affiliateCommision)}</td>
+            <td>${currency(row.affiliateStoreAds)}</td>
+            <td>${currency(row.dynamicCommision)}</td>
+            <td>${currency(row.exclusiveAccessFee)}</td>
+            <td>${currency(row.cashbackFee)}</td>
+            <td>${currency(row.orderProcessingFee)}</td>
+            <td>${currency(row.totalBiayaAdmin)}</td>
+            <td>${currency(row.totalPendapatan)}</td>
+          </tr>
+        `).join("")}
+      `;
+    }
+
     function renderAdminMarketplacePage() {
       const [start, end] = getAdminMarketplaceRange();
       if (!start || !end) return;
@@ -5079,6 +5340,8 @@
       els.adminMarketplaceStoreCount.textContent = new Set(rows.map(row => row.store)).size.toLocaleString("id-ID");
       els.adminMarketplaceRowCount.textContent = rows.length.toLocaleString("id-ID");
       els.adminMarketplaceStatus.textContent = `${rows.length.toLocaleString("id-ID")} baris marketplace terbaca`;
+      renderAdminShopeeTable(start, end);
+      renderAdminTiktokTable(start, end);
     }
 
     function populateAdminMarketplaceInputOptions() {
@@ -5125,6 +5388,7 @@
       if (value.includes("tiktok")) {
         return [
           "Revenue",
+          "Platform Fee",
           "Shipping Cost",
           "Affiliate Commision",
           "Komisi Iklan Toko afiliasi",
@@ -7054,7 +7318,7 @@
       updateAdminMarketplaceInputs(...rangePreset("thisMonth"));
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
-        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet, shopeeResultMpSheet, tiktokResultSheet, csResultSheet, csReportSheet] = await Promise.allSettled([
+        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet, shopeeResultMpSheet, tiktokResultSheet, csResultSheet, csReportSheet, adminShopeeSheet, adminTiktokSheet] = await Promise.allSettled([
           loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, WEBOT_QUERY),
           loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,G,H,I,K,O,U,Y,AD,AE"),
           loadGoogleSheet(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
@@ -7062,7 +7326,9 @@
           loadGoogleSheet(SHEETS.shopeeResultMp.id, SHEETS.shopeeResultMp.sheet, "select *"),
           loadGoogleSheet(SHEETS.tiktokResult.id, SHEETS.tiktokResult.sheet, "select *"),
           loadGoogleSheet(SHEETS.csResult.id, SHEETS.csResult.sheet, "select *"),
-          loadGoogleSheet(SHEETS.csReport.id, SHEETS.csReport.sheet, "select *")
+          loadGoogleSheet(SHEETS.csReport.id, SHEETS.csReport.sheet, "select *"),
+          loadGoogleSheet(SHEETS.adminShopeeSummary.id, SHEETS.adminShopeeSummary.sheet, "select *"),
+          loadGoogleSheet(SHEETS.adminTiktokSummary.id, SHEETS.adminTiktokSummary.sheet, "select *")
         ]);
         const webotRows = webotResult.status === "fulfilled" ? webotResult.value : [];
         const marketplaceRows = marketplaceResult.status === "fulfilled" ? marketplaceResult.value : [];
@@ -7072,12 +7338,16 @@
         const tiktokResultRows = tiktokResultSheet.status === "fulfilled" ? tiktokResultSheet.value : [];
         const csResultRows = csResultSheet.status === "fulfilled" ? csResultSheet.value : [];
         const csReportRows = csReportSheet.status === "fulfilled" ? csReportSheet.value : [];
+        const adminShopeeRows = adminShopeeSheet.status === "fulfilled" ? adminShopeeSheet.value : [];
+        const adminTiktokRows = adminTiktokSheet.status === "fulfilled" ? adminTiktokSheet.value : [];
         externalBudgetInputs = normalizeBudgetingRows(advertiserResultRows, "Result")
           .concat(normalizeBudgetingRows(advertiserBudgetRows, "Budget Iklan"));
         externalShopeeBudgetInputs = normalizeShopeeBudgetRows(shopeeResultMpRows, "Result MP");
         externalTiktokBudgetInputs = normalizeTiktokBudgetRows(tiktokResultRows, "Result Tiktokshop");
         externalCsReportInputs = normalizeCsReportRows(csResultRows, "Result CS")
           .concat(normalizeCsReportRows(csReportRows, "Laporan CS"));
+        adminShopeeSummaryRows = normalizeAdminShopeeRows(adminShopeeRows);
+        adminTiktokSummaryRows = normalizeAdminTiktokRows(adminTiktokRows);
         allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
         if (!allRows.length) throw new Error("Kolom data belum terbaca");
         populateAdvertiserFilter();
@@ -7095,6 +7365,8 @@
         if (tiktokResultSheet.status === "rejected") sourceNotes.push("Result Tiktokshop belum terbaca");
         if (csResultSheet.status === "rejected") sourceNotes.push("Result CS belum terbaca");
         if (csReportSheet.status === "rejected") sourceNotes.push("Laporan CS belum terbaca");
+        if (adminShopeeSheet.status === "rejected") sourceNotes.push("Admin Shopee belum terbaca");
+        if (adminTiktokSheet.status === "rejected") sourceNotes.push("Admin Tiktokshop belum terbaca");
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
         if (useLatestDataMonthIfCurrentIsEmpty()) {
           els.sourceStatus.textContent += ", menampilkan bulan data terakhir";

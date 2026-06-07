@@ -369,6 +369,11 @@
       font-weight: 800;
     }
 
+    #openBudgetingInput {
+      background: #14532d;
+      font-weight: 400;
+    }
+
     .status-table {
       min-width: 620px;
     }
@@ -737,6 +742,12 @@
       background: #2d145f;
       color: #ffffff;
       font-weight: 800;
+    }
+
+    #budgetingInputForm .primary {
+      border-color: #0b3551;
+      background: #0b3551;
+      font-weight: 400;
     }
 
     .daily-table-wrap {
@@ -1565,6 +1576,7 @@
               <thead>
                 <tr>
                   <th>Tanggal</th>
+                  <th>Platform</th>
                   <th>Nama Advertiser</th>
                   <th>Produk</th>
                   <th>Budget Iklan</th>
@@ -2409,6 +2421,15 @@
       <label>Tanggal
         <input id="budgetingDateInput" type="date" required>
       </label>
+      <label>Platform
+        <select id="budgetingPlatformInput" required>
+          <option value="Meta">Meta</option>
+          <option value="Meta Interaksi WA">Meta Interaksi WA</option>
+          <option value="Meta Interaksi Bx">Meta Interaksi Bx</option>
+          <option value="Tiktok">Tiktok</option>
+          <option value="Google">Google</option>
+        </select>
+      </label>
       <label>Nama Advertiser
         <select id="budgetingAdvertiserInput" required></select>
       </label>
@@ -2416,13 +2437,13 @@
         <select id="budgetingProductInput" required></select>
       </label>
       <label>Budget Iklan
-        <input id="budgetingBudgetInput" type="number" min="0" step="1" placeholder="Contoh: 1000000" required>
+        <input id="budgetingBudgetInput" type="text" inputmode="numeric" placeholder="Contoh: 359,520" required>
       </label>
       <label>Impresi
-        <input id="budgetingImpressionsInput" type="number" min="0" step="1" placeholder="Contoh: 25000">
+        <input id="budgetingImpressionsInput" type="text" inputmode="numeric" placeholder="Contoh: 25,000">
       </label>
       <label>Lead Dashboard
-        <input id="budgetingLeadInput" type="number" min="0" step="1" placeholder="Contoh: 120">
+        <input id="budgetingLeadInput" type="text" inputmode="numeric" placeholder="Contoh: 120">
       </label>
       <div class="modal-actions">
         <button id="closeBudgetingInput" type="button">Batal</button>
@@ -2440,8 +2461,18 @@
       marketplace: {
         id: "19W15h2w_gDsL6v8Chts6QbjeixEgqS9mYAo-iieUUR0",
         sheet: "ALL DATA"
+      },
+      advertiserResult: {
+        id: "1kpUwBKVZ_WA78Z8oGuK4NALH8as11-QL4IM48uaQUkk",
+        sheet: "Result"
+      },
+      advertiserBudget: {
+        id: "1aZ_Ern-dJUlmCpMU4IIEdj9lHD7XWfgynB0bnUpkPNs",
+        sheet: "Budget Iklan"
       }
     };
+
+    const BUDGETING_WRITE_ENDPOINT = "";
 
     const WEBOT_COLUMNS = {
       date: "A",
@@ -2557,6 +2588,7 @@
       budgetingInputForm: document.getElementById("budgetingInputForm"),
       closeBudgetingInput: document.getElementById("closeBudgetingInput"),
       budgetingDateInput: document.getElementById("budgetingDateInput"),
+      budgetingPlatformInput: document.getElementById("budgetingPlatformInput"),
       budgetingAdvertiserInput: document.getElementById("budgetingAdvertiserInput"),
       budgetingProductInput: document.getElementById("budgetingProductInput"),
       budgetingBudgetInput: document.getElementById("budgetingBudgetInput"),
@@ -2645,6 +2677,7 @@
     let chartPoints = [];
     let hoveredPoint = -1;
     let hoveredAdvertiserPoint = -1;
+    let externalBudgetInputs = [];
     let advertiserBudgetInputs = [];
     let editingBudgetingId = "";
     const BUDGETING_STORAGE_KEY = "niagakaraAdvertiserBudgetingInputs";
@@ -2712,6 +2745,48 @@
       }
       const value = Number(normalized);
       return Number.isFinite(value) ? value : 0;
+    }
+
+    function normalizePlainNumberInput(input) {
+      const cleaned = String(input.value || "").replace(/[^\d]/g, "");
+      if (input.value !== cleaned) input.value = cleaned;
+    }
+
+    function normalizeBudgetingRows(rows, sourceName) {
+      return rows.map((row, index) => {
+        const date = parseDateValue(getField(row, [
+          "Tanggal", "Date", "Tanggal Iklan", "Tanggal Budget", "A", "B", "Column 1", "Column 2"
+        ]));
+        const platform = cleanLabel(getField(row, [
+          "Platform", "Platform Iklan", "Media", "Channel Iklan", "B", "C", "Column 2", "Column 3"
+        ]), "Meta");
+        const advertiser = cleanLabel(getField(row, [
+          "Nama Advertiser", "Advertiser", "Adv", "Nama Adv", "C", "D", "Column 3", "Column 4"
+        ]), "");
+        const product = cleanLabel(getField(row, [
+          "Produk", "Product", "Nama Produk", "ProductName", "D", "E", "Column 4", "Column 5"
+        ]), "");
+        const budget = parseMoney(getField(row, [
+          "Budget Iklan", "Budget", "Nominal Budget", "Spend", "Biaya Iklan", "E", "F", "Column 5", "Column 6"
+        ]));
+        const impressions = parseMoney(getField(row, [
+          "Impresi", "Impression", "Impressions", "Jumlah Impresi", "F", "G", "Column 6", "Column 7"
+        ]));
+        const leadDashboard = parseMoney(getField(row, [
+          "Lead Dashboard", "Lead", "Leads", "Lead Dashgo", "Dashboard Lead", "G", "H", "Column 7", "Column 8"
+        ]));
+        return {
+          id: `sheet-${sourceName}-${date ? dateKey(date) : "blank"}-${index}`,
+          date: date ? dateKey(date) : "",
+          platform,
+          advertiser,
+          product,
+          budget,
+          impressions,
+          leadDashboard,
+          source: sourceName
+        };
+      }).filter(row => row.date && row.advertiser && row.product);
     }
 
     function parseDateValue(raw) {
@@ -3132,7 +3207,8 @@
     function loadBudgetingInputs() {
       try {
         advertiserBudgetInputs = JSON.parse(localStorage.getItem(BUDGETING_STORAGE_KEY) || "[]")
-          .filter(item => item && item.date && item.advertiser && item.product);
+          .filter(item => item && item.date && item.advertiser && item.product)
+          .map(item => ({ ...item, source: "local" }));
       } catch {
         advertiserBudgetInputs = [];
       }
@@ -3145,7 +3221,7 @@
     function advertiserBudgetRowsInRange(start, end) {
       const selectedAdvertiser = els.advertiserSelect.value;
       const selectedProduct = els.advProductSelect.value;
-      return advertiserBudgetInputs
+      return combinedBudgetInputs()
         .filter(item => {
           const date = parseDateValue(item.date);
           return date &&
@@ -3155,6 +3231,23 @@
             (selectedProduct === "all" || item.product === selectedProduct);
         })
         .sort((a, b) => parseDateValue(b.date) - parseDateValue(a.date));
+    }
+
+    function combinedBudgetInputs() {
+      const map = new Map();
+      [...externalBudgetInputs, ...advertiserBudgetInputs].forEach(item => {
+        const key = [
+          item.date,
+          normalizeCompare(item.platform),
+          normalizeCompare(item.advertiser),
+          normalizeCompare(item.product),
+          item.budget || 0,
+          item.impressions || 0,
+          item.leadDashboard || 0
+        ].join("|");
+        if (!map.has(key)) map.set(key, item);
+      });
+      return [...map.values()];
     }
 
     function populateBudgetingInputOptions(item = null) {
@@ -3179,12 +3272,14 @@
 
       if (item) {
         els.budgetingDateInput.value = item.date;
+        els.budgetingPlatformInput.value = item.platform || "Meta";
         els.budgetingAdvertiserInput.value = item.advertiser;
         els.budgetingProductInput.value = item.product;
       } else {
         const today = startOfDay(new Date());
         const defaultDate = start && end && today >= startOfDay(start) && today <= startOfDay(end) ? today : start;
         els.budgetingDateInput.value = defaultDate ? dateKey(defaultDate) : "";
+        els.budgetingPlatformInput.value = "Meta";
         if (els.advertiserSelect.value !== "all") els.budgetingAdvertiserInput.value = els.advertiserSelect.value;
         if (els.advProductSelect.value !== "all") els.budgetingProductInput.value = els.advProductSelect.value;
       }
@@ -3210,11 +3305,13 @@
       const payload = {
         id: editingBudgetingId || `budget-${Date.now()}`,
         date: els.budgetingDateInput.value,
+        platform: els.budgetingPlatformInput.value,
         advertiser: els.budgetingAdvertiserInput.value,
         product: els.budgetingProductInput.value,
         budget: parseMoney(els.budgetingBudgetInput.value),
         impressions: parseMoney(els.budgetingImpressionsInput.value),
-        leadDashboard: parseMoney(els.budgetingLeadInput.value)
+        leadDashboard: parseMoney(els.budgetingLeadInput.value),
+        source: "local"
       };
       if (editingBudgetingId) {
         advertiserBudgetInputs = advertiserBudgetInputs.map(item => item.id === editingBudgetingId ? payload : item);
@@ -3222,8 +3319,19 @@
         advertiserBudgetInputs.push(payload);
       }
       saveBudgetingInputs();
+      syncBudgetingInput(payload);
       closeBudgetingInputModal();
       renderAdvertiserReport();
+    }
+
+    function syncBudgetingInput(payload) {
+      if (!BUDGETING_WRITE_ENDPOINT) return;
+      fetch(BUDGETING_WRITE_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      }).catch(() => {});
     }
 
     function renderAdvertiserBudgetingInputs() {
@@ -3239,6 +3347,7 @@
       const totalRow = `
         <tr class="total-row">
           ${reportCell("TOTAL")}
+          ${reportCell("-")}
           ${reportCell(`${rows.length.toLocaleString("id-ID")} inputan`)}
           ${reportCell("-")}
           ${reportCell(currency(totals.budget))}
@@ -3250,17 +3359,19 @@
       const bodyRows = rows.map(row => `
         <tr>
           ${reportCell(longIndonesianDate(parseDateValue(row.date)))}
+          ${reportCell(escapeHtml(row.platform || "-"))}
           ${reportCell(escapeHtml(row.advertiser))}
           ${reportCell(escapeHtml(row.product))}
           ${reportCell(currency(row.budget))}
           ${reportCell((row.impressions || 0).toLocaleString("id-ID"))}
           ${reportCell((row.leadDashboard || 0).toLocaleString("id-ID"))}
-          ${reportCell(`<span class="row-actions"><button class="row-action" data-budget-action="edit" data-id="${escapeHtml(row.id)}">Edit</button><button class="row-action danger" data-budget-action="delete" data-id="${escapeHtml(row.id)}">Hapus</button></span>`)}
+          ${reportCell(row.source === "local" ? `<span class="row-actions"><button class="row-action" data-budget-action="edit" data-id="${escapeHtml(row.id)}">Edit</button><button class="row-action danger" data-budget-action="delete" data-id="${escapeHtml(row.id)}">Hapus</button></span>` : `<span class="panel-note">${escapeHtml(row.source || "Sheet")}</span>`)}
         </tr>
       `).join("");
       els.budgetingInputBody.innerHTML = totalRow + (bodyRows || `
         <tr>
           ${reportCell("Belum ada inputan budgeting")}
+          ${reportCell("-")}
           ${reportCell("-")}
           ${reportCell("-")}
           ${reportCell(currency(0))}
@@ -5159,6 +5270,9 @@
         if (event.target === els.budgetingInputModal) closeBudgetingInputModal();
       });
       els.budgetingInputForm.addEventListener("submit", handleBudgetingSubmit);
+      [els.budgetingBudgetInput, els.budgetingImpressionsInput, els.budgetingLeadInput].forEach(input => {
+        input.addEventListener("input", () => normalizePlainNumberInput(input));
+      });
       els.budgetingInputBody.addEventListener("click", event => {
         const button = event.target.closest("[data-budget-action]");
         if (!button) return;
@@ -5328,12 +5442,18 @@
       updateTiktokInputs(...rangePreset("thisMonth"));
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
-        const [webotResult, marketplaceResult] = await Promise.allSettled([
+        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet] = await Promise.allSettled([
           loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, WEBOT_QUERY),
-          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,H,I,K,O,U,Y,AD,AE")
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,H,I,K,O,U,Y,AD,AE"),
+          loadGoogleSheet(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
+          loadGoogleSheet(SHEETS.advertiserBudget.id, SHEETS.advertiserBudget.sheet, "select *")
         ]);
         const webotRows = webotResult.status === "fulfilled" ? webotResult.value : [];
         const marketplaceRows = marketplaceResult.status === "fulfilled" ? marketplaceResult.value : [];
+        const advertiserResultRows = advertiserResultSheet.status === "fulfilled" ? advertiserResultSheet.value : [];
+        const advertiserBudgetRows = advertiserBudgetSheet.status === "fulfilled" ? advertiserBudgetSheet.value : [];
+        externalBudgetInputs = normalizeBudgetingRows(advertiserResultRows, "Result")
+          .concat(normalizeBudgetingRows(advertiserBudgetRows, "Budget Iklan"));
         allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
         if (!allRows.length) throw new Error("Kolom data belum terbaca");
         populateAdvertiserFilter();
@@ -5344,6 +5464,8 @@
         const sourceNotes = [];
         if (webotResult.status === "rejected") sourceNotes.push("Webot belum terbaca");
         if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace belum terbaca");
+        if (advertiserResultSheet.status === "rejected") sourceNotes.push("Result budgeting belum terbaca");
+        if (advertiserBudgetSheet.status === "rejected") sourceNotes.push("Budget Iklan belum terbaca");
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
         if (useLatestDataMonthIfCurrentIsEmpty()) {
           els.sourceStatus.textContent += ", menampilkan bulan data terakhir";

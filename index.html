@@ -43,6 +43,11 @@
       min-height: 100vh;
       display: grid;
       grid-template-columns: 264px minmax(0, 1fr);
+      transition: grid-template-columns 180ms ease;
+    }
+
+    .app.sidebar-collapsed {
+      grid-template-columns: 104px minmax(0, 1fr);
     }
 
     .sidebar {
@@ -64,6 +69,24 @@
       grid-template-columns: 48px minmax(0, 1fr);
       gap: 12px;
       align-items: center;
+    }
+
+    .sidebar-toggle {
+      height: 34px;
+      width: 34px;
+      border: 1px solid rgba(255,255,255,0.20);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .sidebar-top {
+      display: grid;
+      gap: 14px;
     }
 
     .brand img {
@@ -107,6 +130,36 @@
       align-items: center;
       gap: 10px;
       transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .nav-short {
+      display: none;
+    }
+
+    .app.sidebar-collapsed .brand {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .app.sidebar-collapsed .brand div {
+      display: none;
+    }
+
+    .app.sidebar-collapsed .nav button {
+      justify-content: center;
+      text-align: center;
+      padding-inline: 8px;
+    }
+
+    .app.sidebar-collapsed .nav-full,
+    .app.sidebar-collapsed .nav .dot {
+      display: none;
+    }
+
+    .app.sidebar-collapsed .nav-short {
+      display: inline;
+      font-weight: 800;
     }
 
     .nav button:hover {
@@ -1177,10 +1230,15 @@
 
     @media (max-width: 1120px) {
       .app { grid-template-columns: 1fr; }
+      .app.sidebar-collapsed { grid-template-columns: 1fr; }
       .sidebar {
         position: relative;
         height: auto;
         padding: 16px;
+      }
+      .sidebar-top {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
       }
       .brand {
         grid-template-columns: 44px minmax(0, 1fr);
@@ -1196,6 +1254,26 @@
         justify-content: center;
         text-align: center;
       }
+      .app.sidebar-collapsed .brand {
+        grid-template-columns: 44px minmax(0, 1fr);
+        justify-items: stretch;
+        text-align: left;
+      }
+      .app.sidebar-collapsed .brand div {
+        display: block;
+      }
+      .app.sidebar-collapsed .nav {
+        display: none;
+      }
+      .app.sidebar-collapsed .nav-full {
+        display: inline;
+      }
+      .app.sidebar-collapsed .nav .dot {
+        display: inline-block;
+      }
+      .app.sidebar-collapsed .nav-short {
+        display: none;
+      }
       .kpi-grid, .content-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1209,6 +1287,16 @@
 
     @media (max-width: 720px) {
       main { padding: 16px; }
+      .sidebar {
+        gap: 14px;
+      }
+      .nav {
+        grid-template-columns: 1fr;
+      }
+      .nav button {
+        justify-content: flex-start;
+        text-align: left;
+      }
       .topbar, .filters {
         grid-template-columns: 1fr;
         display: grid;
@@ -1245,25 +1333,28 @@
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="app" id="appShell">
     <aside class="sidebar">
-      <div class="brand">
-        <img src="logo-niagakara.jpg" alt="Logo Niagakara">
-        <div>
-          <strong>NIAGAKARA MITRA JUARA</strong>
-          <span>Report Sales Niagakara</span>
+      <div class="sidebar-top">
+        <div class="brand">
+          <img src="logo-niagakara.jpg" alt="Logo Niagakara">
+          <div>
+            <strong>NIAGAKARA MITRA JUARA</strong>
+            <span>Report Sales Niagakara</span>
+          </div>
         </div>
+        <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Toggle menu">☰</button>
       </div>
       <nav class="nav" aria-label="Menu utama">
-        <button class="active" data-page="dashboard"><span class="dot"></span>Dashboard</button>
-        <button data-page="advertiser"><span class="dot"></span>Report Advertiser Soscom</button>
-        <button data-page="cs"><span class="dot"></span>Customer Service</button>
-        <button data-page="crm"><span class="dot"></span>CRM</button>
-        <button data-page="shopee"><span class="dot"></span>Shopee</button>
-        <button data-page="tiktok"><span class="dot"></span>Tiktokshop</button>
-        <button data-page="weekly-budgeting"><span class="dot"></span>Review weekly & Budgeting</button>
-        <button data-page="product"><span class="dot"></span>Product</button>
-        <button data-page="customer-management"><span class="dot"></span>Customer Management</button>
+        <button class="active" data-page="dashboard"><span class="dot"></span><span class="nav-full">Dashboard</span><span class="nav-short">Dash</span></button>
+        <button data-page="advertiser"><span class="dot"></span><span class="nav-full">Report Advertiser Soscom</span><span class="nav-short">ADV</span></button>
+        <button data-page="cs"><span class="dot"></span><span class="nav-full">Customer Service</span><span class="nav-short">CS</span></button>
+        <button data-page="crm"><span class="dot"></span><span class="nav-full">CRM</span><span class="nav-short">CRM</span></button>
+        <button data-page="shopee"><span class="dot"></span><span class="nav-full">Shopee</span><span class="nav-short">Shop</span></button>
+        <button data-page="tiktok"><span class="dot"></span><span class="nav-full">Tiktokshop</span><span class="nav-short">TKshop</span></button>
+        <button data-page="weekly-budgeting"><span class="dot"></span><span class="nav-full">Review weekly & Budgeting</span><span class="nav-short">W&B</span></button>
+        <button data-page="product"><span class="dot"></span><span class="nav-full">Product</span><span class="nav-short">Pro</span></button>
+        <button data-page="customer-management"><span class="dot"></span><span class="nav-full">Customer Management</span><span class="nav-short">Cust</span></button>
       </nav>
     </aside>
 
@@ -2597,6 +2688,8 @@
 
     const EXCLUDED_WEBOT_STATUS = new Set(["cancelled", "canceled", "draft", "waiting for payment"]);
     const els = {
+      appShell: document.getElementById("appShell"),
+      sidebarToggle: document.getElementById("sidebarToggle"),
       sourceStatus: document.getElementById("sourceStatus"),
       advertiserStatus: document.getElementById("advertiserStatus"),
       csStatus: document.getElementById("csStatus"),
@@ -3296,6 +3389,33 @@
       );
     }
 
+    function previousWeekRange() {
+      const today = startOfDay(new Date());
+      const day = today.getDay();
+      const mondayThisWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - ((day + 6) % 7));
+      const mondayLastWeek = new Date(mondayThisWeek.getFullYear(), mondayThisWeek.getMonth(), mondayThisWeek.getDate() - 7);
+      const sundayLastWeek = new Date(mondayLastWeek.getFullYear(), mondayLastWeek.getMonth(), mondayLastWeek.getDate() + 6);
+      return [mondayLastWeek, sundayLastWeek];
+    }
+
+    function activeAdvertiserNames() {
+      const [start, end] = previousWeekRange();
+      const active = [...new Set(advertiserSourceRows()
+        .filter(row => row.date >= start && row.date <= end)
+        .map(row => row.advertiser))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      if (active.length) return active;
+      return [...new Set(advertiserSourceRows().map(row => row.advertiser))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+    }
+
+    function mainProductNames(rows = allRows) {
+      return [...new Set(rows
+        .map(row => row.product)
+        .filter(product => product && isMainProduct(product)))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+    }
+
     function grossAdvertiserRows(rows) {
       return rows.filter(row => !EXCLUDED_WEBOT_STATUS.has(String(row.status || "").toLowerCase()));
     }
@@ -3314,15 +3434,12 @@
     function populateAdvertiserFilter() {
       const currentValue = els.advertiserSelect.value || "all";
       const currentProduct = els.advProductSelect.value || "all";
-      const names = [...new Set(advertiserSourceRows().map(row => row.advertiser))]
-        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      const names = activeAdvertiserNames();
       els.advertiserSelect.innerHTML = `<option value="all">Semua Advertiser</option>` +
         names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
       els.advertiserSelect.value = names.includes(currentValue) ? currentValue : "all";
 
-      const products = [...new Set(advertiserSourceRows().map(row => row.product))]
-        .filter(Boolean)
-        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      const products = mainProductNames(advertiserSourceRows());
       els.advProductSelect.innerHTML = `<option value="all">Semua Produk</option>` +
         products.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
       els.advProductSelect.value = products.includes(currentProduct) ? currentProduct : "all";
@@ -3381,15 +3498,12 @@
         els.budgetingDateInput.max = dateKey(end);
       }
 
-      const advertisers = [...new Set(advertiserSourceRows().map(row => row.advertiser))]
-        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      const advertisers = activeAdvertiserNames();
       els.budgetingAdvertiserInput.innerHTML = advertisers.map(name =>
         `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
       ).join("");
 
-      const products = [...new Set(advertiserSourceRows().map(row => row.product))]
-        .filter(Boolean)
-        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      const products = mainProductNames(advertiserSourceRows());
       els.budgetingProductInput.innerHTML = products.map(name =>
         `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
       ).join("");
@@ -3641,15 +3755,12 @@
       ).join("");
       if (els.csSelect.value !== "all") els.csReportCsInput.value = els.csSelect.value;
 
-      const advertisers = [...new Set(advertiserSourceRows().map(row => row.advertiser))]
-        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      const advertisers = activeAdvertiserNames();
       els.csReportAdvertiserInput.innerHTML = advertisers.map(name =>
         `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
       ).join("");
 
-      const products = [...new Set(csSourceRows().map(row => row.product))]
-        .filter(Boolean)
-        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      const products = mainProductNames(csSourceRows());
       els.csReportProductInput.innerHTML = products.map(name =>
         `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
       ).join("");
@@ -5452,11 +5563,18 @@
     }
 
     function setupNavigation() {
+      els.appShell.classList.add("sidebar-collapsed");
+      els.sidebarToggle.addEventListener("click", () => {
+        els.appShell.classList.toggle("sidebar-collapsed");
+      });
       document.querySelectorAll(".nav button").forEach(button => {
         button.addEventListener("click", () => {
           document.querySelectorAll(".nav button").forEach(item => item.classList.remove("active"));
           button.classList.add("active");
           const page = button.dataset.page;
+          if (window.matchMedia("(max-width: 1120px)").matches) {
+            els.appShell.classList.add("sidebar-collapsed");
+          }
           els.dashboardPage.classList.add("hidden");
           els.advertiserPage.classList.add("hidden");
           els.csPage.classList.add("hidden");

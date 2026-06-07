@@ -432,6 +432,12 @@
       font-weight: 400;
     }
 
+    #openShopeeBudgetInput {
+      background: #14532d;
+      color: #ffffff;
+      font-weight: 400;
+    }
+
     .status-table {
       min-width: 620px;
     }
@@ -723,6 +729,12 @@
       padding: 20px;
     }
 
+    .modal.wide-modal {
+      width: min(920px, 100%);
+      max-height: min(88vh, 820px);
+      overflow: auto;
+    }
+
     .modal h2 {
       color: #0b3551;
       margin-bottom: 18px;
@@ -812,6 +824,37 @@
       border-color: #2d145f;
       background: #2d145f;
       font-weight: 400;
+    }
+
+    #shopeeBudgetInputForm .primary {
+      border-color: #ea580c;
+      background: #ea580c;
+      font-weight: 400;
+    }
+
+    #shopeeBudgetInputForm h2,
+    #shopeeBudgetInputForm label {
+      color: #c2410c;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 14px;
+    }
+
+    .product-input-block {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin: 12px 0;
+      background: #fff7ed;
+    }
+
+    .product-input-block h3 {
+      margin: 0 0 10px;
+      color: #c2410c;
+      font-size: 15px;
     }
 
     .daily-table-wrap {
@@ -2042,6 +2085,7 @@
               </select>
             </label>
             <button class="apply-btn" id="applyShopeeFilter">Terapkan</button>
+            <button class="panel-action" id="openShopeeBudgetInput" type="button">Input Budget Shopee</button>
           </div>
           <div class="quick-row" id="shopeeQuickFilters">
             <button data-range="thisMonth" class="active">Bulan ini</button>
@@ -2113,6 +2157,32 @@
                 </tr>
               </thead>
               <tbody id="shopeeDailyReportBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2 class="shopee-panel-title">Hasil Input Budget Shopee</h2>
+            <span class="panel-note">gabungan data sheet dan input web</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table shopee-daily-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Nama Advertiser</th>
+                  <th>Toko Shopee</th>
+                  <th>Iklan Toko</th>
+                  <th>Omset Toko</th>
+                  <th>Budget Produk</th>
+                  <th>Impresi Produk</th>
+                  <th>Klik Produk</th>
+                  <th>Total Budget</th>
+                  <th>Sumber</th>
+                </tr>
+              </thead>
+              <tbody id="shopeeBudgetInputBody"></tbody>
             </table>
           </div>
         </section>
@@ -2611,6 +2681,33 @@
       </div>
     </form>
   </div>
+  <div class="modal-backdrop hidden" id="shopeeBudgetInputModal">
+    <form class="modal wide-modal" id="shopeeBudgetInputForm">
+      <h2>Input Budget Shopee</h2>
+      <div class="form-grid">
+        <label>Tanggal
+          <input id="shopeeBudgetDateInput" type="date" required>
+        </label>
+        <label>Nama Advertiser
+          <select id="shopeeBudgetAdvertiserInput" required></select>
+        </label>
+        <label>Toko Shopee
+          <select id="shopeeBudgetStoreInput" required></select>
+        </label>
+        <label>Iklan Toko
+          <input id="shopeeStoreAdsInput" type="text" inputmode="numeric" placeholder="Contoh: 359,520">
+        </label>
+        <label>Omset Toko
+          <input id="shopeeStoreRevenueInput" type="text" inputmode="numeric" placeholder="Contoh: 2,500,000">
+        </label>
+      </div>
+      <div id="shopeeProductInputs"></div>
+      <div class="modal-actions">
+        <button id="closeShopeeBudgetInput" type="button">Batal</button>
+        <button class="primary" type="submit">Simpan</button>
+      </div>
+    </form>
+  </div>
 
   <script>
     const SHEETS = {
@@ -2629,6 +2726,10 @@
       advertiserBudget: {
         id: "1aZ_Ern-dJUlmCpMU4IIEdj9lHD7XWfgynB0bnUpkPNs",
         sheet: "Budget Iklan"
+      },
+      shopeeResultMp: {
+        id: "1kpUwBKVZ_WA78Z8oGuK4NALH8as11-QL4IM48uaQUkk",
+        sheet: "Result MP"
       },
       csResult: {
         id: "1xF7qyMgiNPgtBLwps-YqqesZ3GZH9Ta7CoYg51ZHuMU",
@@ -2817,6 +2918,17 @@
       shopeeNett: document.getElementById("shopeeNett"),
       shopeeStatusBody: document.getElementById("shopeeStatusBody"),
       shopeeDailyReportBody: document.getElementById("shopeeDailyReportBody"),
+      openShopeeBudgetInput: document.getElementById("openShopeeBudgetInput"),
+      shopeeBudgetInputModal: document.getElementById("shopeeBudgetInputModal"),
+      shopeeBudgetInputForm: document.getElementById("shopeeBudgetInputForm"),
+      closeShopeeBudgetInput: document.getElementById("closeShopeeBudgetInput"),
+      shopeeBudgetDateInput: document.getElementById("shopeeBudgetDateInput"),
+      shopeeBudgetAdvertiserInput: document.getElementById("shopeeBudgetAdvertiserInput"),
+      shopeeBudgetStoreInput: document.getElementById("shopeeBudgetStoreInput"),
+      shopeeStoreAdsInput: document.getElementById("shopeeStoreAdsInput"),
+      shopeeStoreRevenueInput: document.getElementById("shopeeStoreRevenueInput"),
+      shopeeProductInputs: document.getElementById("shopeeProductInputs"),
+      shopeeBudgetInputBody: document.getElementById("shopeeBudgetInputBody"),
       tiktokStatus: document.getElementById("tiktokStatus"),
       tiktokGross: document.getElementById("tiktokGross"),
       tiktokBudgetAdmin: document.getElementById("tiktokBudgetAdmin"),
@@ -2860,11 +2972,17 @@
     let hoveredAdvertiserPoint = -1;
     let externalBudgetInputs = [];
     let externalCsReportInputs = [];
+    let externalShopeeBudgetInputs = [];
     let advertiserBudgetInputs = [];
     let csReportInputs = [];
+    let shopeeBudgetInputs = [];
     let editingBudgetingId = "";
     const BUDGETING_STORAGE_KEY = "niagakaraAdvertiserBudgetingInputs";
     const CS_REPORT_STORAGE_KEY = "niagakaraCsReportInputs";
+    const SHOPEE_BUDGET_STORAGE_KEY = "niagakaraShopeeBudgetInputs";
+    const SHOPEE_BUDGET_PRODUCTS = [
+      "Vitameal", "Waji", "Eyebost", "Eyebost Pro", "Vitasma", "Vitummy", "Bruv"
+    ];
 
     function currency(value) {
       return new Intl.NumberFormat("id-ID", {
@@ -3004,6 +3122,74 @@
           source: sourceName
         };
       }).filter(row => row.date && row.cs && row.product);
+    }
+
+    function productKey(name) {
+      return String(name || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+    }
+
+    function emptyShopeeProductMetrics() {
+      return Object.fromEntries(SHOPEE_BUDGET_PRODUCTS.map(product => [product, {
+        budget: 0,
+        impressions: 0,
+        clicks: 0
+      }]));
+    }
+
+    function shopeeProductMetric(item, product, field) {
+      return item.products?.[product]?.[field] || 0;
+    }
+
+    function totalShopeeProductMetric(item, field) {
+      return SHOPEE_BUDGET_PRODUCTS.reduce((total, product) => total + shopeeProductMetric(item, product, field), 0);
+    }
+
+    function totalShopeeBudget(item) {
+      return (item.storeAds || 0) + totalShopeeProductMetric(item, "budget");
+    }
+
+    function normalizeShopeeBudgetRows(rows, sourceName) {
+      return rows.map((row, index) => {
+        const date = parseDateValue(getField(row, [
+          "Tanggal", "Date", "Tanggal Iklan", "Tanggal Budget", "A", "B", "Column 1", "Column 2"
+        ]));
+        const advertiser = cleanLabel(getField(row, [
+          "Nama Advertiser", "Advertiser", "Nama Adv", "Adv", "B", "C", "Column 2", "Column 3"
+        ]), "");
+        const store = cleanLabel(getField(row, [
+          "Toko Shopee", "Toko", "Nama Toko", "Store", "Shop", "C", "D", "Column 3", "Column 4"
+        ]), "");
+        const storeAds = parseMoney(getField(row, [
+          "Iklan Toko", "Budget Toko", "Budget Iklan Toko", "D", "E", "Column 4", "Column 5"
+        ]));
+        const storeRevenue = parseMoney(getField(row, [
+          "Omset Toko", "Omset", "Revenue Toko", "E", "F", "Column 5", "Column 6"
+        ]));
+        const products = emptyShopeeProductMetrics();
+        SHOPEE_BUDGET_PRODUCTS.forEach(product => {
+          products[product] = {
+            budget: parseMoney(getField(row, [
+              `Budget ${product}`, `${product} Budget`, `Budget Produk ${product}`, `${product} Ads`
+            ])),
+            impressions: parseMoney(getField(row, [
+              `Impresi ${product}`, `Impresi (Dilihat) ${product}`, `Dilihat ${product}`, `${product} Impresi`, `${product} Dilihat`
+            ])),
+            clicks: parseMoney(getField(row, [
+              `Klik ${product}`, `Klik (Pengunjung) ${product}`, `Pengunjung ${product}`, `${product} Klik`, `${product} Pengunjung`
+            ]))
+          };
+        });
+        return {
+          id: `shopee-sheet-${sourceName}-${date ? dateKey(date) : "blank"}-${index}`,
+          date: date ? dateKey(date) : "",
+          advertiser,
+          store,
+          storeAds,
+          storeRevenue,
+          products,
+          source: sourceName
+        };
+      }).filter(row => row.date && row.store);
     }
 
     function parseDateValue(raw) {
@@ -3199,7 +3385,7 @@
 
     function normalizeMarketplace(rows) {
       return rows.map(row => {
-        const platform = String(getField(row, ["Platform", "platform"]) || "-").trim() || "-";
+        const platform = String(getField(row, ["Platform", "platform", "F"]) || "-").trim() || "-";
         return {
           source: "Marketplace",
           orderId: cleanLabel(getField(row, ["invoice_number", "Order Number"]), ""),
@@ -3208,14 +3394,14 @@
           status: normalizeStatus(getField(row, ["Status", "status"])) || "All",
           channel: cleanLabel(getField(row, ["Kanal", "kanal"]), "Marketplace"),
           type: platform,
-          store: cleanLabel(getField(row, ["Toko", "Nama Toko", "Store", "Shop", "Shop Name", "shop_name", "name_store", "Nama Store"]), platform),
+          store: cleanLabel(getField(row, ["Toko", "Nama Toko", "Store", "Shop", "Shop Name", "shop_name", "name_store", "Nama Store", "G"]), platform),
           product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk"]), "Tanpa produk"),
           quantity: parseMoney(getField(row, ["Quantity", "quantity"])),
           returnCost: parseMoney(getField(row, ["Ongkir", "ongkir"])),
           closing: parseMoney(getField(row, ["Closing", "closing"])),
           province: extractProvince(getField(row, ["Provinsi", "provinsi", "Billing Address"])),
           expedition: cleanExpedition(getField(row, ["Ekspedisi", "ship_via", "Ship Via"])),
-          advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv"]), "Tanpa advertiser"),
+          advertiser: cleanLabel(getField(row, ["Adv", "Advertiser", "adv", "Nama Advertiser", "I"]), "Tanpa advertiser"),
           cs: normalizeStaffName(getField(row, ["Nama CS", "name_cs", "CS"]), "Tanpa CS"),
           valid: true
         };
@@ -4045,6 +4231,192 @@
       );
     }
 
+    function loadShopeeBudgetInputs() {
+      try {
+        shopeeBudgetInputs = JSON.parse(localStorage.getItem(SHOPEE_BUDGET_STORAGE_KEY) || "[]")
+          .filter(item => item && item.date && item.store)
+          .map(item => ({ ...item, source: "local" }));
+      } catch {
+        shopeeBudgetInputs = [];
+      }
+    }
+
+    function saveShopeeBudgetInputs() {
+      localStorage.setItem(SHOPEE_BUDGET_STORAGE_KEY, JSON.stringify(shopeeBudgetInputs));
+    }
+
+    function combinedShopeeBudgetInputs() {
+      const map = new Map();
+      [...externalShopeeBudgetInputs, ...shopeeBudgetInputs].forEach(item => {
+        const key = [
+          item.date,
+          normalizeCompare(item.advertiser),
+          normalizeCompare(item.store),
+          item.storeAds || 0,
+          item.storeRevenue || 0,
+          totalShopeeBudget(item)
+        ].join("|");
+        if (!map.has(key)) map.set(key, item);
+      });
+      return [...map.values()];
+    }
+
+    function shopeeBudgetRowsInRange(start, end) {
+      const selectedStore = els.shopeeStoreSelect.value;
+      return combinedShopeeBudgetInputs().filter(item => {
+        const date = parseDateValue(item.date);
+        return date &&
+          date >= startOfDay(start) &&
+          date <= startOfDay(end) &&
+          (selectedStore === "all" || item.store === selectedStore);
+      });
+    }
+
+    function buildShopeeProductInputBlocks() {
+      els.shopeeProductInputs.innerHTML = SHOPEE_BUDGET_PRODUCTS.map(product => {
+        const key = productKey(product);
+        return `
+          <div class="product-input-block">
+            <h3>Produk ${escapeHtml(product)}</h3>
+            <div class="form-grid">
+              <label>Budget ${escapeHtml(product)}
+                <input data-shopee-product="${escapeHtml(product)}" data-field="budget" id="shopee-${key}-budget" type="text" inputmode="numeric" placeholder="Contoh: 100,000">
+              </label>
+              <label>Impresi (Dilihat) ${escapeHtml(product)}
+                <input data-shopee-product="${escapeHtml(product)}" data-field="impressions" id="shopee-${key}-impressions" type="text" inputmode="numeric" placeholder="Contoh: 10,000">
+              </label>
+              <label>Klik (Pengunjung) ${escapeHtml(product)}
+                <input data-shopee-product="${escapeHtml(product)}" data-field="clicks" id="shopee-${key}-clicks" type="text" inputmode="numeric" placeholder="Contoh: 500">
+              </label>
+            </div>
+          </div>
+        `;
+      }).join("");
+      els.shopeeProductInputs.querySelectorAll("input").forEach(input => {
+        input.addEventListener("input", () => normalizePlainNumberInput(input));
+      });
+    }
+
+    function populateShopeeBudgetInputOptions() {
+      const [start, end] = getShopeeRange();
+      if (start && end) {
+        els.shopeeBudgetDateInput.min = dateKey(start);
+        els.shopeeBudgetDateInput.max = dateKey(end);
+      }
+      const today = startOfDay(new Date());
+      const defaultDate = start && end && today >= startOfDay(start) && today <= startOfDay(end) ? today : start;
+      els.shopeeBudgetDateInput.value = defaultDate ? dateKey(defaultDate) : "";
+
+      const shopeeMarketplaceRows = shopeeSourceRows();
+      const advertisers = [...new Set(shopeeMarketplaceRows.map(row => row.advertiser))]
+        .filter(name => name && name !== "Tanpa advertiser")
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.shopeeBudgetAdvertiserInput.innerHTML = advertisers.map(name =>
+        `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
+      ).join("");
+
+      const stores = [...new Set(shopeeMarketplaceRows.map(row => row.store || row.type))]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.shopeeBudgetStoreInput.innerHTML = stores.map(name =>
+        `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
+      ).join("");
+      if (els.shopeeStoreSelect.value !== "all") els.shopeeBudgetStoreInput.value = els.shopeeStoreSelect.value;
+    }
+
+    function openShopeeBudgetInputModal() {
+      buildShopeeProductInputBlocks();
+      populateShopeeBudgetInputOptions();
+      els.shopeeStoreAdsInput.value = "";
+      els.shopeeStoreRevenueInput.value = "";
+      els.shopeeBudgetInputModal.classList.remove("hidden");
+    }
+
+    function closeShopeeBudgetInputModal() {
+      els.shopeeBudgetInputForm.reset();
+      els.shopeeBudgetInputModal.classList.add("hidden");
+    }
+
+    function handleShopeeBudgetSubmit(event) {
+      event.preventDefault();
+      const products = emptyShopeeProductMetrics();
+      els.shopeeProductInputs.querySelectorAll("input[data-shopee-product]").forEach(input => {
+        const product = input.dataset.shopeeProduct;
+        const field = input.dataset.field;
+        products[product][field] = parseMoney(input.value);
+      });
+      shopeeBudgetInputs.push({
+        id: `shopee-budget-${Date.now()}`,
+        date: els.shopeeBudgetDateInput.value,
+        advertiser: els.shopeeBudgetAdvertiserInput.value,
+        store: els.shopeeBudgetStoreInput.value,
+        storeAds: parseMoney(els.shopeeStoreAdsInput.value),
+        storeRevenue: parseMoney(els.shopeeStoreRevenueInput.value),
+        products,
+        source: "local"
+      });
+      saveShopeeBudgetInputs();
+      closeShopeeBudgetInputModal();
+      renderShopeeReport();
+    }
+
+    function renderShopeeBudgetInputs() {
+      const [start, end] = getShopeeRange();
+      if (!start || !end) return;
+      const rows = shopeeBudgetRowsInRange(start, end)
+        .sort((a, b) => parseDateValue(b.date) - parseDateValue(a.date));
+      const totals = rows.reduce((acc, row) => {
+        acc.storeAds += row.storeAds || 0;
+        acc.storeRevenue += row.storeRevenue || 0;
+        acc.productBudget += totalShopeeProductMetric(row, "budget");
+        acc.productImpressions += totalShopeeProductMetric(row, "impressions");
+        acc.productClicks += totalShopeeProductMetric(row, "clicks");
+        return acc;
+      }, { storeAds: 0, storeRevenue: 0, productBudget: 0, productImpressions: 0, productClicks: 0 });
+      const totalRow = `
+        <tr class="total-row">
+          ${reportCell("TOTAL")}
+          ${reportCell(`${rows.length.toLocaleString("id-ID")} inputan`)}
+          ${reportCell("-")}
+          ${reportCell(currency(totals.storeAds))}
+          ${reportCell(currency(totals.storeRevenue))}
+          ${reportCell(currency(totals.productBudget))}
+          ${reportCell(totals.productImpressions.toLocaleString("id-ID"))}
+          ${reportCell(totals.productClicks.toLocaleString("id-ID"))}
+          ${reportCell(currency(totals.storeAds + totals.productBudget))}
+          ${reportCell("-")}
+        </tr>
+      `;
+      const bodyRows = rows.map(row => `
+        <tr>
+          ${reportCell(longIndonesianDate(parseDateValue(row.date)))}
+          ${reportCell(escapeHtml(row.advertiser || "-"))}
+          ${reportCell(escapeHtml(row.store || "-"))}
+          ${reportCell(currency(row.storeAds))}
+          ${reportCell(currency(row.storeRevenue))}
+          ${reportCell(currency(totalShopeeProductMetric(row, "budget")))}
+          ${reportCell(totalShopeeProductMetric(row, "impressions").toLocaleString("id-ID"))}
+          ${reportCell(totalShopeeProductMetric(row, "clicks").toLocaleString("id-ID"))}
+          ${reportCell(currency(totalShopeeBudget(row)))}
+          ${reportCell(escapeHtml(row.source || "Sheet"))}
+        </tr>
+      `).join("");
+      els.shopeeBudgetInputBody.innerHTML = totalRow + (bodyRows || `
+        <tr>
+          ${reportCell("Belum ada input budget Shopee")}
+          ${reportCell("-")}
+          ${reportCell("-")}
+          ${reportCell(currency(0))}
+          ${reportCell(currency(0))}
+          ${reportCell(currency(0))}
+          ${reportCell("0")}
+          ${reportCell("0")}
+          ${reportCell(currency(0))}
+          ${reportCell("-")}
+        </tr>
+      `);
+    }
+
     function useLatestShopeeMonthIfCurrentIsEmpty() {
       const [start, end] = getShopeeRange();
       const source = shopeeSourceRows();
@@ -4068,6 +4440,18 @@
           item.returnRevenue += row.revenue || 0;
           item.returnCost += row.returnCost || 0;
         }
+        byDate.set(key, item);
+      });
+      shopeeBudgetRowsInRange(start, end).forEach(row => {
+        const date = parseDateValue(row.date);
+        if (!date) return;
+        const key = dateKey(date);
+        const item = byDate.get(key) || {
+          date, budget: 0, dashgoRevenue: 0, dataOrderRevenue: 0,
+          admin: 0, returnRevenue: 0, returnCost: 0
+        };
+        item.budget += totalShopeeBudget(row);
+        item.dataOrderRevenue += row.storeRevenue || 0;
         byDate.set(key, item);
       });
       return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
@@ -4105,9 +4489,13 @@
       if (!start || !end) return;
       const rows = shopeeRowsInRange(start, end);
       const gross = sumRows(rows);
-      const budget = 0;
-      const admin = 0;
-      const totalBudgetAdmin = budget + admin;
+      const dailyRows = buildShopeeDailyRows(rows, start, end);
+      const shopeeBudgetTotals = dailyRows.reduce((acc, row) => {
+        acc.budget += row.budget || 0;
+        acc.admin += row.admin || 0;
+        return acc;
+      }, { budget: 0, admin: 0 });
+      const totalBudgetAdmin = shopeeBudgetTotals.budget + shopeeBudgetTotals.admin;
       const returnRows = rows.filter(row => isReturnStatus(row.status));
       const returnRevenue = sumRows(returnRows);
       const returnRate = percentRatio(returnRevenue, gross);
@@ -4115,7 +4503,6 @@
       const nett = gross - returnRevenue - returnCost;
       const cac = percentRatio(totalBudgetAdmin, gross);
       const roasValue = totalBudgetAdmin > 0 ? gross / totalBudgetAdmin : 0;
-      const dailyRows = buildShopeeDailyRows(rows, start, end);
 
       els.shopeeGross.textContent = currency(gross);
       els.shopeeBudgetAdmin.textContent = currency(totalBudgetAdmin);
@@ -4128,6 +4515,7 @@
 
       renderMarketplaceStatusTable(rows, els.shopeeStatusBody);
       renderShopeeDailyReport(dailyRows);
+      renderShopeeBudgetInputs();
     }
 
     function renderShopeeDailyReport(rows) {
@@ -5732,6 +6120,15 @@
         renderShopeeReport();
       });
       els.shopeeStoreSelect.addEventListener("change", renderShopeeReport);
+      els.openShopeeBudgetInput.addEventListener("click", openShopeeBudgetInputModal);
+      els.closeShopeeBudgetInput.addEventListener("click", closeShopeeBudgetInputModal);
+      els.shopeeBudgetInputModal.addEventListener("click", event => {
+        if (event.target === els.shopeeBudgetInputModal) closeShopeeBudgetInputModal();
+      });
+      els.shopeeBudgetInputForm.addEventListener("submit", handleShopeeBudgetSubmit);
+      [els.shopeeStoreAdsInput, els.shopeeStoreRevenueInput].forEach(input => {
+        input.addEventListener("input", () => normalizePlainNumberInput(input));
+      });
       els.tiktokQuickFilters.addEventListener("click", event => {
         const button = event.target.closest("button[data-range]");
         if (!button) return;
@@ -5833,6 +6230,7 @@
     async function init() {
       loadBudgetingInputs();
       loadCsReportInputs();
+      loadShopeeBudgetInputs();
       setupNavigation();
       setupFilters();
       setupChartHover();
@@ -5845,11 +6243,12 @@
       updateTiktokInputs(...rangePreset("thisMonth"));
       try {
         els.sourceStatus.textContent = "Memuat data real Google Sheets...";
-        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet, csResultSheet, csReportSheet] = await Promise.allSettled([
+        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet, shopeeResultMpSheet, csResultSheet, csReportSheet] = await Promise.allSettled([
           loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, WEBOT_QUERY),
-          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,H,I,K,O,U,Y,AD,AE"),
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,G,H,I,K,O,U,Y,AD,AE"),
           loadGoogleSheet(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
           loadGoogleSheet(SHEETS.advertiserBudget.id, SHEETS.advertiserBudget.sheet, "select *"),
+          loadGoogleSheet(SHEETS.shopeeResultMp.id, SHEETS.shopeeResultMp.sheet, "select *"),
           loadGoogleSheet(SHEETS.csResult.id, SHEETS.csResult.sheet, "select *"),
           loadGoogleSheet(SHEETS.csReport.id, SHEETS.csReport.sheet, "select *")
         ]);
@@ -5857,10 +6256,12 @@
         const marketplaceRows = marketplaceResult.status === "fulfilled" ? marketplaceResult.value : [];
         const advertiserResultRows = advertiserResultSheet.status === "fulfilled" ? advertiserResultSheet.value : [];
         const advertiserBudgetRows = advertiserBudgetSheet.status === "fulfilled" ? advertiserBudgetSheet.value : [];
+        const shopeeResultMpRows = shopeeResultMpSheet.status === "fulfilled" ? shopeeResultMpSheet.value : [];
         const csResultRows = csResultSheet.status === "fulfilled" ? csResultSheet.value : [];
         const csReportRows = csReportSheet.status === "fulfilled" ? csReportSheet.value : [];
         externalBudgetInputs = normalizeBudgetingRows(advertiserResultRows, "Result")
           .concat(normalizeBudgetingRows(advertiserBudgetRows, "Budget Iklan"));
+        externalShopeeBudgetInputs = normalizeShopeeBudgetRows(shopeeResultMpRows, "Result MP");
         externalCsReportInputs = normalizeCsReportRows(csResultRows, "Result CS")
           .concat(normalizeCsReportRows(csReportRows, "Laporan CS"));
         allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
@@ -5875,6 +6276,7 @@
         if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace belum terbaca");
         if (advertiserResultSheet.status === "rejected") sourceNotes.push("Result budgeting belum terbaca");
         if (advertiserBudgetSheet.status === "rejected") sourceNotes.push("Budget Iklan belum terbaca");
+        if (shopeeResultMpSheet.status === "rejected") sourceNotes.push("Result MP Shopee belum terbaca");
         if (csResultSheet.status === "rejected") sourceNotes.push("Result CS belum terbaca");
         if (csReportSheet.status === "rejected") sourceNotes.push("Laporan CS belum terbaca");
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;

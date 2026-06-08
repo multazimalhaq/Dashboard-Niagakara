@@ -3695,41 +3695,71 @@
       if (input.value !== cleaned) input.value = cleaned;
     }
 
+    function isAdvertiserLabel(value) {
+      const normalized = normalizeCompare(value);
+      return normalized.startsWith("adv ") || normalized.startsWith("adv.");
+    }
+
+    function isBudgetPlatformLabel(value) {
+      const normalized = normalizeCompare(value);
+      return ["meta", "meta interaksi wa", "meta interaksi bx", "tiktok", "google"].includes(normalized);
+    }
+
+    function isBudgetProductLabel(value) {
+      const text = cleanLabel(value, "");
+      const normalized = normalizeCompare(text);
+      if (!text || normalized === "-" || isAdvertiserLabel(text) || isBudgetPlatformLabel(text)) return false;
+      if (/^[\d.,\s]+$/.test(text)) return false;
+      return text.length > 2;
+    }
+
+    function readBudgetingRowByLayout(row, index, sourceName, layout) {
+      const date = parseDateValue(getField(row, layout.date));
+      const platform = layout.platform ? cleanLabel(getField(row, layout.platform), "") : "Meta";
+      const advertiser = cleanLabel(getField(row, layout.advertiser), "");
+      const product = canonicalProductName(cleanLabel(getField(row, layout.product), ""));
+      if (!date || !isBudgetPlatformLabel(platform) || !isAdvertiserLabel(advertiser) || !isBudgetProductLabel(product)) return null;
+      const budget = parseMoney(getField(row, layout.budget));
+      const impressions = parseMoney(getField(row, layout.impressions));
+      const leadDashboard = parseMoney(getField(row, layout.leadDashboard));
+      return {
+        id: `sheet-${sourceName}-${dateKey(date)}-${index}`,
+        date: dateKey(date),
+        platform,
+        advertiser,
+        product,
+        budget,
+        impressions,
+        leadDashboard,
+        source: sourceName
+      };
+    }
+
     function normalizeBudgetingRows(rows, sourceName) {
+      const layouts = [
+        {
+          date: ["Tanggal", "Date", "Tanggal Iklan", "Tanggal Budget"],
+          platform: ["Platform", "Platform Iklan", "Media", "Channel Iklan"],
+          advertiser: ["Nama Advertiser", "Advertiser", "Adv", "Nama Adv"],
+          product: ["Produk", "Product", "Nama Produk", "ProductName"],
+          budget: ["Budget Iklan", "Budget", "Nominal Budget", "Spend", "Biaya Iklan"],
+          impressions: ["Impresi", "Impression", "Impressions", "Jumlah Impresi"],
+          leadDashboard: ["Lead Dashboard", "Lead", "Leads", "Lead Dashgo", "Dashboard Lead"]
+        },
+        { date: ["A"], platform: ["B"], advertiser: ["C"], product: ["D"], budget: ["E"], impressions: ["F"], leadDashboard: ["G"] },
+        { date: ["B"], platform: ["C"], advertiser: ["D"], product: ["E"], budget: ["F"], impressions: ["G"], leadDashboard: ["H"] },
+        { date: ["A"], platform: ["C"], advertiser: ["D"], product: ["E"], budget: ["F"], impressions: ["G"], leadDashboard: ["H"] },
+        { date: ["B"], platform: ["D"], advertiser: ["E"], product: ["F"], budget: ["G"], impressions: ["H"], leadDashboard: ["I"] },
+        { date: ["A"], platform: null, advertiser: ["B"], product: ["C"], budget: ["D"], impressions: ["E"], leadDashboard: ["F"] },
+        { date: ["B"], platform: null, advertiser: ["C"], product: ["D"], budget: ["E"], impressions: ["F"], leadDashboard: ["G"] }
+      ];
       return rows.map((row, index) => {
-        const date = parseDateValue(getField(row, [
-          "Tanggal", "Date", "Tanggal Iklan", "Tanggal Budget", "A", "B", "Column 1", "Column 2"
-        ]));
-        const platform = cleanLabel(getField(row, [
-          "Platform", "Platform Iklan", "Media", "Channel Iklan", "B", "C", "Column 2", "Column 3"
-        ]), "Meta");
-        const advertiser = cleanLabel(getField(row, [
-          "Nama Advertiser", "Advertiser", "Adv", "Nama Adv", "C", "D", "Column 3", "Column 4"
-        ]), "");
-        const product = cleanLabel(getField(row, [
-          "Produk", "Product", "Nama Produk", "ProductName", "D", "E", "Column 4", "Column 5"
-        ]), "");
-        const budget = parseMoney(getField(row, [
-          "Budget Iklan", "Budget", "Nominal Budget", "Spend", "Biaya Iklan", "E", "F", "Column 5", "Column 6"
-        ]));
-        const impressions = parseMoney(getField(row, [
-          "Impresi", "Impression", "Impressions", "Jumlah Impresi", "F", "G", "Column 6", "Column 7"
-        ]));
-        const leadDashboard = parseMoney(getField(row, [
-          "Lead Dashboard", "Lead", "Leads", "Lead Dashgo", "Dashboard Lead", "G", "H", "Column 7", "Column 8"
-        ]));
-        return {
-          id: `sheet-${sourceName}-${date ? dateKey(date) : "blank"}-${index}`,
-          date: date ? dateKey(date) : "",
-          platform,
-          advertiser,
-          product,
-          budget,
-          impressions,
-          leadDashboard,
-          source: sourceName
-        };
-      }).filter(row => row.date && row.advertiser && row.product);
+        for (const layout of layouts) {
+          const parsed = readBudgetingRowByLayout(row, index, sourceName, layout);
+          if (parsed) return parsed;
+        }
+        return null;
+      }).filter(Boolean);
     }
 
     function normalizeCsReportRows(rows, sourceName) {

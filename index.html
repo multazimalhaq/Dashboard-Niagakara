@@ -3708,7 +3708,7 @@
     function isBudgetProductLabel(value) {
       const text = cleanLabel(value, "");
       const normalized = normalizeCompare(text);
-      if (!text || normalized === "-" || isAdvertiserLabel(text) || isBudgetPlatformLabel(text)) return false;
+      if (!text || normalized === "-" || normalized === "tanpa produk" || isAdvertiserLabel(text) || isBudgetPlatformLabel(text)) return false;
       if (/^[\d.,\s]+$/.test(text)) return false;
       return text.length > 2;
     }
@@ -5619,7 +5619,13 @@
     function weeklyRowsInRange(start, end) {
       const budgetRows = combinedBudgetInputs().filter(item => {
         const date = parseDateValue(item.date);
-        return date && date >= startOfDay(start) && date <= startOfDay(end);
+        const product = canonicalProductName(item.product);
+        return date &&
+          date >= startOfDay(start) &&
+          date <= startOfDay(end) &&
+          isBudgetPlatformLabel(item.platform) &&
+          isAdvertiserLabel(item.advertiser) &&
+          isBudgetProductLabel(product);
       });
       const revenueRows = grossAdvertiserRows(advertiserSourceRows()).filter(row =>
         row.date >= startOfDay(start) && row.date <= startOfDay(end)

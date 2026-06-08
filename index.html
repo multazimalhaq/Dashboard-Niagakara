@@ -5358,7 +5358,6 @@
       };
       Object.entries(productFieldMap).forEach(([productName, key]) => {
         const metrics = payload.products?.[productName] || {};
-        productPayload[`produk${key}`] = productName;
         productPayload[`budget${key}`] = metrics.budget || 0;
         productPayload[`impresi${key}`] = metrics.impressions || 0;
         productPayload[`klik${key}`] = metrics.clicks || 0;

@@ -4082,6 +4082,7 @@
           revenue: parseMoney(getField(row, ["Total Perline", WEBOT_COLUMNS.totalPerline])),
           status,
           channel: cleanLabel(getField(row, ["Kanal", "kanal", WEBOT_COLUMNS.channel]), "Tanpa kanal"),
+          platformAdvertiser: cleanLabel(getField(row, ["Platform Adv", "Platform Advertiser", WEBOT_COLUMNS.platformAdvertiser]), "Tanpa platform"),
           type: normalizeCustomerType(customerType),
           product: cleanLabel(getField(row, ["ProductName", "Product Name", "name_produk", WEBOT_COLUMNS.productName]), "Tanpa produk"),
           quantity: parseMoney(getField(row, ["Quantity", "quantity", WEBOT_COLUMNS.quantity])),
@@ -4255,6 +4256,41 @@
 
     function normalizeCompare(value) {
       return String(value || "").replace(/\./g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+    }
+
+    function sameNormalizedValue(a, b) {
+      return normalizeCompare(a) === normalizeCompare(b);
+    }
+
+    function sameProductValue(a, b) {
+      return sameNormalizedValue(a, b) || sameNormalizedValue(canonicalProductName(a), canonicalProductName(b));
+    }
+
+    function mergeSheetAndLocalInputs(sheetRows, localRows, keyGetter) {
+      const result = [];
+      const sheetKeys = new Set();
+      const localKeys = new Set();
+
+      sheetRows.forEach(item => {
+        const key = keyGetter(item);
+        if (sheetKeys.has(key)) return;
+        sheetKeys.add(key);
+        result.push({ ...item, source: item.source || "sheet" });
+      });
+
+      localRows.forEach(item => {
+        const key = keyGetter(item);
+        if (sheetKeys.has(key) || localKeys.has(key)) return;
+        localKeys.add(key);
+        result.push({ ...item, source: "local" });
+      });
+
+      return result;
+    }
+
+    function inputDateKey(value) {
+      const parsed = parseDateValue(value);
+      return parsed ? dateKey(parsed) : String(value || "").trim();
     }
 
     function advertiserRows(rows) {
@@ -4432,27 +4468,26 @@
           return date &&
             date >= startOfDay(start) &&
             date <= startOfDay(end) &&
-            (selectedAdvertiser === "all" || item.advertiser === selectedAdvertiser) &&
-            (selectedProduct === "all" || item.product === selectedProduct);
+            (selectedAdvertiser === "all" || sameNormalizedValue(item.advertiser, selectedAdvertiser)) &&
+            (selectedProduct === "all" || sameProductValue(item.product, selectedProduct));
         })
         .sort((a, b) => parseDateValue(b.date) - parseDateValue(a.date));
     }
 
+    function advertiserBudgetInputKey(item) {
+      return [
+        inputDateKey(item.date),
+        normalizeCompare(item.platform),
+        normalizeCompare(item.advertiser),
+        normalizeCompare(canonicalProductName(item.product)),
+        item.budget || 0,
+        item.impressions || 0,
+        item.leadDashboard || 0
+      ].join("|");
+    }
+
     function combinedBudgetInputs() {
-      const map = new Map();
-      [...externalBudgetInputs, ...advertiserBudgetInputs].forEach(item => {
-        const key = [
-          item.date,
-          normalizeCompare(item.platform),
-          normalizeCompare(item.advertiser),
-          normalizeCompare(item.product),
-          item.budget || 0,
-          item.impressions || 0,
-          item.leadDashboard || 0
-        ].join("|");
-        if (!map.has(key)) map.set(key, item);
-      });
-      return [...map.values()];
+      return mergeSheetAndLocalInputs(externalBudgetInputs, advertiserBudgetInputs, advertiserBudgetInputKey);
     }
 
     function allAdvertiserBudgetByDate(start, end) {
@@ -5062,20 +5097,19 @@
       localStorage.setItem(SHOPEE_BUDGET_STORAGE_KEY, JSON.stringify(shopeeBudgetInputs));
     }
 
+    function shopeeBudgetInputKey(item) {
+      return [
+        inputDateKey(item.date),
+        normalizeCompare(item.advertiser),
+        normalizeCompare(item.store),
+        item.storeAds || 0,
+        item.storeRevenue || 0,
+        totalShopeeBudget(item)
+      ].join("|");
+    }
+
     function combinedShopeeBudgetInputs() {
-      const map = new Map();
-      [...externalShopeeBudgetInputs, ...shopeeBudgetInputs].forEach(item => {
-        const key = [
-          item.date,
-          normalizeCompare(item.advertiser),
-          normalizeCompare(item.store),
-          item.storeAds || 0,
-          item.storeRevenue || 0,
-          totalShopeeBudget(item)
-        ].join("|");
-        if (!map.has(key)) map.set(key, item);
-      });
-      return [...map.values()];
+      return mergeSheetAndLocalInputs(externalShopeeBudgetInputs, shopeeBudgetInputs, shopeeBudgetInputKey);
     }
 
     function shopeeBudgetRowsInRange(start, end) {
@@ -5085,7 +5119,7 @@
         return date &&
           date >= startOfDay(start) &&
           date <= startOfDay(end) &&
-          (selectedStore === "all" || item.store === selectedStore);
+          (selectedStore === "all" || sameNormalizedValue(item.store, selectedStore));
       });
     }
 
@@ -5562,13 +5596,14 @@
         budgetMap.set(key, current);
       });
 
-      const revenueByAdvertiserProduct = new Map();
+      const revenueByAdvertiserPlatformProduct = new Map();
       const revenueByAdvertiser = new Map();
       revenueRows.forEach(row => {
         const advertiser = cleanLabel(row.advertiser, "Tanpa advertiser");
+        const platform = cleanLabel(row.platformAdvertiser, "Tanpa platform");
         const product = canonicalProductName(row.product);
-        const productKeyValue = `${normalizeCompare(advertiser)}|${normalizeCompare(product)}`;
-        revenueByAdvertiserProduct.set(productKeyValue, (revenueByAdvertiserProduct.get(productKeyValue) || 0) + (row.revenue || 0));
+        const productKeyValue = `${normalizeCompare(advertiser)}|${normalizeCompare(platform)}|${normalizeCompare(product)}`;
+        revenueByAdvertiserPlatformProduct.set(productKeyValue, (revenueByAdvertiserPlatformProduct.get(productKeyValue) || 0) + (row.revenue || 0));
         const advertiserKeyValue = normalizeCompare(advertiser);
         revenueByAdvertiser.set(advertiserKeyValue, {
           name: advertiser,
@@ -5576,22 +5611,26 @@
         });
       });
 
-      revenueByAdvertiserProduct.forEach((revenue, key) => {
-        const [, productKeyValue] = key.split("|");
+      revenueByAdvertiserPlatformProduct.forEach((revenue, key) => {
+        const [advertiserKeyValue, platformKeyValue, productKeyValue] = key.split("|");
         const hasBudgetRow = [...budgetMap.values()].some(item =>
+          normalizeCompare(item.advertiser) === advertiserKeyValue &&
+          normalizeCompare(item.platform) === platformKeyValue &&
           normalizeCompare(item.product) === productKeyValue &&
-          key.startsWith(`${normalizeCompare(item.advertiser)}|`)
+          key.startsWith(`${normalizeCompare(item.advertiser)}|${normalizeCompare(item.platform)}|`)
         );
         if (!hasBudgetRow) {
           const revenueRow = revenueRows.find(row =>
-            `${normalizeCompare(row.advertiser)}|${normalizeCompare(canonicalProductName(row.product))}` === key
+            `${normalizeCompare(row.advertiser)}|${normalizeCompare(row.platformAdvertiser)}|${normalizeCompare(canonicalProductName(row.product))}` === key
           );
           if (revenueRow) {
-            const mapKey = `${normalizeCompare(revenueRow.advertiser)}|soscom|${normalizeCompare(revenueRow.product)}`;
+            const platform = cleanLabel(revenueRow.platformAdvertiser, "Tanpa platform");
+            const product = canonicalProductName(revenueRow.product);
+            const mapKey = `${normalizeCompare(revenueRow.advertiser)}|${normalizeCompare(platform)}|${normalizeCompare(product)}`;
             budgetMap.set(mapKey, {
               advertiser: revenueRow.advertiser,
-              platform: "Soscom",
-            product: canonicalProductName(revenueRow.product),
+              platform,
+              product,
               budget: 0
             });
           }
@@ -5599,7 +5638,7 @@
       });
 
       const detailRows = [...budgetMap.values()].map(item => {
-        const revenue = revenueByAdvertiserProduct.get(`${normalizeCompare(item.advertiser)}|${normalizeCompare(item.product)}`) || 0;
+        const revenue = revenueByAdvertiserPlatformProduct.get(`${normalizeCompare(item.advertiser)}|${normalizeCompare(item.platform)}|${normalizeCompare(item.product)}`) || 0;
         return { ...item, revenue, cac: percentRatio(item.budget, revenue) };
       }).sort((a, b) =>
         a.advertiser.localeCompare(b.advertiser, "id-ID") ||
@@ -6478,21 +6517,20 @@
       localStorage.setItem(TIKTOK_BUDGET_STORAGE_KEY, JSON.stringify(tiktokBudgetInputs));
     }
 
+    function tiktokBudgetInputKey(item) {
+      return [
+        inputDateKey(item.date),
+        normalizeCompare(item.advertiser),
+        normalizeCompare(item.store),
+        item.budget || 0,
+        item.dashboardRevenue || 0,
+        item.impressions || 0,
+        item.leadDashboard || 0
+      ].join("|");
+    }
+
     function combinedTiktokBudgetInputs() {
-      const map = new Map();
-      [...externalTiktokBudgetInputs, ...tiktokBudgetInputs].forEach(item => {
-        const key = [
-          item.date,
-          normalizeCompare(item.advertiser),
-          normalizeCompare(item.store),
-          item.budget || 0,
-          item.dashboardRevenue || 0,
-          item.impressions || 0,
-          item.leadDashboard || 0
-        ].join("|");
-        if (!map.has(key)) map.set(key, item);
-      });
-      return [...map.values()];
+      return mergeSheetAndLocalInputs(externalTiktokBudgetInputs, tiktokBudgetInputs, tiktokBudgetInputKey);
     }
 
     function tiktokBudgetRowsInRange(start, end) {
@@ -6502,7 +6540,7 @@
         return date &&
           date >= startOfDay(start) &&
           date <= startOfDay(end) &&
-          (selectedStore === "all" || item.store === selectedStore);
+          (selectedStore === "all" || sameNormalizedValue(item.store, selectedStore));
       });
     }
 

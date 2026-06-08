@@ -1018,6 +1018,14 @@
       z-index: 7;
     }
 
+    .daily-table.weekly-review-table th:first-child,
+    .daily-table.weekly-review-table td:first-child,
+    .daily-table.weekly-review-table .total-row td:first-child {
+      position: static;
+      min-width: 190px;
+      box-shadow: none;
+    }
+
     .holiday-cell {
       background: #991b1b !important;
       color: #ffffff !important;
@@ -1034,6 +1042,54 @@
       background: #991b1b;
       color: #ffffff;
       font-weight: 800;
+    }
+
+    .pam-summary {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pam-summary-row {
+      display: grid;
+      grid-template-columns: minmax(160px, 1fr) minmax(110px, 160px) minmax(160px, 220px);
+      align-items: center;
+      border: 1px solid #9fca91;
+      background: #d9ead3;
+      color: #0f172a;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .pam-summary-row span,
+    .pam-summary-row strong {
+      padding: 10px 12px;
+      border-right: 1px solid #9fca91;
+    }
+
+    .pam-summary-row span:last-child,
+    .pam-summary-row strong:last-child {
+      border-right: 0;
+    }
+
+    .pam-summary-row strong {
+      text-align: right;
+      background: #6aa84f;
+      color: #071b0a;
+    }
+
+    .pam-summary-row .good {
+      background: #166534;
+      color: #ffffff;
+    }
+
+    .pam-summary-row .bad {
+      background: #991b1b;
+      color: #ffffff;
+    }
+
+    #weekly-budgeting-page > section {
+      margin-top: 18px;
     }
 
     .card {
@@ -1796,7 +1852,7 @@
             <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
           </div>
           <div class="daily-table-wrap">
-            <table class="daily-table advertiser-daily-table">
+            <table class="daily-table advertiser-daily-table weekly-review-table">
               <thead>
                 <tr>
                   <th>Tanggal</th>
@@ -2489,11 +2545,33 @@
               <tbody id="weeklyAdvertiserBody"></tbody>
             </table>
           </div>
-          <div class="daily-table-wrap" style="margin-top:18px; max-height:180px;">
-            <table class="daily-table advertiser-daily-table">
-              <tbody id="weeklyPamBody"></tbody>
+          <div class="pam-summary" id="weeklyPamBody"></div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2>Last Week After CRM</h2>
+            <span class="panel-note">total realisasi sudah digabung omset CRM</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table advertiser-daily-table weekly-review-table">
+              <thead>
+                <tr>
+                  <th>Nama ADV</th>
+                  <th>Kanal</th>
+                  <th>Produk</th>
+                  <th>Budget</th>
+                  <th>Gross Revenue</th>
+                  <th>CAC</th>
+                  <th>Total Budget</th>
+                  <th>Total Gross Revenue</th>
+                  <th>Total CAC</th>
+                </tr>
+              </thead>
+              <tbody id="weeklyAfterCrmBody"></tbody>
             </table>
           </div>
+          <div class="pam-summary" id="weeklyAfterCrmPamBody"></div>
         </section>
 
         <section class="card panel">
@@ -2555,26 +2633,63 @@
                   <th>Kanal</th>
                   <th>Produk</th>
                   <th>Mode</th>
-                  <th>Budget Last Week</th>
-                  <th>Revenue Last Week</th>
-                  <th>PAM Last Week</th>
-                  <th>Budget Pengajuan</th>
+                  <th>Budget</th>
                   <th>Target Revenue</th>
                   <th>Target CAC</th>
-                  <th>Prakiraan Admin</th>
+                  <th>Total Budget</th>
+                  <th>Total Target Gross Revenue</th>
+                  <th>Total Target CAC</th>
+                  <th>Prakiraan Biaya Admin</th>
                   <th>Admin %</th>
                   <th>Budget + Admin</th>
-                  <th>Estimasi PAM</th>
-                  <th>Status</th>
+                  <th>Target CAC After Admin</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
               <tbody id="budgetRecommendationBody"></tbody>
             </table>
           </div>
+          <div class="pam-summary" id="budgetProposalPamBody"></div>
           <datalist id="weeklyAdvertiserOptions"></datalist>
           <datalist id="weeklyPlatformOptions"></datalist>
           <datalist id="weeklyProductOptions"></datalist>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <div>
+              <h2 id="nextWeekAfterCrmTitle">Pengajuan Setelah CRM Periode -</h2>
+              <span class="panel-note">fixed mengikuti pengajuan budget, ditambah target omset CRM</span>
+            </div>
+          </div>
+          <div class="form-grid">
+            <label>Target Omset CRM
+              <input id="weeklyTargetCrmInput" type="text" inputmode="numeric" placeholder="Rekomendasi dari CRM minggu lalu">
+            </label>
+          </div>
+          <div class="daily-table-wrap" style="margin-top:16px;">
+            <table class="daily-table advertiser-daily-table weekly-review-table">
+              <thead>
+                <tr>
+                  <th>Nama ADV</th>
+                  <th>Kanal</th>
+                  <th>Produk</th>
+                  <th>Budget</th>
+                  <th>Target Revenue</th>
+                  <th>Target CAC</th>
+                  <th>Total Budget</th>
+                  <th>Total Target Gross Revenue</th>
+                  <th>Total Target CAC</th>
+                  <th>Prakiraan Biaya Admin</th>
+                  <th>Admin %</th>
+                  <th>Budget + Admin</th>
+                  <th>Target CAC After Admin</th>
+                </tr>
+              </thead>
+              <tbody id="budgetAfterCrmBody"></tbody>
+            </table>
+          </div>
+          <div class="pam-summary" id="budgetAfterCrmPamBody"></div>
         </section>
       </section>
 
@@ -3425,6 +3540,8 @@
       weeklyPeriodNote: document.getElementById("weeklyPeriodNote"),
       weeklyAdvertiserBody: document.getElementById("weeklyAdvertiserBody"),
       weeklyPamBody: document.getElementById("weeklyPamBody"),
+      weeklyAfterCrmBody: document.getElementById("weeklyAfterCrmBody"),
+      weeklyAfterCrmPamBody: document.getElementById("weeklyAfterCrmPamBody"),
       weeklyProductBody: document.getElementById("weeklyProductBody"),
       nextWeekBudgetTitle: document.getElementById("nextWeekBudgetTitle"),
       weeklyHppInput: document.getElementById("weeklyHppInput"),
@@ -3435,6 +3552,11 @@
       addBudgetProposalRow: document.getElementById("addBudgetProposalRow"),
       resetBudgetProposalRows: document.getElementById("resetBudgetProposalRows"),
       budgetRecommendationBody: document.getElementById("budgetRecommendationBody"),
+      budgetProposalPamBody: document.getElementById("budgetProposalPamBody"),
+      nextWeekAfterCrmTitle: document.getElementById("nextWeekAfterCrmTitle"),
+      weeklyTargetCrmInput: document.getElementById("weeklyTargetCrmInput"),
+      budgetAfterCrmBody: document.getElementById("budgetAfterCrmBody"),
+      budgetAfterCrmPamBody: document.getElementById("budgetAfterCrmPamBody"),
       weeklyAdvertiserOptions: document.getElementById("weeklyAdvertiserOptions"),
       weeklyPlatformOptions: document.getElementById("weeklyPlatformOptions"),
       weeklyProductOptions: document.getElementById("weeklyProductOptions"),
@@ -5559,8 +5681,8 @@
       return 0;
     }
 
-    function buildBudgetRecommendations(detailRows, settings) {
-      return detailRows.map(row => {
+    function buildBudgetRecommendations(detailRows, settings, targetCrmRevenue = 0) {
+      const baseRows = detailRows.map(row => {
         const adminRate = recommendationAdminRate(row.platform, settings.shopeeAdmin, settings.shopeeTax, settings.tiktokAdmin);
         const lastPamValue = row.revenue - (row.revenue * settings.hpp / 100) - row.budget;
         const lastPamRate = percentRatio(lastPamValue, row.revenue);
@@ -5571,29 +5693,31 @@
         const baseBudget = row.budget > 0
           ? row.budget * scale.factor
           : targetRevenue * 0.1;
-        const maxBudgetRate = Math.max(0, (100 - settings.hpp - settings.minPam - adminRate) / 100);
-        const maxBudget = targetRevenue * maxBudgetRate;
-        const recommendedBudget = Math.min(baseBudget, maxBudget);
         const adminCost = targetRevenue * adminRate / 100;
-        const budgetAdmin = recommendedBudget + adminCost;
-        const targetCac = percentRatio(recommendedBudget, targetRevenue);
-        const estimatedPamValue = targetRevenue - (targetRevenue * settings.hpp / 100) - adminCost - recommendedBudget;
-        const estimatedPamRate = percentRatio(estimatedPamValue, targetRevenue);
-        const capped = recommendedBudget < baseBudget;
-        const status = targetRevenue <= 0
+        return { ...row, adminRate, lastPamRate, scale, targetRevenue, baseBudget, adminCost };
+      });
+      const totalTargetRevenue = baseRows.reduce((total, row) => total + (row.targetRevenue || 0), 0) + targetCrmRevenue;
+      const totalAdminCost = baseRows.reduce((total, row) => total + (row.adminCost || 0), 0);
+      const maxBudgetPool = Math.max(0, totalTargetRevenue * ((100 - settings.hpp - settings.minPam) / 100) - totalAdminCost);
+      const totalWeight = baseRows.reduce((total, row) => total + (row.baseBudget || row.targetRevenue || 0), 0);
+      return baseRows.map(row => {
+        const weight = row.baseBudget || row.targetRevenue || 0;
+        const recommendedBudget = totalWeight > 0 ? maxBudgetPool * (weight / totalWeight) : 0;
+        const budgetAdmin = recommendedBudget + row.adminCost;
+        const targetCac = percentRatio(recommendedBudget, row.targetRevenue);
+        const estimatedPamValue = row.targetRevenue - (row.targetRevenue * settings.hpp / 100) - row.adminCost - recommendedBudget;
+        const estimatedPamRate = percentRatio(estimatedPamValue, row.targetRevenue);
+        const status = row.targetRevenue <= 0
           ? "Belum ada data"
-          : (estimatedPamRate >= settings.minPam ? (capped ? `${scale.status} aman` : scale.status) : "Tahan dulu");
+          : `Maksimal ${row.scale.status}`;
         return {
           ...row,
-          lastPamRate,
           recommendedBudget,
-          targetRevenue,
           targetCac,
-          adminCost,
           budgetAdmin,
           estimatedPamRate,
           status,
-          safe: estimatedPamRate >= settings.minPam
+          safe: true
         };
       });
     }
@@ -5651,8 +5775,8 @@
       return marketplaceRows;
     }
 
-    function budgetProposalSeed(rows, settings) {
-      return rows.map(row => `${row.advertiser}|${row.platform}|${row.product}|${Math.round(row.budget)}|${Math.round(row.revenue)}`).join("~");
+    function budgetProposalSeed(rows, settings, targetCrmRevenue = 0) {
+      return `${rows.map(row => `${row.advertiser}|${row.platform}|${row.product}|${Math.round(row.budget)}|${Math.round(row.revenue)}`).join("~")}||crm:${Math.round(targetCrmRevenue)}`;
     }
 
     function proposalAdminDefault(platform, settings) {
@@ -5682,8 +5806,8 @@
       };
     }
 
-    function ensureBudgetProposalRows(recommendations, settings) {
-      const seed = budgetProposalSeed(recommendations, settings);
+    function ensureBudgetProposalRows(recommendations, settings, targetCrmRevenue = 0) {
+      const seed = budgetProposalSeed(recommendations, settings, targetCrmRevenue);
       if (weeklyProposalSeed === seed && weeklyProposalRows.length) return;
       weeklyProposalRows = recommendations.map((row, index) => makeProposalRow(row, index, settings));
       weeklyProposalSeed = seed;
@@ -5731,34 +5855,237 @@
 
     function renderBudgetProposalRows(settings) {
       renderProposalOptions();
-      els.budgetRecommendationBody.innerHTML = weeklyProposalRows.map(row => {
-        const calc = effectiveProposal(row, settings);
-        return `
-          <tr data-proposal-id="${escapeHtml(row.id)}">
-            <td><input class="table-input" data-proposal-field="advertiser" list="weeklyAdvertiserOptions" value="${escapeHtml(row.advertiser)}"></td>
-            <td><input class="table-input" data-proposal-field="platform" list="weeklyPlatformOptions" value="${escapeHtml(row.platform)}"></td>
-            <td><input class="table-input" data-proposal-field="product" list="weeklyProductOptions" value="${escapeHtml(row.product)}"></td>
-            <td>
-              <select class="table-input" data-proposal-field="mode">
-                <option value="recommendation"${row.mode !== "manual" ? " selected" : ""}>Pakai rekomendasi</option>
-                <option value="manual"${row.mode === "manual" ? " selected" : ""}>Manual</option>
-              </select>
-            </td>
-            <td>${currency(row.lastBudget)}</td>
-            <td>${currency(row.lastRevenue)}</td>
-            <td class="${row.lastPamRate >= settings.minPam ? "positive-cell" : "negative-cell"}">${row.lastRevenue ? percent(row.lastPamRate) : "-"}</td>
-            <td><input class="table-input" data-proposal-field="manualBudget" type="text" inputmode="numeric" placeholder="${currency(row.recommendationBudget)}" value="${row.mode === "manual" ? escapeHtml(row.manualBudget) : escapeHtml(String(Math.round(row.recommendationBudget || 0)))}"${row.mode !== "manual" ? " readonly" : ""}></td>
-            <td>${currency(calc.targetRevenue)}</td>
-            <td><input class="table-input" data-proposal-field="manualTargetCac" type="number" min="0" step="0.1" placeholder="${percent(row.recommendationTargetCac)}" value="${row.mode === "manual" ? escapeHtml(row.manualTargetCac) : (row.recommendationTargetCac || 0).toFixed(1)}"${row.mode !== "manual" ? " readonly" : ""}></td>
-            <td>${currency(calc.adminCost)}</td>
-            <td><input class="table-input" data-proposal-field="adminRate" type="number" min="0" step="0.1" value="${Number(row.adminRate || 0)}"></td>
-            <td>${currency(calc.budgetAdmin)}</td>
-            <td class="${calc.safe ? "positive-cell" : "negative-cell"}">${calc.targetRevenue ? percent(calc.estimatedPamRate) : "-"}</td>
-            <td><span class="status-chip ${calc.safe ? "status-success" : "status-return"}">${escapeHtml(calc.status)}</span></td>
-            <td><button class="row-action danger" data-delete-proposal type="button">Hapus</button></td>
-          </tr>
-        `;
-      }).join("") || `<tr><td colspan="16">Belum ada draft pengajuan.</td></tr>`;
+      const rowDetails = weeklyProposalRows.map(row => ({ row, calc: effectiveProposal(row, settings) }));
+      const totals = proposalTotals(rowDetails);
+      const totalCac = percentRatio(totals.budget, totals.targetRevenue);
+      const totalCacAfterAdmin = percentRatio(totals.budgetAdmin, totals.targetRevenue);
+      const groups = new Map();
+      rowDetails.forEach(item => {
+        const key = `${normalizeCompare(item.row.advertiser)}|${normalizeCompare(item.row.platform)}`;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(item);
+      });
+      const bodyRows = [...groups.values()].map(items => {
+        const groupTotals = items.reduce((acc, item) => {
+          acc.budget += item.calc.budget || 0;
+          acc.targetRevenue += item.calc.targetRevenue || 0;
+          acc.adminCost += item.calc.adminCost || 0;
+          acc.budgetAdmin += item.calc.budgetAdmin || 0;
+          return acc;
+        }, { budget: 0, targetRevenue: 0, adminCost: 0, budgetAdmin: 0 });
+        const groupCac = percentRatio(groupTotals.budget, groupTotals.targetRevenue);
+        const groupCacAfterAdmin = percentRatio(groupTotals.budgetAdmin, groupTotals.targetRevenue);
+        const adminLabels = [...new Set(items.map(item => `${Number(item.row.adminRate || 0)}%`))];
+        return items.map((item, index) => {
+          const row = item.row;
+          const calc = item.calc;
+          return `
+            <tr data-proposal-id="${escapeHtml(row.id)}">
+              <td><input class="table-input" data-proposal-field="advertiser" list="weeklyAdvertiserOptions" value="${escapeHtml(row.advertiser)}"></td>
+              <td><input class="table-input" data-proposal-field="platform" list="weeklyPlatformOptions" value="${escapeHtml(row.platform)}"></td>
+              <td><input class="table-input" data-proposal-field="product" list="weeklyProductOptions" value="${escapeHtml(row.product)}"></td>
+              <td>
+                <select class="table-input" data-proposal-field="mode">
+                  <option value="recommendation"${row.mode !== "manual" ? " selected" : ""}>Pakai rekomendasi</option>
+                  <option value="manual"${row.mode === "manual" ? " selected" : ""}>Manual</option>
+                </select>
+              </td>
+              <td><input class="table-input" data-proposal-field="manualBudget" type="text" inputmode="numeric" placeholder="${currency(row.recommendationBudget)}" value="${row.mode === "manual" ? escapeHtml(row.manualBudget) : escapeHtml(String(Math.round(row.recommendationBudget || 0)))}"${row.mode !== "manual" ? " readonly" : ""}></td>
+              <td>${currency(calc.targetRevenue)}</td>
+              <td><input class="table-input" data-proposal-field="manualTargetCac" type="number" min="0" step="0.1" placeholder="${percent(row.recommendationTargetCac)}" value="${row.mode === "manual" ? escapeHtml(row.manualTargetCac) : (row.recommendationTargetCac || 0).toFixed(1)}"${row.mode !== "manual" ? " readonly" : ""}></td>
+              ${index === 0 ? `
+                <td rowspan="${items.length}">${currency(groupTotals.budget)}</td>
+                <td rowspan="${items.length}">${currency(groupTotals.targetRevenue)}</td>
+                <td rowspan="${items.length}">${percent(groupCac)}</td>
+                <td rowspan="${items.length}">${currency(groupTotals.adminCost)}</td>
+                <td rowspan="${items.length}">${adminLabels.length === 1 ? adminLabels[0] : "-"}</td>
+                <td rowspan="${items.length}">${currency(groupTotals.budgetAdmin)}</td>
+                <td rowspan="${items.length}">${percent(groupCacAfterAdmin)}</td>
+              ` : ""}
+              <td><button class="row-action danger" data-delete-proposal type="button">Hapus</button></td>
+            </tr>
+          `;
+        }).join("");
+      }).join("");
+      els.budgetRecommendationBody.innerHTML = bodyRows ? `
+        ${bodyRows}
+        <tr class="total-row">
+          <td>Total Pengajuan</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>${currency(totals.budget)}</td>
+          <td>${currency(totals.targetRevenue)}</td>
+          <td>${percent(totalCac)}</td>
+          <td>${currency(totals.adminCost)}</td>
+          <td>-</td>
+          <td>${currency(totals.budgetAdmin)}</td>
+          <td>${percent(totalCacAfterAdmin)}</td>
+          <td>-</td>
+        </tr>
+      ` : `<tr><td colspan="15">Belum ada draft pengajuan.</td></tr>`;
+      els.budgetProposalPamBody.innerHTML = pamSummaryHtml({
+        hppRate: settings.hpp,
+        revenue: totals.targetRevenue,
+        budget: totals.budget,
+        budgetAdmin: totals.budgetAdmin,
+        minPam: settings.minPam
+      });
+    }
+
+    function proposalTotals(rowDetails) {
+      return rowDetails.reduce((acc, item) => {
+        acc.budget += item.calc.budget || 0;
+        acc.targetRevenue += item.calc.targetRevenue || 0;
+        acc.adminCost += item.calc.adminCost || 0;
+        acc.budgetAdmin += item.calc.budgetAdmin || 0;
+        return acc;
+      }, { budget: 0, targetRevenue: 0, adminCost: 0, budgetAdmin: 0 });
+    }
+
+    function crmRevenueInRange(start, end) {
+      return grossAdvertiserRows(crmSourceRows()).filter(row =>
+        row.date >= startOfDay(start) && row.date <= startOfDay(end)
+      ).reduce((total, row) => total + (row.revenue || 0), 0);
+    }
+
+    function pamSummaryHtml({ hppRate, revenue, budget, budgetAdmin = budget, minPam }) {
+      const hppValue = revenue * hppRate / 100;
+      const pamBeforeValue = revenue - hppValue - budget;
+      const pamBeforeRate = percentRatio(pamBeforeValue, revenue);
+      const pamAfterValue = revenue - hppValue - budgetAdmin;
+      const pamAfterRate = percentRatio(pamAfterValue, revenue);
+      const hasAdmin = budgetAdmin !== budget;
+      return `
+        <div class="pam-summary-row"><span>HPP</span><strong>${percent(hppRate)}</strong><span>${currency(hppValue)}</span></div>
+        <div class="pam-summary-row"><span>PAM</span><strong class="${pamBeforeRate >= minPam ? "good" : "bad"}">${percent(pamBeforeRate)}</strong><span>${currency(pamBeforeValue)}</span></div>
+        ${hasAdmin ? `<div class="pam-summary-row"><span>PAM After Admin</span><strong class="${pamAfterRate >= minPam ? "good" : "bad"}">${percent(pamAfterRate)}</strong><span>${currency(pamAfterValue)}</span></div>` : ""}
+        <div class="pam-summary-row"><span>Minimal PAM</span><strong>${percent(minPam)}</strong><span>${(hasAdmin ? pamAfterRate : pamBeforeRate) >= minPam ? "Aman" : "Belum aman"}</span></div>
+      `;
+    }
+
+    function renderBudgetAfterCrm(settings, nextStart, nextEnd, recommendedCrmRevenue) {
+      const rowDetails = weeklyProposalRows.map(row => ({ row, calc: effectiveProposal(row, settings) }));
+      const totals = proposalTotals(rowDetails);
+      const targetCrm = parseMoney(els.weeklyTargetCrmInput.value) || recommendedCrmRevenue;
+      const totalRevenueAfterCrm = totals.targetRevenue + targetCrm;
+      const totalCacAfterCrm = percentRatio(totals.budget, totalRevenueAfterCrm);
+      const totalCacAfterAdminCrm = percentRatio(totals.budgetAdmin, totalRevenueAfterCrm);
+
+      els.nextWeekAfterCrmTitle.textContent = `Pengajuan Setelah CRM Periode ${compactPeriodLabel(nextStart, nextEnd)}`;
+      if (!els.weeklyTargetCrmInput.value) {
+        els.weeklyTargetCrmInput.placeholder = currency(recommendedCrmRevenue);
+      }
+
+      const bodyRows = rowDetails.map(item => `
+        <tr>
+          <td>${escapeHtml(item.row.advertiser || "-")}</td>
+          <td>${escapeHtml(item.row.platform || "-")}</td>
+          <td>${escapeHtml(item.row.product || "-")}</td>
+          <td>${currency(item.calc.budget)}</td>
+          <td>${currency(item.calc.targetRevenue)}</td>
+          <td>${item.calc.targetRevenue ? percent(item.calc.targetCac) : "-"}</td>
+          <td>${currency(item.calc.budget)}</td>
+          <td>${currency(item.calc.targetRevenue)}</td>
+          <td>${item.calc.targetRevenue ? percent(item.calc.targetCac) : "-"}</td>
+          <td>${currency(item.calc.adminCost)}</td>
+          <td>${Number(item.row.adminRate || 0)}%</td>
+          <td>${currency(item.calc.budgetAdmin)}</td>
+          <td>${item.calc.targetRevenue ? percent(percentRatio(item.calc.budgetAdmin, item.calc.targetRevenue)) : "-"}</td>
+        </tr>
+      `).join("");
+      els.budgetAfterCrmBody.innerHTML = `
+        ${bodyRows || `<tr><td colspan="13">Belum ada data pengajuan.</td></tr>`}
+        <tr>
+          <td>Target Omset CRM</td>
+          <td>CRM</td>
+          <td>-</td>
+          <td>${currency(0)}</td>
+          <td>${currency(targetCrm)}</td>
+          <td>-</td>
+          <td>${currency(0)}</td>
+          <td>${currency(targetCrm)}</td>
+          <td>-</td>
+          <td>${currency(0)}</td>
+          <td>-</td>
+          <td>${currency(0)}</td>
+          <td>-</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total Setelah CRM</td>
+          <td>-</td>
+          <td>-</td>
+          <td>${currency(totals.budget)}</td>
+          <td>${currency(totalRevenueAfterCrm)}</td>
+          <td>${percent(totalCacAfterCrm)}</td>
+          <td>${currency(totals.budget)}</td>
+          <td>${currency(totalRevenueAfterCrm)}</td>
+          <td>${percent(totalCacAfterCrm)}</td>
+          <td>${currency(totals.adminCost)}</td>
+          <td>-</td>
+          <td>${currency(totals.budgetAdmin)}</td>
+          <td>${percent(totalCacAfterAdminCrm)}</td>
+        </tr>
+      `;
+      els.budgetAfterCrmPamBody.innerHTML = pamSummaryHtml({
+        hppRate: settings.hpp,
+        revenue: totalRevenueAfterCrm,
+        budget: totals.budget,
+        budgetAdmin: totals.budgetAdmin,
+        minPam: settings.minPam
+      });
+    }
+
+    function renderWeeklyAfterCrm(reviewRows, totalBudget, totalRevenue, crmRevenue, settings) {
+      const totalRevenueAfterCrm = totalRevenue + crmRevenue;
+      const totalCacAfterCrm = percentRatio(totalBudget, totalRevenueAfterCrm);
+      const body = reviewRows.map(row => `
+        <tr>
+          <td>${escapeHtml(row.advertiser)}</td>
+          <td>${escapeHtml(row.platform)}</td>
+          <td>${escapeHtml(row.product)}</td>
+          <td>${currency(row.budget)}</td>
+          <td>${currency(row.revenue)}</td>
+          <td>${row.revenue ? percent(row.cac) : "-"}</td>
+          <td>${currency(row.budget)}</td>
+          <td>${currency(row.revenue)}</td>
+          <td>${row.revenue ? percent(row.cac) : "-"}</td>
+        </tr>
+      `).join("");
+      els.weeklyAfterCrmBody.innerHTML = `
+        ${body || `<tr><td colspan="9">Belum ada data weekly pada periode ini.</td></tr>`}
+        <tr>
+          <td>Omset CRM</td>
+          <td>CRM</td>
+          <td>-</td>
+          <td>${currency(0)}</td>
+          <td>${currency(crmRevenue)}</td>
+          <td>-</td>
+          <td>${currency(0)}</td>
+          <td>${currency(crmRevenue)}</td>
+          <td>-</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total After CRM</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>${currency(totalBudget)}</td>
+          <td>${currency(totalRevenueAfterCrm)}</td>
+          <td>${percent(totalCacAfterCrm)}</td>
+        </tr>
+      `;
+      els.weeklyAfterCrmPamBody.innerHTML = pamSummaryHtml({
+        hppRate: settings.hpp,
+        revenue: totalRevenueAfterCrm,
+        budget: totalBudget,
+        minPam: settings.minPam
+      });
     }
 
     function currentWeeklySettings() {
@@ -5810,13 +6137,17 @@
       const [nextStart, nextEnd] = nextWeekRangeFrom(start);
       const label = compactPeriodLabel(start, end);
       const { detailRows, advertiserTotals } = weeklyRowsInRange(start, end);
-      const proposalSourceRows = detailRows.concat(weeklyMarketplaceRowsInRange(start, end));
+      const marketplaceReviewRows = weeklyMarketplaceRowsInRange(start, end);
+      const reviewRows = detailRows.concat(marketplaceReviewRows);
+      const proposalSourceRows = reviewRows;
       const productRows = weeklyProductRowsInRange(start, end);
       const settings = currentWeeklySettings();
-      const budgetRecommendations = buildBudgetRecommendations(proposalSourceRows, settings);
-      ensureBudgetProposalRows(budgetRecommendations, settings);
-      const totalBudget = detailRows.reduce((total, row) => total + (row.budget || 0), 0);
-      const totalRevenue = [...advertiserTotals.values()].reduce((total, row) => total + (row.revenue || 0), 0);
+      const weeklyCrmRevenue = crmRevenueInRange(start, end);
+      const targetCrmRevenue = parseMoney(els.weeklyTargetCrmInput.value) || weeklyCrmRevenue;
+      const budgetRecommendations = buildBudgetRecommendations(proposalSourceRows, settings, targetCrmRevenue);
+      ensureBudgetProposalRows(budgetRecommendations, settings, targetCrmRevenue);
+      const totalBudget = reviewRows.reduce((total, row) => total + (row.budget || 0), 0);
+      const totalRevenue = reviewRows.reduce((total, row) => total + (row.revenue || 0), 0);
       const totalCac = percentRatio(totalBudget, totalRevenue);
       const hppRate = settings.hpp;
       const pamValue = totalRevenue - (totalRevenue * hppRate / 100) - totalBudget;
@@ -5825,7 +6156,7 @@
       els.weeklyAdvertiserTitle.textContent = `Performa Advertiser Periode ${label}`;
       els.nextWeekBudgetTitle.textContent = `Pengajuan Budget Marketing Advertiser Periode ${compactPeriodLabel(nextStart, nextEnd)}`;
       els.weeklyPeriodNote.textContent = `${start.toLocaleDateString("id-ID")} - ${end.toLocaleDateString("id-ID")}`;
-      els.weeklyAdvertiserStatus.textContent = `${detailRows.length.toLocaleString("id-ID")} baris review`;
+      els.weeklyAdvertiserStatus.textContent = `${reviewRows.length.toLocaleString("id-ID")} baris review`;
       els.weeklyTotalBudget.textContent = currency(totalBudget);
       els.weeklyTotalRevenue.textContent = currency(totalRevenue);
       els.weeklyTotalCac.textContent = percent(totalCac);
@@ -5833,15 +6164,20 @@
       els.weeklyPamKpi.className = pamValue >= 0 ? "delta-up" : "delta-down";
 
       const rowsByAdvertiser = new Map();
-      detailRows.forEach(row => {
+      const allAdvertiserTotals = new Map();
+      reviewRows.forEach(row => {
         const key = normalizeCompare(row.advertiser);
         if (!rowsByAdvertiser.has(key)) rowsByAdvertiser.set(key, []);
         rowsByAdvertiser.get(key).push(row);
+        const current = allAdvertiserTotals.get(key) || { budget: 0, revenue: 0 };
+        current.budget += row.budget || 0;
+        current.revenue += row.revenue || 0;
+        allAdvertiserTotals.set(key, current);
       });
 
       const body = [];
       rowsByAdvertiser.forEach((rows, key) => {
-        const totals = advertiserTotals.get(key) || { budget: 0, revenue: 0 };
+        const totals = allAdvertiserTotals.get(key) || advertiserTotals.get(key) || { budget: 0, revenue: 0 };
         rows.forEach((row, index) => {
           body.push(`
             <tr>
@@ -5859,16 +6195,22 @@
       els.weeklyAdvertiserBody.innerHTML = `
         ${body.join("") || `<tr><td colspan="9">Belum ada data weekly pada periode ini.</td></tr>`}
         <tr class="total-row">
-          <td colspan="6">Total</td>
+          <td>Total</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
           <td>${currency(totalBudget)}</td>
           <td>${currency(totalRevenue)}</td>
           <td>${percent(totalCac)}</td>
         </tr>
       `;
       els.weeklyPamBody.innerHTML = `
-        <tr><td colspan="2">HPP</td><td>${percent(hppRate)}</td></tr>
-        <tr class="total-row"><td colspan="2">PAM</td><td>${percent(pamRate)}</td></tr>
+        <div class="pam-summary-row"><span>HPP</span><strong>${percent(hppRate)}</strong><span>${currency(totalRevenue * hppRate / 100)}</span></div>
+        <div class="pam-summary-row"><span>PAM</span><strong class="${pamRate >= settings.minPam ? "good" : "bad"}">${percent(pamRate)}</strong><span>${currency(pamValue)}</span></div>
       `;
+      renderWeeklyAfterCrm(reviewRows, totalBudget, totalRevenue, weeklyCrmRevenue, settings);
       els.weeklyProductBody.innerHTML = productRows.map(row => `
         <tr>
           <td>${escapeHtml(row.product)}</td>
@@ -5881,6 +6223,7 @@
         </tr>
       `).join("") || `<tr><td colspan="7">Belum ada data produk pada periode ini.</td></tr>`;
       renderBudgetProposalRows(settings);
+      renderBudgetAfterCrm(settings, nextStart, nextEnd, weeklyCrmRevenue);
     }
 
     function renderAdminShopeeTable(start, end) {
@@ -7889,6 +8232,10 @@
         els.weeklyShopeeTaxInput,
         els.weeklyTiktokAdminInput
       ].forEach(input => input.addEventListener("input", renderWeeklyBudgetingPage));
+      els.weeklyTargetCrmInput.addEventListener("input", () => {
+        normalizePlainNumberInput(els.weeklyTargetCrmInput);
+        renderWeeklyBudgetingPage();
+      });
       els.addBudgetProposalRow.addEventListener("click", addManualBudgetProposalRow);
       els.resetBudgetProposalRows.addEventListener("click", () => {
         weeklyProposalRows = [];

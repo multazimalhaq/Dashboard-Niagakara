@@ -3620,6 +3620,8 @@
     let weeklyProposalSeed = "";
     let activePage = "dashboard";
     let resizeRenderTimer = 0;
+    let supportDataLoaded = false;
+    let supportDataLoading = false;
     let advertiserBudgetInputs = [];
     let csReportInputs = [];
     let shopeeBudgetInputs = [];
@@ -4721,6 +4723,21 @@
         item.leadDashboard += row.leadDashboard || 0;
         byDate.set(key, item);
       });
+      const selectedAdvertiser = els.advertiserSelect.value;
+      const selectedProduct = els.advProductSelect.value;
+      combinedCsReportInputs().forEach(row => {
+        const date = parseDateValue(row.date);
+        if (!date || date < startOfDay(start) || date > startOfDay(end)) return;
+        if (selectedAdvertiser !== "all" && !sameNormalizedValue(row.advertiser, selectedAdvertiser)) return;
+        if (selectedProduct !== "all" && !sameProductValue(row.product, selectedProduct)) return;
+        const key = dateKey(date);
+        const item = byDate.get(key) || {
+          date, revenue: 0, budget: 0, impressions: 0, leadDashboard: 0,
+          leadCs: 0, closing: 0, quantity: 0
+        };
+        item.leadCs += row.leadCs || 0;
+        byDate.set(key, item);
+      });
       return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
         date, revenue: 0, budget: 0, impressions: 0, leadDashboard: 0,
         leadCs: 0, closing: 0, quantity: 0
@@ -4793,7 +4810,7 @@
         return date &&
           date >= startOfDay(start) &&
           date <= startOfDay(end) &&
-          (selectedCs === "all" || item.cs === selectedCs);
+          (selectedCs === "all" || sameNormalizedValue(item.cs, selectedCs));
       });
     }
 
@@ -6284,12 +6301,12 @@
       const [start, end] = previousWeekRange();
       const [nextStart, nextEnd] = nextWeekRangeFrom(start);
       const label = compactPeriodLabel(start, end);
+      const settings = currentWeeklySettings();
       const { detailRows, advertiserTotals } = weeklyRowsInRange(start, end);
       const marketplaceReviewRows = weeklyMarketplaceRowsInRange(start, end);
       const reviewRows = withWeeklyAdminRows(detailRows.concat(marketplaceReviewRows), start, end, settings);
       const proposalSourceRows = reviewRows;
       const productRows = weeklyProductRowsInRange(start, end);
-      const settings = currentWeeklySettings();
       const weeklyCrmRevenue = crmRevenueInRange(start, end);
       const targetCrmRevenue = parseMoney(els.weeklyTargetCrmInput.value) || weeklyCrmRevenue;
       const budgetRecommendations = buildBudgetRecommendations(proposalSourceRows, settings, targetCrmRevenue);
@@ -8182,11 +8199,13 @@
           }
           if (page === "advertiser") {
             els.advertiserPage.classList.remove("hidden");
+            loadSupportDataInBackground();
             renderAdvertiserReport();
             return;
           }
           if (page === "cs") {
             els.csPage.classList.remove("hidden");
+            loadSupportDataInBackground();
             renderCsReport();
             return;
           }
@@ -8197,16 +8216,19 @@
           }
           if (page === "shopee") {
             els.shopeePage.classList.remove("hidden");
+            loadSupportDataInBackground();
             renderShopeeReport();
             return;
           }
           if (page === "tiktok") {
             els.tiktokPage.classList.remove("hidden");
+            loadSupportDataInBackground();
             renderTiktokReport();
             return;
           }
           if (page === "weekly-budgeting") {
             els.weeklyBudgetingPage.classList.remove("hidden");
+            loadSupportDataInBackground();
             renderWeeklyBudgetingPage();
             return;
           }
@@ -8224,6 +8246,7 @@
           }
           if (page === "admin-marketplace") {
             els.adminMarketplacePage.classList.remove("hidden");
+            loadSupportDataInBackground();
             renderAdminMarketplacePage();
             return;
           }
@@ -8638,11 +8661,28 @@
       }
     }
 
+    async function loadSupportDataInBackground() {
+      if (supportDataLoaded || supportDataLoading) return;
+      supportDataLoading = true;
+      try {
+        const results = await Promise.allSettled(supportingSheetPromises());
+        const notes = applySupportingRows(results);
+        supportDataLoaded = true;
+        els.sourceStatus.textContent += ` | Data input tersinkron${notes.length ? ` (${notes.join(", ")})` : ""}`;
+        renderCurrentPage();
+      } catch (error) {
+        console.warn(error);
+        els.sourceStatus.textContent += ` | Data input belum berhasil tersinkron: ${error.message}`;
+      } finally {
+        supportDataLoading = false;
+      }
+    }
+
     function scheduleFullDataLoad() {
       if ("requestIdleCallback" in window) {
-        window.requestIdleCallback(loadFullDataInBackground, { timeout: 4000 });
+        window.requestIdleCallback(loadSupportDataInBackground, { timeout: 4000 });
       } else {
-        window.setTimeout(loadFullDataInBackground, 1800);
+        window.setTimeout(loadSupportDataInBackground, 1800);
       }
     }
 

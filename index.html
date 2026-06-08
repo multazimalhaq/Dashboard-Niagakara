@@ -3347,6 +3347,7 @@
     };
 
     const WEBOT_QUERY = `select ${Object.values(WEBOT_COLUMNS).join(",")}`;
+    const MARKETPLACE_QUERY = "select A,C,F,G,H,I,K,O,U,Y,AD,AE";
 
     const EXCLUDED_WEBOT_STATUS = new Set(["cancelled", "canceled", "draft", "waiting for payment"]);
     const els = {
@@ -4050,6 +4051,14 @@
         };
         document.head.appendChild(script);
       });
+    }
+
+    function rangeQuery(baseQuery, dateColumn, start, end) {
+      return `${baseQuery} where ${dateColumn} >= date '${dateKey(start)}' and ${dateColumn} <= date '${dateKey(end)}'`;
+    }
+
+    function settledRows(result) {
+      return result.status === "fulfilled" ? result.value : [];
     }
 
     function parseSelectedColumns(queryText) {
@@ -8384,6 +8393,113 @@
       return true;
     }
 
+    function populateAllFilters() {
+      populateAdvertiserFilter();
+      populateCsFilter();
+      populateCrmFilter();
+      populateShopeeFilter();
+      populateTiktokFilter();
+      populateAdminMarketplaceFilters();
+    }
+
+    function renderAllReports() {
+      render();
+      renderAdvertiserReport();
+      renderCsReport();
+      renderCrmReport();
+      renderShopeeReport();
+      renderTiktokReport();
+      renderWeeklyBudgetingPage();
+      renderAdminMarketplacePage();
+    }
+
+    function applyLatestFallbacks() {
+      if (useLatestDataMonthIfCurrentIsEmpty()) {
+        els.sourceStatus.textContent += ", menampilkan bulan data terakhir";
+      }
+      if (useLatestAdvertiserMonthIfCurrentIsEmpty()) {
+        els.advertiserStatus.textContent = "Menampilkan bulan data Soscom terakhir";
+      }
+      if (useLatestCsMonthIfCurrentIsEmpty()) {
+        els.csStatus.textContent = "Menampilkan bulan data CS Soscom terakhir";
+      }
+      if (useLatestCrmMonthIfCurrentIsEmpty()) {
+        els.crmStatus.textContent = "Menampilkan bulan data CRM terakhir";
+      }
+      if (useLatestShopeeMonthIfCurrentIsEmpty()) {
+        els.shopeeStatus.textContent = "Menampilkan bulan data Shopee terakhir";
+      }
+      if (useLatestTiktokMonthIfCurrentIsEmpty()) {
+        els.tiktokStatus.textContent = "Menampilkan bulan data Tiktokshop terakhir";
+      }
+    }
+
+    function applySupportingRows(results) {
+      const [advertiserResultSheet, advertiserBudgetSheet, shopeeResultMpSheet, tiktokResultSheet, csResultSheet, csReportSheet, adminShopeeSheet, adminTiktokSheet] = results;
+      externalBudgetInputs = normalizeBudgetingRows(settledRows(advertiserResultSheet), "Result")
+        .concat(normalizeBudgetingRows(settledRows(advertiserBudgetSheet), "Budget Iklan"));
+      externalShopeeBudgetInputs = normalizeShopeeBudgetRows(settledRows(shopeeResultMpSheet), "Result MP");
+      externalTiktokBudgetInputs = normalizeTiktokBudgetRows(settledRows(tiktokResultSheet), "Result Tiktokshop");
+      externalCsReportInputs = normalizeCsReportRows(settledRows(csResultSheet), "Result CS")
+        .concat(normalizeCsReportRows(settledRows(csReportSheet), "Laporan CS"));
+      adminShopeeSummaryRows = normalizeAdminShopeeRows(settledRows(adminShopeeSheet));
+      adminTiktokSummaryRows = normalizeAdminTiktokRows(settledRows(adminTiktokSheet));
+      return [
+        [advertiserResultSheet, "Result budgeting belum terbaca"],
+        [advertiserBudgetSheet, "Budget Iklan belum terbaca"],
+        [shopeeResultMpSheet, "Result MP Shopee belum terbaca"],
+        [tiktokResultSheet, "Result Tiktokshop belum terbaca"],
+        [csResultSheet, "Result CS belum terbaca"],
+        [csReportSheet, "Laporan CS belum terbaca"],
+        [adminShopeeSheet, "Admin Shopee belum terbaca"],
+        [adminTiktokSheet, "Admin Tiktokshop belum terbaca"]
+      ].filter(([result]) => result.status === "rejected").map(([, note]) => note);
+    }
+
+    function applyCoreRows(webotRows, marketplaceRows) {
+      allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
+      populateAllFilters();
+    }
+
+    function supportingSheetPromises() {
+      return [
+        loadGoogleSheet(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
+        loadGoogleSheet(SHEETS.advertiserBudget.id, SHEETS.advertiserBudget.sheet, "select *"),
+        loadGoogleSheet(SHEETS.shopeeResultMp.id, SHEETS.shopeeResultMp.sheet, "select *"),
+        loadGoogleSheet(SHEETS.tiktokResult.id, SHEETS.tiktokResult.sheet, "select *"),
+        loadGoogleSheet(SHEETS.csResult.id, SHEETS.csResult.sheet, "select *"),
+        loadGoogleSheet(SHEETS.csReport.id, SHEETS.csReport.sheet, "select *"),
+        loadGoogleSheet(SHEETS.adminShopeeSummary.id, SHEETS.adminShopeeSummary.sheet, "select *"),
+        loadGoogleSheet(SHEETS.adminTiktokSummary.id, SHEETS.adminTiktokSummary.sheet, "select *")
+      ];
+    }
+
+    async function loadFullDataInBackground() {
+      try {
+        els.sourceStatus.textContent += " | Sinkronisasi data lengkap berjalan...";
+        const [webotResult, marketplaceResult, ...supportResults] = await Promise.allSettled([
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, WEBOT_QUERY),
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, MARKETPLACE_QUERY),
+          ...supportingSheetPromises()
+        ]);
+        const sourceNotes = [];
+        if (webotResult.status === "rejected") sourceNotes.push("Webot lengkap belum terbaca");
+        if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace lengkap belum terbaca");
+        sourceNotes.push(...applySupportingRows(supportResults));
+        const webotRows = settledRows(webotResult);
+        const marketplaceRows = settledRows(marketplaceResult);
+        if (webotRows.length || marketplaceRows.length) {
+          applyCoreRows(webotRows, marketplaceRows);
+        }
+        els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris data lengkap tersinkron${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
+        applyLatestFallbacks();
+        renderAllReports();
+      } catch (error) {
+        console.warn(error);
+        els.sourceStatus.textContent += ` | Sinkronisasi data lengkap belum berhasil: ${error.message}`;
+      }
+    }
+
     async function init() {
       loadBudgetingInputs();
       loadCsReportInputs();
@@ -8400,88 +8516,29 @@
       updateShopeeInputs(...rangePreset("thisMonth"));
       updateTiktokInputs(...rangePreset("thisMonth"));
       updateAdminMarketplaceInputs(...rangePreset("thisMonth"));
+      renderAllReports();
       try {
-        els.sourceStatus.textContent = "Memuat data real Google Sheets...";
-        const [webotResult, marketplaceResult, advertiserResultSheet, advertiserBudgetSheet, shopeeResultMpSheet, tiktokResultSheet, csResultSheet, csReportSheet, adminShopeeSheet, adminTiktokSheet] = await Promise.allSettled([
-          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, WEBOT_QUERY),
-          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, "select A,C,F,G,H,I,K,O,U,Y,AD,AE"),
-          loadGoogleSheet(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
-          loadGoogleSheet(SHEETS.advertiserBudget.id, SHEETS.advertiserBudget.sheet, "select *"),
-          loadGoogleSheet(SHEETS.shopeeResultMp.id, SHEETS.shopeeResultMp.sheet, "select *"),
-          loadGoogleSheet(SHEETS.tiktokResult.id, SHEETS.tiktokResult.sheet, "select *"),
-          loadGoogleSheet(SHEETS.csResult.id, SHEETS.csResult.sheet, "select *"),
-          loadGoogleSheet(SHEETS.csReport.id, SHEETS.csReport.sheet, "select *"),
-          loadGoogleSheet(SHEETS.adminShopeeSummary.id, SHEETS.adminShopeeSummary.sheet, "select *"),
-          loadGoogleSheet(SHEETS.adminTiktokSummary.id, SHEETS.adminTiktokSummary.sheet, "select *")
+        const [monthStart, monthEnd] = rangePreset("thisMonth");
+        els.sourceStatus.textContent = "Memuat data bulan berjalan...";
+        const [webotResult, marketplaceResult] = await Promise.allSettled([
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, rangeQuery(WEBOT_QUERY, WEBOT_COLUMNS.date, monthStart, monthEnd)),
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, rangeQuery(MARKETPLACE_QUERY, "A", monthStart, monthEnd))
         ]);
-        const webotRows = webotResult.status === "fulfilled" ? webotResult.value : [];
-        const marketplaceRows = marketplaceResult.status === "fulfilled" ? marketplaceResult.value : [];
-        const advertiserResultRows = advertiserResultSheet.status === "fulfilled" ? advertiserResultSheet.value : [];
-        const advertiserBudgetRows = advertiserBudgetSheet.status === "fulfilled" ? advertiserBudgetSheet.value : [];
-        const shopeeResultMpRows = shopeeResultMpSheet.status === "fulfilled" ? shopeeResultMpSheet.value : [];
-        const tiktokResultRows = tiktokResultSheet.status === "fulfilled" ? tiktokResultSheet.value : [];
-        const csResultRows = csResultSheet.status === "fulfilled" ? csResultSheet.value : [];
-        const csReportRows = csReportSheet.status === "fulfilled" ? csReportSheet.value : [];
-        const adminShopeeRows = adminShopeeSheet.status === "fulfilled" ? adminShopeeSheet.value : [];
-        const adminTiktokRows = adminTiktokSheet.status === "fulfilled" ? adminTiktokSheet.value : [];
-        externalBudgetInputs = normalizeBudgetingRows(advertiserResultRows, "Result")
-          .concat(normalizeBudgetingRows(advertiserBudgetRows, "Budget Iklan"));
-        externalShopeeBudgetInputs = normalizeShopeeBudgetRows(shopeeResultMpRows, "Result MP");
-        externalTiktokBudgetInputs = normalizeTiktokBudgetRows(tiktokResultRows, "Result Tiktokshop");
-        externalCsReportInputs = normalizeCsReportRows(csResultRows, "Result CS")
-          .concat(normalizeCsReportRows(csReportRows, "Laporan CS"));
-        adminShopeeSummaryRows = normalizeAdminShopeeRows(adminShopeeRows);
-        adminTiktokSummaryRows = normalizeAdminTiktokRows(adminTiktokRows);
-        allRows = normalizeWebot(webotRows).concat(normalizeMarketplace(marketplaceRows));
-        if (!allRows.length) throw new Error("Kolom data belum terbaca");
-        populateAdvertiserFilter();
-        populateCsFilter();
-        populateCrmFilter();
-        populateShopeeFilter();
-        populateTiktokFilter();
-        populateAdminMarketplaceFilters();
+        const webotRows = settledRows(webotResult);
+        const marketplaceRows = settledRows(marketplaceResult);
+        applyCoreRows(webotRows, marketplaceRows);
+        if (!allRows.length) throw new Error("Data bulan berjalan belum terbaca");
         const sourceNotes = [];
-        if (webotResult.status === "rejected") sourceNotes.push("Webot belum terbaca");
-        if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace belum terbaca");
-        if (advertiserResultSheet.status === "rejected") sourceNotes.push("Result budgeting belum terbaca");
-        if (advertiserBudgetSheet.status === "rejected") sourceNotes.push("Budget Iklan belum terbaca");
-        if (shopeeResultMpSheet.status === "rejected") sourceNotes.push("Result MP Shopee belum terbaca");
-        if (tiktokResultSheet.status === "rejected") sourceNotes.push("Result Tiktokshop belum terbaca");
-        if (csResultSheet.status === "rejected") sourceNotes.push("Result CS belum terbaca");
-        if (csReportSheet.status === "rejected") sourceNotes.push("Laporan CS belum terbaca");
-        if (adminShopeeSheet.status === "rejected") sourceNotes.push("Admin Shopee belum terbaca");
-        if (adminTiktokSheet.status === "rejected") sourceNotes.push("Admin Tiktokshop belum terbaca");
-        els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
-        if (useLatestDataMonthIfCurrentIsEmpty()) {
-          els.sourceStatus.textContent += ", menampilkan bulan data terakhir";
-        }
-        if (useLatestAdvertiserMonthIfCurrentIsEmpty()) {
-          els.advertiserStatus.textContent = "Menampilkan bulan data Soscom terakhir";
-        }
-        if (useLatestCsMonthIfCurrentIsEmpty()) {
-          els.csStatus.textContent = "Menampilkan bulan data CS Soscom terakhir";
-        }
-        if (useLatestCrmMonthIfCurrentIsEmpty()) {
-          els.crmStatus.textContent = "Menampilkan bulan data CRM terakhir";
-        }
-        if (useLatestShopeeMonthIfCurrentIsEmpty()) {
-          els.shopeeStatus.textContent = "Menampilkan bulan data Shopee terakhir";
-        }
-        if (useLatestTiktokMonthIfCurrentIsEmpty()) {
-          els.tiktokStatus.textContent = "Menampilkan bulan data Tiktokshop terakhir";
-        }
+        if (webotResult.status === "rejected") sourceNotes.push("Webot bulan ini belum terbaca");
+        if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace bulan ini belum terbaca");
+        els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris bulan berjalan terbaca${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
+        renderAllReports();
+        setTimeout(loadFullDataInBackground, 300);
       } catch (error) {
         console.warn(error);
-        allRows = [];
-        els.sourceStatus.textContent = `Data real belum berhasil terbaca: ${error.message}. Coba refresh beberapa saat lagi.`;
+        els.sourceStatus.textContent = `Data bulan berjalan belum berhasil terbaca: ${error.message}. Mencoba data lengkap di belakang layar...`;
+        setTimeout(loadFullDataInBackground, 300);
       }
-      render();
-      renderAdvertiserReport();
-      renderCsReport();
-      renderCrmReport();
-      renderShopeeReport();
-      renderTiktokReport();
-      renderWeeklyBudgetingPage();
     }
 
     init();

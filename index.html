@@ -2042,6 +2042,7 @@
                   <th>Nama Produk</th>
                   <th>Lead CS</th>
                   <th>Sumber</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody id="csReportInputBody"></tbody>
@@ -2370,6 +2371,7 @@
                   <th>Klik Produk</th>
                   <th>Total Budget</th>
                   <th>Sumber</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody id="shopeeBudgetInputBody"></tbody>
@@ -2498,6 +2500,7 @@
                   <th>Impresi</th>
                   <th>Lead Dashboard</th>
                   <th>Sumber</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody id="tiktokBudgetInputBody"></tbody>
@@ -3275,20 +3278,20 @@
         sheet: "ALL DATA"
       },
       advertiserResult: {
-        id: "1kpUwBKVZ_WA78Z8oGuK4NALH8as11-QL4IM48uaQUkk",
-        sheet: "Result"
+        id: "1LYB6dgoV53O-ap1hE7E8WGw-aNW4_a-h4_ytJTZ-kV0",
+        sheet: "Soscom"
       },
       advertiserBudget: {
         id: "1aZ_Ern-dJUlmCpMU4IIEdj9lHD7XWfgynB0bnUpkPNs",
         sheet: "Budget Iklan"
       },
       shopeeResultMp: {
-        id: "1kpUwBKVZ_WA78Z8oGuK4NALH8as11-QL4IM48uaQUkk",
-        sheet: "Result MP"
+        id: "1iMrd37QqLjoeGu0VStDt6f-NMmEaRG37d7dzF3THQAs",
+        sheet: "Shopee"
       },
       tiktokResult: {
-        id: "1kpUwBKVZ_WA78Z8oGuK4NALH8as11-QL4IM48uaQUkk",
-        sheet: "Result Tiktokshop"
+        id: "1MfmcmhMg5HY4tld-Yewenp859rc58GRe0fRb9C3YNE0",
+        sheet: "Tiktokshop"
       },
       csResult: {
         id: "1xF7qyMgiNPgtBLwps-YqqesZ3GZH9Ta7CoYg51ZHuMU",
@@ -3308,7 +3311,10 @@
       }
     };
 
-    const BUDGETING_WRITE_ENDPOINT = "https://script.google.com/macros/s/AKfycbx203KBrgpgRzbruts9Cwd7AeLdxhc1x3LsghE0GiwX_Bf6gCxAK99JUSoOnp0hAV05/exec";
+    const BUDGETING_WRITE_ENDPOINT = "https://script.google.com/macros/s/AKfycbyJ2EydbxAnqbDLkozGgvCNZb9GlPxdyg2qbc004-WkoZ09XnuJf7-pzNikSBTfr_ZoNg/exec";
+    const CS_REPORT_WRITE_ENDPOINT = "https://script.google.com/macros/s/AKfycbzoCvbZRW2cGuLe-H_RyZ3yn8FdtN5a-chE8N3Ghygum5t-yJkUIavJzFZaBZxEZlM_/exec";
+    const SHOPEE_BUDGET_WRITE_ENDPOINT = "https://script.google.com/macros/s/AKfycbwVNfv1-D-GjbwPTBKCABqhuGXeWrb1LMWMPDJKm4h4_gCL6ytwGh0ZQraLaWYw5Q4P/exec";
+    const TIKTOK_BUDGET_WRITE_ENDPOINT = "https://script.google.com/macros/s/AKfycbxKzJpCLeLeWwEEoGJb8PkTF56VRpfoGSZQWgWV26YK9QMmflJyrRqOyYKkFFLpZdW-RQ/exec";
 
     const WEBOT_COLUMNS = {
       date: "A",
@@ -3627,6 +3633,9 @@
     let shopeeBudgetInputs = [];
     let tiktokBudgetInputs = [];
     let editingBudgetingId = "";
+    let editingCsReportId = "";
+    let editingShopeeBudgetId = "";
+    let editingTiktokBudgetId = "";
     const BUDGETING_STORAGE_KEY = "niagakaraAdvertiserBudgetingInputs";
     const CS_REPORT_STORAGE_KEY = "niagakaraCsReportInputs";
     const SHOPEE_BUDGET_STORAGE_KEY = "niagakaraShopeeBudgetInputs";
@@ -3888,13 +3897,13 @@
           "Budget Iklan Tiktokshop", "Budget Tiktokshop", "Budget Iklan", "Budget", "D", "E", "Column 4", "Column 5"
         ]));
         const dashboardRevenue = parseMoney(getField(row, [
-          "Omset Dashboard Tiktokshop", "Omset Dashboard", "Dashboard Revenue", "Omset", "E", "F", "Column 5", "Column 6"
+          "Omset Dashboard", "Omset Dashboard Tiktokshop", "Dashboard Revenue", "Omset", "F", "Column 6"
         ]));
         const impressions = parseMoney(getField(row, [
-          "Impresi Tiktokshop", "Impresi", "Impressions", "F", "G", "Column 6", "Column 7"
+          "Impresi Tiktokshop", "Impresi", "Impressions", "G", "Column 7"
         ]));
         const leadDashboard = parseMoney(getField(row, [
-          "Lead Dashboard Tiktokshop", "Lead Dashboard", "Lead", "Leads", "G", "H", "Column 7", "Column 8"
+          "Lead Dashboard", "Lead Dashboard Tiktokshop", "Lead", "Leads", "H", "Column 8"
         ]));
         return {
           id: `tiktok-sheet-${sourceName}-${date ? dateKey(date) : "blank"}-${index}`,
@@ -4651,6 +4660,7 @@
           ${reportCell(totals.impressions.toLocaleString("id-ID"))}
           ${reportCell(totals.leadDashboard.toLocaleString("id-ID"))}
           ${reportCell("-")}
+          ${reportCell("-")}
         </tr>
       `;
       const bodyRows = rows.map(row => `
@@ -4674,6 +4684,7 @@
           ${reportCell(currency(0))}
           ${reportCell("0")}
           ${reportCell("0")}
+          ${reportCell("-")}
           ${reportCell("-")}
         </tr>
       `);
@@ -4859,21 +4870,32 @@
       els.csReportPlatformInput.value = "Meta";
     }
 
-    function openCsReportInputModal() {
+    function openCsReportInputModal(item = null) {
+      editingCsReportId = item?.id || "";
       populateCsReportInputOptions();
-      els.csReportLeadInput.value = "";
+      if (item) {
+        els.csReportDateInput.value = item.date;
+        els.csReportCsInput.value = item.cs;
+        els.csReportAdvertiserInput.value = item.advertiser;
+        els.csReportPlatformInput.value = item.platform || "Meta";
+        els.csReportProductInput.value = item.product;
+        els.csReportLeadInput.value = item.leadCs || "";
+      } else {
+        els.csReportLeadInput.value = "";
+      }
       els.csReportInputModal.classList.remove("hidden");
     }
 
     function closeCsReportInputModal() {
+      editingCsReportId = "";
       els.csReportInputForm.reset();
       els.csReportInputModal.classList.add("hidden");
     }
 
     function handleCsReportSubmit(event) {
       event.preventDefault();
-      csReportInputs.push({
-        id: `cs-report-${Date.now()}`,
+      const payload = {
+        id: editingCsReportId || `cs-report-${Date.now()}`,
         date: els.csReportDateInput.value,
         cs: els.csReportCsInput.value,
         advertiser: els.csReportAdvertiserInput.value,
@@ -4881,10 +4903,33 @@
         product: els.csReportProductInput.value,
         leadCs: parseMoney(els.csReportLeadInput.value),
         source: "local"
-      });
+      };
+      if (editingCsReportId) {
+        csReportInputs = csReportInputs.map(item => item.id === editingCsReportId ? payload : item);
+      } else {
+        csReportInputs.push(payload);
+        syncCsReportInput(payload);
+      }
       saveCsReportInputs();
       closeCsReportInputModal();
       renderCsReport();
+    }
+
+    function syncCsReportInput(payload) {
+      if (!CS_REPORT_WRITE_ENDPOINT) return;
+      fetch(CS_REPORT_WRITE_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          tanggal: payload.date,
+          namaCs: payload.cs,
+          namaAdv: payload.advertiser,
+          platform: payload.platform,
+          namaProduk: payload.product,
+          leadCs: payload.leadCs
+        })
+      }).catch(() => {});
     }
 
     function renderCsReportInputs() {
@@ -4902,6 +4947,7 @@
           ${reportCell("-")}
           ${reportCell(totalLead.toLocaleString("id-ID"))}
           ${reportCell("-")}
+          ${reportCell("-")}
         </tr>
       `;
       const bodyRows = rows.map(row => `
@@ -4913,6 +4959,7 @@
           ${reportCell(escapeHtml(row.product || "-"))}
           ${reportCell((row.leadCs || 0).toLocaleString("id-ID"))}
           ${reportCell(escapeHtml(row.source || "Sheet"))}
+          ${reportCell(row.source === "local" ? `<span class="row-actions"><button class="row-action" data-cs-input-action="edit" data-id="${escapeHtml(row.id)}">Edit</button><button class="row-action danger" data-cs-input-action="delete" data-id="${escapeHtml(row.id)}">Hapus</button></span>` : `<span class="panel-note">Sheet</span>`)}
         </tr>
       `).join("");
       els.csReportInputBody.innerHTML = totalRow + (bodyRows || `
@@ -4923,6 +4970,7 @@
           ${reportCell("-")}
           ${reportCell("-")}
           ${reportCell("0")}
+          ${reportCell("-")}
           ${reportCell("-")}
         </tr>
       `);
@@ -5239,15 +5287,30 @@
       if (els.shopeeStoreSelect.value !== "all") els.shopeeBudgetStoreInput.value = els.shopeeStoreSelect.value;
     }
 
-    function openShopeeBudgetInputModal() {
+    function openShopeeBudgetInputModal(item = null) {
+      editingShopeeBudgetId = item?.id || "";
       buildShopeeProductInputBlocks();
       populateShopeeBudgetInputOptions();
-      els.shopeeStoreAdsInput.value = "";
-      els.shopeeStoreRevenueInput.value = "";
+      if (item) {
+        els.shopeeBudgetDateInput.value = item.date;
+        els.shopeeBudgetAdvertiserInput.value = item.advertiser;
+        els.shopeeBudgetStoreInput.value = item.store;
+        els.shopeeStoreAdsInput.value = item.storeAds || "";
+        els.shopeeStoreRevenueInput.value = item.storeRevenue || "";
+        els.shopeeProductInputs.querySelectorAll("input[data-shopee-product]").forEach(input => {
+          const product = input.dataset.shopeeProduct;
+          const field = input.dataset.field;
+          input.value = item.products?.[product]?.[field] || "";
+        });
+      } else {
+        els.shopeeStoreAdsInput.value = "";
+        els.shopeeStoreRevenueInput.value = "";
+      }
       els.shopeeBudgetInputModal.classList.remove("hidden");
     }
 
     function closeShopeeBudgetInputModal() {
+      editingShopeeBudgetId = "";
       els.shopeeBudgetInputForm.reset();
       els.shopeeBudgetInputModal.classList.add("hidden");
     }
@@ -5260,8 +5323,8 @@
         const field = input.dataset.field;
         products[product][field] = parseMoney(input.value);
       });
-      shopeeBudgetInputs.push({
-        id: `shopee-budget-${Date.now()}`,
+      const payload = {
+        id: editingShopeeBudgetId || `shopee-budget-${Date.now()}`,
         date: els.shopeeBudgetDateInput.value,
         advertiser: els.shopeeBudgetAdvertiserInput.value,
         store: els.shopeeBudgetStoreInput.value,
@@ -5269,10 +5332,50 @@
         storeRevenue: parseMoney(els.shopeeStoreRevenueInput.value),
         products,
         source: "local"
-      });
+      };
+      if (editingShopeeBudgetId) {
+        shopeeBudgetInputs = shopeeBudgetInputs.map(item => item.id === editingShopeeBudgetId ? payload : item);
+      } else {
+        shopeeBudgetInputs.push(payload);
+        syncShopeeBudgetInput(payload);
+      }
       saveShopeeBudgetInputs();
       closeShopeeBudgetInputModal();
       renderShopeeReport();
+    }
+
+    function syncShopeeBudgetInput(payload) {
+      if (!SHOPEE_BUDGET_WRITE_ENDPOINT) return;
+      const productPayload = {};
+      const productFieldMap = {
+        Vitameal: "Vitameal",
+        Waji: "Waji",
+        Eyebost: "Eyebost",
+        "Eyebost Pro": "EyebostPro",
+        Vitasma: "Vitasma",
+        Vitummy: "Vitummy",
+        Bruv: "Bruv"
+      };
+      Object.entries(productFieldMap).forEach(([productName, key]) => {
+        const metrics = payload.products?.[productName] || {};
+        productPayload[`produk${key}`] = productName;
+        productPayload[`budget${key}`] = metrics.budget || 0;
+        productPayload[`impresi${key}`] = metrics.impressions || 0;
+        productPayload[`klik${key}`] = metrics.clicks || 0;
+      });
+      fetch(SHOPEE_BUDGET_WRITE_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          tanggal: payload.date,
+          namaAdvertiser: payload.advertiser,
+          tokoShopee: payload.store,
+          iklanToko: payload.storeAds,
+          omsetToko: payload.storeRevenue,
+          ...productPayload
+        })
+      }).catch(() => {});
     }
 
     function renderShopeeBudgetInputs() {
@@ -5300,6 +5403,7 @@
           ${reportCell(totals.productClicks.toLocaleString("id-ID"))}
           ${reportCell(currency(totals.storeAds + totals.productBudget))}
           ${reportCell("-")}
+          ${reportCell("-")}
         </tr>
       `;
       const bodyRows = rows.map(row => `
@@ -5314,6 +5418,7 @@
           ${reportCell(totalShopeeProductMetric(row, "clicks").toLocaleString("id-ID"))}
           ${reportCell(currency(totalShopeeBudget(row)))}
           ${reportCell(escapeHtml(row.source || "Sheet"))}
+          ${reportCell(row.source === "local" ? `<span class="row-actions"><button class="row-action" data-shopee-input-action="edit" data-id="${escapeHtml(row.id)}">Edit</button><button class="row-action danger" data-shopee-input-action="delete" data-id="${escapeHtml(row.id)}">Hapus</button></span>` : `<span class="panel-note">Sheet</span>`)}
         </tr>
       `).join("");
       els.shopeeBudgetInputBody.innerHTML = totalRow + (bodyRows || `
@@ -5327,6 +5432,7 @@
           ${reportCell("0")}
           ${reportCell("0")}
           ${reportCell(currency(0))}
+          ${reportCell("-")}
           ${reportCell("-")}
         </tr>
       `);
@@ -6713,24 +6819,36 @@
       if (els.tiktokStoreSelect.value !== "all") els.tiktokBudgetStoreInput.value = els.tiktokStoreSelect.value;
     }
 
-    function openTiktokBudgetInputModal() {
+    function openTiktokBudgetInputModal(item = null) {
+      editingTiktokBudgetId = item?.id || "";
       populateTiktokBudgetInputOptions();
-      els.tiktokBudgetInput.value = "";
-      els.tiktokDashboardRevenueInput.value = "";
-      els.tiktokImpressionsInput.value = "";
-      els.tiktokLeadDashboardInput.value = "";
+      if (item) {
+        els.tiktokBudgetDateInput.value = item.date;
+        els.tiktokBudgetAdvertiserInput.value = item.advertiser;
+        els.tiktokBudgetStoreInput.value = item.store;
+        els.tiktokBudgetInput.value = item.budget || "";
+        els.tiktokDashboardRevenueInput.value = item.dashboardRevenue || "";
+        els.tiktokImpressionsInput.value = item.impressions || "";
+        els.tiktokLeadDashboardInput.value = item.leadDashboard || "";
+      } else {
+        els.tiktokBudgetInput.value = "";
+        els.tiktokDashboardRevenueInput.value = "";
+        els.tiktokImpressionsInput.value = "";
+        els.tiktokLeadDashboardInput.value = "";
+      }
       els.tiktokBudgetInputModal.classList.remove("hidden");
     }
 
     function closeTiktokBudgetInputModal() {
+      editingTiktokBudgetId = "";
       els.tiktokBudgetInputForm.reset();
       els.tiktokBudgetInputModal.classList.add("hidden");
     }
 
     function handleTiktokBudgetSubmit(event) {
       event.preventDefault();
-      tiktokBudgetInputs.push({
-        id: `tiktok-budget-${Date.now()}`,
+      const payload = {
+        id: editingTiktokBudgetId || `tiktok-budget-${Date.now()}`,
         date: els.tiktokBudgetDateInput.value,
         advertiser: els.tiktokBudgetAdvertiserInput.value,
         store: els.tiktokBudgetStoreInput.value,
@@ -6739,10 +6857,35 @@
         impressions: parseMoney(els.tiktokImpressionsInput.value),
         leadDashboard: parseMoney(els.tiktokLeadDashboardInput.value),
         source: "local"
-      });
+      };
+      if (editingTiktokBudgetId) {
+        tiktokBudgetInputs = tiktokBudgetInputs.map(item => item.id === editingTiktokBudgetId ? payload : item);
+      } else {
+        tiktokBudgetInputs.push(payload);
+        syncTiktokBudgetInput(payload);
+      }
       saveTiktokBudgetInputs();
       closeTiktokBudgetInputModal();
       renderTiktokReport();
+    }
+
+    function syncTiktokBudgetInput(payload) {
+      if (!TIKTOK_BUDGET_WRITE_ENDPOINT) return;
+      fetch(TIKTOK_BUDGET_WRITE_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          tanggal: payload.date,
+          namaAdvertiser: payload.advertiser,
+          tokoTiktokshop: payload.store,
+          budgetIklanTiktokshop: payload.budget,
+          omsetDashboardTiktokshop: payload.dashboardRevenue,
+          impresiTiktokshop: payload.impressions,
+          leadDashboardTiktokshop: payload.leadDashboard,
+          platform: "Tiktokshop"
+        })
+      }).catch(() => {});
     }
 
     function renderTiktokBudgetInputs() {
@@ -6779,6 +6922,7 @@
           ${reportCell((row.impressions || 0).toLocaleString("id-ID"))}
           ${reportCell((row.leadDashboard || 0).toLocaleString("id-ID"))}
           ${reportCell(escapeHtml(row.source || "Sheet"))}
+          ${reportCell(row.source === "local" ? `<span class="row-actions"><button class="row-action" data-tiktok-input-action="edit" data-id="${escapeHtml(row.id)}">Edit</button><button class="row-action danger" data-tiktok-input-action="delete" data-id="${escapeHtml(row.id)}">Hapus</button></span>` : `<span class="panel-note">Sheet</span>`)}
         </tr>
       `).join("");
       els.tiktokBudgetInputBody.innerHTML = totalRow + (bodyRows || `
@@ -8328,6 +8472,20 @@
       });
       els.csReportInputForm.addEventListener("submit", handleCsReportSubmit);
       els.csReportLeadInput.addEventListener("input", () => normalizePlainNumberInput(els.csReportLeadInput));
+      els.csReportInputBody.addEventListener("click", event => {
+        const button = event.target.closest("[data-cs-input-action]");
+        if (!button) return;
+        const id = button.dataset.id;
+        const item = csReportInputs.find(row => row.id === id);
+        if (!item) return;
+        if (button.dataset.csInputAction === "edit") {
+          openCsReportInputModal(item);
+          return;
+        }
+        csReportInputs = csReportInputs.filter(row => row.id !== id);
+        saveCsReportInputs();
+        renderCsReport();
+      });
       els.crmQuickFilters.addEventListener("click", event => {
         const button = event.target.closest("button[data-range]");
         if (!button) return;
@@ -8365,6 +8523,20 @@
       [els.shopeeStoreAdsInput, els.shopeeStoreRevenueInput].forEach(input => {
         input.addEventListener("input", () => normalizePlainNumberInput(input));
       });
+      els.shopeeBudgetInputBody.addEventListener("click", event => {
+        const button = event.target.closest("[data-shopee-input-action]");
+        if (!button) return;
+        const id = button.dataset.id;
+        const item = shopeeBudgetInputs.find(row => row.id === id);
+        if (!item) return;
+        if (button.dataset.shopeeInputAction === "edit") {
+          openShopeeBudgetInputModal(item);
+          return;
+        }
+        shopeeBudgetInputs = shopeeBudgetInputs.filter(row => row.id !== id);
+        saveShopeeBudgetInputs();
+        renderShopeeReport();
+      });
       els.tiktokQuickFilters.addEventListener("click", event => {
         const button = event.target.closest("button[data-range]");
         if (!button) return;
@@ -8386,6 +8558,20 @@
       els.tiktokBudgetInputForm.addEventListener("submit", handleTiktokBudgetSubmit);
       [els.tiktokBudgetInput, els.tiktokDashboardRevenueInput, els.tiktokImpressionsInput, els.tiktokLeadDashboardInput].forEach(input => {
         input.addEventListener("input", () => normalizePlainNumberInput(input));
+      });
+      els.tiktokBudgetInputBody.addEventListener("click", event => {
+        const button = event.target.closest("[data-tiktok-input-action]");
+        if (!button) return;
+        const id = button.dataset.id;
+        const item = tiktokBudgetInputs.find(row => row.id === id);
+        if (!item) return;
+        if (button.dataset.tiktokInputAction === "edit") {
+          openTiktokBudgetInputModal(item);
+          return;
+        }
+        tiktokBudgetInputs = tiktokBudgetInputs.filter(row => row.id !== id);
+        saveTiktokBudgetInputs();
+        renderTiktokReport();
       });
       els.adminMarketplaceQuickFilters.addEventListener("click", event => {
         const button = event.target.closest("button[data-range]");
@@ -8587,7 +8773,7 @@
       externalBudgetInputs = normalizeBudgetingRows(settledRows(advertiserResultSheet), "Result")
         .concat(normalizeBudgetingRows(settledRows(advertiserBudgetSheet), "Budget Iklan"));
       externalShopeeBudgetInputs = normalizeShopeeBudgetRows(settledRows(shopeeResultMpSheet), "Result MP");
-      externalTiktokBudgetInputs = normalizeTiktokBudgetRows(settledRows(tiktokResultSheet), "Result Tiktokshop");
+      externalTiktokBudgetInputs = normalizeTiktokBudgetRows(settledRows(tiktokResultSheet), "Tiktokshop");
       externalCsReportInputs = normalizeCsReportRows(settledRows(csResultSheet), "Result CS")
         .concat(normalizeCsReportRows(settledRows(csReportSheet), "Laporan CS"));
       adminShopeeSummaryRows = normalizeAdminShopeeRows(settledRows(adminShopeeSheet));
@@ -8596,7 +8782,7 @@
         [advertiserResultSheet, "Result budgeting belum terbaca"],
         [advertiserBudgetSheet, "Budget Iklan belum terbaca"],
         [shopeeResultMpSheet, "Result MP Shopee belum terbaca"],
-        [tiktokResultSheet, "Result Tiktokshop belum terbaca"],
+        [tiktokResultSheet, "Budget Tiktokshop belum terbaca"],
         [csResultSheet, "Result CS belum terbaca"],
         [csReportSheet, "Laporan CS belum terbaca"],
         [adminShopeeSheet, "Admin Shopee belum terbaca"],

@@ -2540,6 +2540,9 @@
                   <th>Total Budget</th>
                   <th>Total Gross Revenue</th>
                   <th>Total CAC</th>
+                  <th>Admin</th>
+                  <th>Budget + Admin</th>
+                  <th>CAC After Admin</th>
                 </tr>
               </thead>
               <tbody id="weeklyAdvertiserBody"></tbody>
@@ -2566,6 +2569,9 @@
                   <th>Total Budget</th>
                   <th>Total Gross Revenue</th>
                   <th>Total CAC</th>
+                  <th>Admin</th>
+                  <th>Budget + Admin</th>
+                  <th>CAC After Admin</th>
                 </tr>
               </thead>
               <tbody id="weeklyAfterCrmBody"></tbody>
@@ -3612,6 +3618,8 @@
     let adminTiktokSummaryRows = [];
     let weeklyProposalRows = [];
     let weeklyProposalSeed = "";
+    let activePage = "dashboard";
+    let resizeRenderTimer = 0;
     let advertiserBudgetInputs = [];
     let csReportInputs = [];
     let shopeeBudgetInputs = [];
@@ -5859,6 +5867,49 @@
       return marketplaceRows;
     }
 
+    function weeklyAdminCostForRow(row, start, end, settings, platformTotals = new Map()) {
+      const platform = normalizeCompare(row.platform);
+      if (platform.includes("shopee")) {
+        const realAdmin = adminShopeeSummaryRows.reduce((total, item) =>
+          item.date >= startOfDay(start) && item.date <= startOfDay(end) ? total + (item.totalAdmin || 0) : total, 0);
+        if (realAdmin) {
+          const total = platformTotals.get("shopee") || 0;
+          return total > 0 ? realAdmin * (((row.revenue || 0) || (row.budget || 0)) / total) : 0;
+        }
+        return (row.revenue || 0) * ((settings.shopeeAdmin + settings.shopeeTax) / 100);
+      }
+      if (platform.includes("tiktok")) {
+        const realAdmin = adminTiktokSummaryRows.reduce((total, item) =>
+          item.date >= startOfDay(start) && item.date <= startOfDay(end) ? total + (item.totalBiayaAdmin || 0) : total, 0);
+        if (realAdmin) {
+          const total = platformTotals.get("tiktok") || 0;
+          return total > 0 ? realAdmin * (((row.revenue || 0) || (row.budget || 0)) / total) : 0;
+        }
+        return (row.revenue || 0) * (settings.tiktokAdmin / 100);
+      }
+      return 0;
+    }
+
+    function withWeeklyAdminRows(rows, start, end, settings) {
+      const platformTotals = rows.reduce((map, row) => {
+        const platform = normalizeCompare(row.platform);
+        const weight = (row.revenue || 0) || (row.budget || 0);
+        if (platform.includes("shopee")) map.set("shopee", (map.get("shopee") || 0) + weight);
+        if (platform.includes("tiktok")) map.set("tiktok", (map.get("tiktok") || 0) + weight);
+        return map;
+      }, new Map());
+      return rows.map(row => {
+        const adminCost = weeklyAdminCostForRow(row, start, end, settings, platformTotals);
+        const budgetAdmin = (row.budget || 0) + adminCost;
+        return {
+          ...row,
+          adminCost,
+          budgetAdmin,
+          cacAfterAdmin: percentRatio(budgetAdmin, row.revenue)
+        };
+      });
+    }
+
     function budgetProposalSeed(rows, settings, targetCrmRevenue = 0) {
       return `${rows.map(row => `${row.advertiser}|${row.platform}|${row.product}|${Math.round(row.budget)}|${Math.round(row.revenue)}`).join("~")}||crm:${Math.round(targetCrmRevenue)}`;
     }
@@ -6124,8 +6175,11 @@
     }
 
     function renderWeeklyAfterCrm(reviewRows, totalBudget, totalRevenue, crmRevenue, settings) {
+      const totalAdmin = reviewRows.reduce((total, row) => total + (row.adminCost || 0), 0);
+      const totalBudgetAdmin = totalBudget + totalAdmin;
       const totalRevenueAfterCrm = totalRevenue + crmRevenue;
       const totalCacAfterCrm = percentRatio(totalBudget, totalRevenueAfterCrm);
+      const totalCacAfterAdminCrm = percentRatio(totalBudgetAdmin, totalRevenueAfterCrm);
       const body = reviewRows.map(row => `
         <tr>
           <td>${escapeHtml(row.advertiser)}</td>
@@ -6137,10 +6191,13 @@
           <td>${currency(row.budget)}</td>
           <td>${currency(row.revenue)}</td>
           <td>${row.revenue ? percent(row.cac) : "-"}</td>
+          <td>${row.adminCost ? currency(row.adminCost) : "-"}</td>
+          <td>${currency(row.budgetAdmin || row.budget)}</td>
+          <td>${row.revenue ? percent(row.cacAfterAdmin || row.cac) : "-"}</td>
         </tr>
       `).join("");
       els.weeklyAfterCrmBody.innerHTML = `
-        ${body || `<tr><td colspan="9">Belum ada data weekly pada periode ini.</td></tr>`}
+        ${body || `<tr><td colspan="12">Belum ada data weekly pada periode ini.</td></tr>`}
         <tr>
           <td>Omset CRM</td>
           <td>CRM</td>
@@ -6150,6 +6207,9 @@
           <td>-</td>
           <td>${currency(0)}</td>
           <td>${currency(crmRevenue)}</td>
+          <td>-</td>
+          <td>-</td>
+          <td>${currency(0)}</td>
           <td>-</td>
         </tr>
         <tr class="total-row">
@@ -6162,12 +6222,16 @@
           <td>${currency(totalBudget)}</td>
           <td>${currency(totalRevenueAfterCrm)}</td>
           <td>${percent(totalCacAfterCrm)}</td>
+          <td>${currency(totalAdmin)}</td>
+          <td>${currency(totalBudgetAdmin)}</td>
+          <td>${percent(totalCacAfterAdminCrm)}</td>
         </tr>
       `;
       els.weeklyAfterCrmPamBody.innerHTML = pamSummaryHtml({
         hppRate: settings.hpp,
         revenue: totalRevenueAfterCrm,
         budget: totalBudget,
+        budgetAdmin: totalBudgetAdmin,
         minPam: settings.minPam
       });
     }
@@ -6222,7 +6286,7 @@
       const label = compactPeriodLabel(start, end);
       const { detailRows, advertiserTotals } = weeklyRowsInRange(start, end);
       const marketplaceReviewRows = weeklyMarketplaceRowsInRange(start, end);
-      const reviewRows = detailRows.concat(marketplaceReviewRows);
+      const reviewRows = withWeeklyAdminRows(detailRows.concat(marketplaceReviewRows), start, end, settings);
       const proposalSourceRows = reviewRows;
       const productRows = weeklyProductRowsInRange(start, end);
       const settings = currentWeeklySettings();
@@ -6232,7 +6296,10 @@
       ensureBudgetProposalRows(budgetRecommendations, settings, targetCrmRevenue);
       const totalBudget = reviewRows.reduce((total, row) => total + (row.budget || 0), 0);
       const totalRevenue = reviewRows.reduce((total, row) => total + (row.revenue || 0), 0);
+      const totalAdmin = reviewRows.reduce((total, row) => total + (row.adminCost || 0), 0);
+      const totalBudgetAdmin = totalBudget + totalAdmin;
       const totalCac = percentRatio(totalBudget, totalRevenue);
+      const totalCacAfterAdmin = percentRatio(totalBudgetAdmin, totalRevenue);
       const hppRate = settings.hpp;
       const pamValue = totalRevenue - (totalRevenue * hppRate / 100) - totalBudget;
       const pamRate = percentRatio(pamValue, totalRevenue);
@@ -6253,15 +6320,17 @@
         const key = normalizeCompare(row.advertiser);
         if (!rowsByAdvertiser.has(key)) rowsByAdvertiser.set(key, []);
         rowsByAdvertiser.get(key).push(row);
-        const current = allAdvertiserTotals.get(key) || { budget: 0, revenue: 0 };
+        const current = allAdvertiserTotals.get(key) || { budget: 0, revenue: 0, adminCost: 0, budgetAdmin: 0 };
         current.budget += row.budget || 0;
         current.revenue += row.revenue || 0;
+        current.adminCost += row.adminCost || 0;
+        current.budgetAdmin += row.budgetAdmin || row.budget || 0;
         allAdvertiserTotals.set(key, current);
       });
 
       const body = [];
       rowsByAdvertiser.forEach((rows, key) => {
-        const totals = allAdvertiserTotals.get(key) || advertiserTotals.get(key) || { budget: 0, revenue: 0 };
+        const totals = allAdvertiserTotals.get(key) || advertiserTotals.get(key) || { budget: 0, revenue: 0, adminCost: 0, budgetAdmin: 0 };
         rows.forEach((row, index) => {
           body.push(`
             <tr>
@@ -6271,13 +6340,20 @@
               <td>${currency(row.budget)}</td>
               <td>${currency(row.revenue)}</td>
               <td>${row.revenue ? percent(row.cac) : "-"}</td>
-              ${index === 0 ? `<td rowspan="${rows.length}">${currency(totals.budget)}</td><td rowspan="${rows.length}">${currency(totals.revenue)}</td><td rowspan="${rows.length}">${totals.revenue ? percent(percentRatio(totals.budget, totals.revenue)) : "-"}</td>` : ""}
+              ${index === 0 ? `
+                <td rowspan="${rows.length}">${currency(totals.budget)}</td>
+                <td rowspan="${rows.length}">${currency(totals.revenue)}</td>
+                <td rowspan="${rows.length}">${totals.revenue ? percent(percentRatio(totals.budget, totals.revenue)) : "-"}</td>
+                <td rowspan="${rows.length}">${totals.adminCost ? currency(totals.adminCost) : "-"}</td>
+                <td rowspan="${rows.length}">${currency(totals.budgetAdmin || totals.budget)}</td>
+                <td rowspan="${rows.length}">${totals.revenue ? percent(percentRatio(totals.budgetAdmin || totals.budget, totals.revenue)) : "-"}</td>
+              ` : ""}
             </tr>
           `);
         });
       });
       els.weeklyAdvertiserBody.innerHTML = `
-        ${body.join("") || `<tr><td colspan="9">Belum ada data weekly pada periode ini.</td></tr>`}
+        ${body.join("") || `<tr><td colspan="12">Belum ada data weekly pada periode ini.</td></tr>`}
         <tr class="total-row">
           <td>Total</td>
           <td>-</td>
@@ -6288,11 +6364,15 @@
           <td>${currency(totalBudget)}</td>
           <td>${currency(totalRevenue)}</td>
           <td>${percent(totalCac)}</td>
+          <td>${currency(totalAdmin)}</td>
+          <td>${currency(totalBudgetAdmin)}</td>
+          <td>${percent(totalCacAfterAdmin)}</td>
         </tr>
       `;
       els.weeklyPamBody.innerHTML = `
         <div class="pam-summary-row"><span>HPP</span><strong>${percent(hppRate)}</strong><span>${currency(totalRevenue * hppRate / 100)}</span></div>
         <div class="pam-summary-row"><span>PAM</span><strong class="${pamRate >= settings.minPam ? "good" : "bad"}">${percent(pamRate)}</strong><span>${currency(pamValue)}</span></div>
+        <div class="pam-summary-row"><span>PAM After Admin</span><strong class="${percentRatio(totalRevenue - (totalRevenue * hppRate / 100) - totalBudgetAdmin, totalRevenue) >= settings.minPam ? "good" : "bad"}">${percent(percentRatio(totalRevenue - (totalRevenue * hppRate / 100) - totalBudgetAdmin, totalRevenue))}</strong><span>${currency(totalRevenue - (totalRevenue * hppRate / 100) - totalBudgetAdmin)}</span></div>
       `;
       renderWeeklyAfterCrm(reviewRows, totalBudget, totalRevenue, weeklyCrmRevenue, settings);
       els.weeklyProductBody.innerHTML = productRows.map(row => `
@@ -8079,6 +8159,7 @@
           document.querySelectorAll(".nav button").forEach(item => item.classList.remove("active"));
           button.classList.add("active");
           const page = button.dataset.page;
+          activePage = page;
           if (window.matchMedia("(max-width: 1120px)").matches) {
             els.appShell.classList.add("sidebar-collapsed");
           }
@@ -8096,6 +8177,7 @@
           els.comingPage.classList.add("hidden");
           if (page === "dashboard") {
             els.dashboardPage.classList.remove("hidden");
+            render();
             return;
           }
           if (page === "advertiser") {
@@ -8356,20 +8438,16 @@
         renderCsReport();
       });
       window.addEventListener("resize", () => {
-        drawChart();
-        renderAdvertiserReport();
-        renderCsReport();
-        renderCrmReport();
-        renderShopeeReport();
-        renderTiktokReport();
+        window.clearTimeout(resizeRenderTimer);
+        resizeRenderTimer = window.setTimeout(renderCurrentPage, 180);
       });
       document.addEventListener("click", event => {
         const link = event.target.closest("[data-track-key]");
         if (!link) return;
         localStorage.setItem(link.dataset.trackKey, "1");
         window.setTimeout(() => {
-          renderCsReport();
-          renderCrmReport();
+          if (activePage === "cs") renderCsReport();
+          if (activePage === "crm") renderCrmReport();
         }, 250);
       });
       document.addEventListener("input", event => {
@@ -8438,34 +8516,38 @@
       populateAdminMarketplaceFilters();
     }
 
+    function renderCurrentPage() {
+      if (activePage === "advertiser") return renderAdvertiserReport();
+      if (activePage === "cs") return renderCsReport();
+      if (activePage === "crm") return renderCrmReport();
+      if (activePage === "shopee") return renderShopeeReport();
+      if (activePage === "tiktok") return renderTiktokReport();
+      if (activePage === "weekly-budgeting") return renderWeeklyBudgetingPage();
+      if (activePage === "admin-marketplace") return renderAdminMarketplacePage();
+      return render();
+    }
+
     function renderAllReports() {
-      render();
-      renderAdvertiserReport();
-      renderCsReport();
-      renderCrmReport();
-      renderShopeeReport();
-      renderTiktokReport();
-      renderWeeklyBudgetingPage();
-      renderAdminMarketplacePage();
+      renderCurrentPage();
     }
 
     function applyLatestFallbacks() {
-      if (useLatestDataMonthIfCurrentIsEmpty()) {
+      if (activePage === "dashboard" && useLatestDataMonthIfCurrentIsEmpty()) {
         els.sourceStatus.textContent += ", menampilkan bulan data terakhir";
       }
-      if (useLatestAdvertiserMonthIfCurrentIsEmpty()) {
+      if (activePage === "advertiser" && useLatestAdvertiserMonthIfCurrentIsEmpty()) {
         els.advertiserStatus.textContent = "Menampilkan bulan data Soscom terakhir";
       }
-      if (useLatestCsMonthIfCurrentIsEmpty()) {
+      if (activePage === "cs" && useLatestCsMonthIfCurrentIsEmpty()) {
         els.csStatus.textContent = "Menampilkan bulan data CS Soscom terakhir";
       }
-      if (useLatestCrmMonthIfCurrentIsEmpty()) {
+      if (activePage === "crm" && useLatestCrmMonthIfCurrentIsEmpty()) {
         els.crmStatus.textContent = "Menampilkan bulan data CRM terakhir";
       }
-      if (useLatestShopeeMonthIfCurrentIsEmpty()) {
+      if (activePage === "shopee" && useLatestShopeeMonthIfCurrentIsEmpty()) {
         els.shopeeStatus.textContent = "Menampilkan bulan data Shopee terakhir";
       }
-      if (useLatestTiktokMonthIfCurrentIsEmpty()) {
+      if (activePage === "tiktok" && useLatestTiktokMonthIfCurrentIsEmpty()) {
         els.tiktokStatus.textContent = "Menampilkan bulan data Tiktokshop terakhir";
       }
     }
@@ -8497,6 +8579,26 @@
       populateAllFilters();
     }
 
+    function nextFrame() {
+      return new Promise(resolve => window.setTimeout(resolve, 0));
+    }
+
+    async function normalizeRowsInChunks(rows, normalizer, chunkSize = 700) {
+      const normalized = [];
+      for (let index = 0; index < rows.length; index += chunkSize) {
+        normalized.push(...normalizer(rows.slice(index, index + chunkSize)));
+        await nextFrame();
+      }
+      return normalized;
+    }
+
+    async function applyCoreRowsAsync(webotRows, marketplaceRows) {
+      const normalizedWebot = await normalizeRowsInChunks(webotRows, normalizeWebot);
+      const normalizedMarketplace = await normalizeRowsInChunks(marketplaceRows, normalizeMarketplace);
+      allRows = normalizedWebot.concat(normalizedMarketplace);
+      populateAllFilters();
+    }
+
     function supportingSheetPromises() {
       return [
         loadGoogleSheet(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
@@ -8525,7 +8627,7 @@
         const webotRows = settledRows(webotResult);
         const marketplaceRows = settledRows(marketplaceResult);
         if (webotRows.length || marketplaceRows.length) {
-          applyCoreRows(webotRows, marketplaceRows);
+          await applyCoreRowsAsync(webotRows, marketplaceRows);
         }
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris data lengkap tersinkron${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
         applyLatestFallbacks();
@@ -8533,6 +8635,14 @@
       } catch (error) {
         console.warn(error);
         els.sourceStatus.textContent += ` | Sinkronisasi data lengkap belum berhasil: ${error.message}`;
+      }
+    }
+
+    function scheduleFullDataLoad() {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadFullDataInBackground, { timeout: 4000 });
+      } else {
+        window.setTimeout(loadFullDataInBackground, 1800);
       }
     }
 
@@ -8569,11 +8679,11 @@
         if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace bulan ini belum terbaca");
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris bulan berjalan terbaca${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
         renderAllReports();
-        setTimeout(loadFullDataInBackground, 300);
+        scheduleFullDataLoad();
       } catch (error) {
         console.warn(error);
         els.sourceStatus.textContent = `Data bulan berjalan belum berhasil terbaca: ${error.message}. Mencoba data lengkap di belakang layar...`;
-        setTimeout(loadFullDataInBackground, 300);
+        scheduleFullDataLoad();
       }
     }
 

@@ -8816,14 +8816,14 @@
 
     function supportingSheetPromises() {
       return [
-        loadGoogleSheet(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
-        loadGoogleSheet(SHEETS.advertiserBudget.id, SHEETS.advertiserBudget.sheet, "select *"),
-        loadGoogleSheet(SHEETS.shopeeResultMp.id, SHEETS.shopeeResultMp.sheet, "select *"),
-        loadGoogleSheet(SHEETS.tiktokResult.id, SHEETS.tiktokResult.sheet, "select *"),
-        loadGoogleSheet(SHEETS.csResult.id, SHEETS.csResult.sheet, "select *"),
-        loadGoogleSheet(SHEETS.csReport.id, SHEETS.csReport.sheet, "select *"),
-        loadGoogleSheet(SHEETS.adminShopeeSummary.id, SHEETS.adminShopeeSummary.sheet, "select *"),
-        loadGoogleSheet(SHEETS.adminTiktokSummary.id, SHEETS.adminTiktokSummary.sheet, "select *")
+        loadGoogleSheetCached(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
+        loadGoogleSheetCached(SHEETS.advertiserBudget.id, SHEETS.advertiserBudget.sheet, "select *"),
+        loadGoogleSheetCached(SHEETS.shopeeResultMp.id, SHEETS.shopeeResultMp.sheet, "select *"),
+        loadGoogleSheetCached(SHEETS.tiktokResult.id, SHEETS.tiktokResult.sheet, "select *"),
+        loadGoogleSheetCached(SHEETS.csResult.id, SHEETS.csResult.sheet, "select *"),
+        loadGoogleSheetCached(SHEETS.csReport.id, SHEETS.csReport.sheet, "select *"),
+        loadGoogleSheetCached(SHEETS.adminShopeeSummary.id, SHEETS.adminShopeeSummary.sheet, "select *"),
+        loadGoogleSheetCached(SHEETS.adminTiktokSummary.id, SHEETS.adminTiktokSummary.sheet, "select *")
       ];
     }
 
@@ -8889,6 +8889,45 @@
       }
     }
 
+    // ─── SESSION CACHE ────────────────────────────────────────────────────────
+    const CACHE_TTL_MS = 10 * 60 * 1000; // 10 menit
+
+    function cacheKey(id, sheet) {
+      return `ngk_cache__${id}__${sheet}`;
+    }
+
+    function cacheTimestampKey(id, sheet) {
+      return `ngk_cache_ts__${id}__${sheet}`;
+    }
+
+    function saveToCache(id, sheet, data) {
+      try {
+        const key = cacheKey(id, sheet);
+        const tsKey = cacheTimestampKey(id, sheet);
+        sessionStorage.setItem(key, JSON.stringify(data));
+        sessionStorage.setItem(tsKey, String(Date.now()));
+      } catch (_) { /* kuota penuh, skip */ }
+    }
+
+    function loadFromCache(id, sheet) {
+      try {
+        const tsKey = cacheTimestampKey(id, sheet);
+        const ts = Number(sessionStorage.getItem(tsKey) || 0);
+        if (!ts || Date.now() - ts > CACHE_TTL_MS) return null;
+        const raw = sessionStorage.getItem(cacheKey(id, sheet));
+        return raw ? JSON.parse(raw) : null;
+      } catch (_) { return null; }
+    }
+
+    async function loadGoogleSheetCached(id, sheet, query) {
+      const cached = loadFromCache(id, sheet);
+      if (cached) return cached;
+      const fresh = await loadGoogleSheet(id, sheet, query);
+      saveToCache(id, sheet, fresh);
+      return fresh;
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     async function init() {
       loadBudgetingInputs();
       loadCsReportInputs();
@@ -8905,30 +8944,34 @@
       updateShopeeInputs(...rangePreset("thisMonth"));
       updateTiktokInputs(...rangePreset("thisMonth"));
       updateAdminMarketplaceInputs(...rangePreset("thisMonth"));
+
+      // FASE 1: Load core data (webot + marketplace) — prioritas utama
       try {
-        els.sourceStatus.textContent = "Memuat semua data Google Sheets...";
-        const [webotResult, marketplaceResult, ...supportResults] = await Promise.allSettled([
-          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, WEBOT_QUERY),
-          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, MARKETPLACE_QUERY),
-          ...supportingSheetPromises()
+        els.sourceStatus.textContent = "Memuat data utama...";
+        const [webotResult, marketplaceResult] = await Promise.allSettled([
+          loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, WEBOT_QUERY),
+          loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, MARKETPLACE_QUERY),
         ]);
         const webotRows = settledRows(webotResult);
         const marketplaceRows = settledRows(marketplaceResult);
-        const supportNotes = applySupportingRows(supportResults);
         await applyCoreRowsAsync(webotRows, marketplaceRows);
         if (!allRows.length) throw new Error("Kolom data belum terbaca");
         const sourceNotes = [];
         if (webotResult.status === "rejected") sourceNotes.push("Webot belum terbaca");
         if (marketplaceResult.status === "rejected") sourceNotes.push("Marketplace belum terbaca");
-        sourceNotes.push(...supportNotes);
-        els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca dari Google Sheets${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
+        els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
         applyLatestFallbacks();
       } catch (error) {
         console.warn(error);
         allRows = [];
         els.sourceStatus.textContent = `Data real belum berhasil terbaca: ${error.message}. Coba refresh beberapa saat lagi.`;
       }
-      renderAllReports();
+
+      // Render hanya halaman aktif dulu, bukan semua sekaligus
+      renderCurrentPage();
+
+      // FASE 2: Load supporting sheets di background setelah dashboard tampil
+      scheduleSupportDataLoad();
     }
 
     init();

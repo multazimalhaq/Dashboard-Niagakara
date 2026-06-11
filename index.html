@@ -935,6 +935,11 @@
       gap: 0 14px;
     }
 
+    #productKpiGrid { margin-bottom: 18px; }
+    .product-growth-pos { color: var(--green); font-weight: 600; }
+    .product-growth-neg { color: var(--rose); font-weight: 600; }
+    .product-growth-neu { color: var(--muted); }
+
     .product-input-block {
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -2706,94 +2711,72 @@
         <div class="topbar">
           <div>
             <h1>Product</h1>
-            <p class="subtitle">Dummy performa produk, kontribusi omset, dan return</p>
+            <p class="subtitle">Omset per minggu dan kontribusi per channel</p>
           </div>
-          <div class="status-pill">Konsep awal</div>
+          <span class="status-pill" id="productStatus">—</span>
         </div>
 
         <section class="filters" aria-label="Filter Product">
           <div class="date-row">
-            <label>Tanggal awal
-              <input type="date">
+            <label>Bulan ini — awal
+              <input type="date" id="productStartDate">
             </label>
-            <label>Tanggal akhir
-              <input type="date">
+            <label>Bulan ini — akhir
+              <input type="date" id="productEndDate">
             </label>
             <label>Produk
-              <select>
-                <option>Semua Produk</option>
-                <option>Vitameal</option>
-                <option>Eyebost</option>
-                <option>Waji</option>
+              <select id="productSelect">
+                <option value="all">Semua Produk</option>
               </select>
             </label>
-            <button class="apply-btn">Terapkan</button>
+            <button class="apply-btn" id="productApplyBtn">Terapkan</button>
           </div>
         </section>
 
-        <section class="kpi-grid">
-          <article class="card kpi"><div><span>Produk Aktif</span><strong>18</strong></div><small>Dummy produk terjual periode ini</small></article>
-          <article class="card kpi"><div><span>Top Produk</span><strong>Vitameal</strong></div><small>Kontribusi omset tertinggi</small></article>
-          <article class="card kpi"><div><span>Return Produk</span><strong>Rp 7.850.000</strong></div><small>3,1% dari omset produk</small></article>
-          <article class="card kpi"><div><span>Cross Selling</span><strong>Rp 22.400.000</strong></div><small>Dummy kontribusi add-on</small></article>
+        <!-- KPI row -->
+        <section class="kpi-grid" id="productKpiGrid" style="grid-template-columns:repeat(4,minmax(0,1fr))"></section>
+
+        <!-- Grafik 1: Omset per Minggu -->
+        <section class="card panel" style="margin-bottom:18px">
+          <div class="panel-header">
+            <h2>Omset per Minggu</h2>
+            <span class="panel-note" id="productWeeklyNote">bulan ini vs bulan lalu</span>
+          </div>
+          <div style="position:relative;height:300px">
+            <canvas id="productWeeklyChart"></canvas>
+          </div>
         </section>
 
+        <!-- Grafik 2: Pareto per Channel -->
+        <section class="card panel" style="margin-bottom:18px">
+          <div class="panel-header">
+            <h2>Omset per Channel</h2>
+            <span class="panel-note" id="productParetoNote">bulan ini</span>
+          </div>
+          <div style="position:relative;height:300px">
+            <canvas id="productParetoChart"></canvas>
+          </div>
+        </section>
+
+        <!-- Summary table -->
         <section class="card panel">
           <div class="panel-header">
-            <h2>Product Performance</h2>
-            <span class="panel-note">dummy ranking produk</span>
+            <h2>Ringkasan Produk</h2>
+            <span class="panel-note" id="productTableNote">—</span>
           </div>
-          <div class="daily-table-wrap">
-            <table class="daily-table">
+          <div class="daily-table-wrap" style="max-height:400px">
+            <table class="daily-table" style="min-width:700px">
               <thead>
                 <tr>
                   <th>Produk</th>
-                  <th>Quantity</th>
-                  <th>Omset</th>
-                  <th>AOV</th>
-                  <th>Return</th>
-                  <th>Return Rate</th>
-                  <th>Kontribusi</th>
+                  <th style="text-align:right">Transaksi</th>
+                  <th style="text-align:right">Omset Bulan Ini</th>
+                  <th style="text-align:right">Omset Bulan Lalu</th>
+                  <th style="text-align:right">Growth</th>
+                  <th style="text-align:right">Kontribusi</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr class="total-row">
-                  <td>Total</td>
-                  <td>1.248</td>
-                  <td>Rp 253.000.000</td>
-                  <td>Rp 202.724</td>
-                  <td>Rp 7.850.000</td>
-                  <td>3,1%</td>
-                  <td>100%</td>
-                </tr>
-                <tr>
-                  <td>Vitameal</td>
-                  <td>420</td>
-                  <td>Rp 86.400.000</td>
-                  <td>Rp 205.714</td>
-                  <td>Rp 2.100.000</td>
-                  <td>2,4%</td>
-                  <td>34,2%</td>
-                </tr>
-                <tr>
-                  <td>Eyebost Pro</td>
-                  <td>312</td>
-                  <td>Rp 72.900.000</td>
-                  <td>Rp 233.654</td>
-                  <td>Rp 1.850.000</td>
-                  <td>2,5%</td>
-                  <td>28,8%</td>
-                </tr>
-                <tr>
-                  <td>Waji Herbal Oil</td>
-                  <td>286</td>
-                  <td>Rp 43.700.000</td>
-                  <td>Rp 152.797</td>
-                  <td>Rp 2.400.000</td>
-                  <td>5,5%</td>
-                  <td>17,3%</td>
-                </tr>
-              </tbody>
+              <tbody id="productTableBody"></tbody>
             </table>
           </div>
         </section>
@@ -3267,6 +3250,8 @@
     </form>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script>
     const SHEETS = {
       webot: {
@@ -3612,7 +3597,18 @@
       adminShopeeBody: document.getElementById("adminShopeeBody"),
       adminTiktokBody: document.getElementById("adminTiktokBody"),
       dashboardPage: document.getElementById("dashboard-page"),
-      comingTitle: document.getElementById("comingTitle")
+      comingTitle: document.getElementById("comingTitle"),
+      productStartDate: document.getElementById("productStartDate"),
+      productEndDate: document.getElementById("productEndDate"),
+      productSelect: document.getElementById("productSelect"),
+      productApplyBtn: document.getElementById("productApplyBtn"),
+      productStatus: document.getElementById("productStatus"),
+      productKpiGrid: document.getElementById("productKpiGrid"),
+      productWeeklyChart: document.getElementById("productWeeklyChart"),
+      productParetoChart: document.getElementById("productParetoChart"),
+      productTableBody: document.getElementById("productTableBody"),
+      productWeeklyNote: document.getElementById("productWeeklyNote"),
+      productTableNote: document.getElementById("productTableNote")
     };
 
     const ratioEls = {
@@ -8394,6 +8390,7 @@
           }
           if (page === "product") {
             els.productPage.classList.remove("hidden");
+            renderProductPage();
             return;
           }
           if (page === "customer-management") {
@@ -8745,6 +8742,347 @@
       populateAdminMarketplaceFilters();
     }
 
+
+    // ─── PRODUCT PAGE ─────────────────────────────────────────────────────────
+
+    let productWeeklyChartInstance = null;
+    let productParetoChartInstance = null;
+    const EXCLUDED_PRODUCT_STATUS = new Set(["draft", "waiting for payment", "cancelled", "canceled"]);
+    const PRODUCT_CHANNELS = ["ADV", "CRM", "Shopee", "Tiktokshop"];
+
+    function productChannelLabel(row) {
+      // Marketplace → platform langsung
+      if (row.source === "Marketplace") {
+        const t = String(row.type || "").trim();
+        if (/tiktok/i.test(t)) return "Tiktokshop";
+        if (/shopee/i.test(t)) return "Shopee";
+        return null;
+      }
+      // Webot → dari cs name
+      const cs = String(row.cs || "").trim();
+      if (/^cs\b/i.test(cs)) return "ADV";
+      if (/^crm\b/i.test(cs)) return "CRM";
+      return null;
+    }
+
+    function productWajiName(name) {
+      if (/waji/i.test(String(name || ""))) return "Waji";
+      return name;
+    }
+
+    function productNormName(name) {
+      return productWajiName(canonicalProductName(name));
+    }
+
+    function isProductStatusValid(row) {
+      return !EXCLUDED_PRODUCT_STATUS.has(String(row.status || "").toLowerCase());
+    }
+
+    function productRowsForRange(start, end) {
+      const s = startOfDay(start);
+      const e = startOfDay(end);
+      return allRows.filter(row =>
+        row.date >= s && row.date <= e &&
+        isProductStatusValid(row) &&
+        row.revenue > 0 &&
+        productChannelLabel(row) !== null
+      );
+    }
+
+    function weekLabel(date) {
+      const d = date.getDate();
+      if (d <= 7) return "Minggu 1";
+      if (d <= 14) return "Minggu 2";
+      if (d <= 21) return "Minggu 3";
+      return "Minggu 4";
+    }
+
+    function productWeekGroups(rows) {
+      // returns { "Minggu 1": total, "Minggu 2": total, "Minggu 3": total, "Minggu 4": total }
+      const groups = { "Minggu 1": 0, "Minggu 2": 0, "Minggu 3": 0, "Minggu 4": 0 };
+      rows.forEach(row => {
+        const lbl = weekLabel(row.date);
+        groups[lbl] = (groups[lbl] || 0) + row.revenue;
+      });
+      return groups;
+    }
+
+    function populateProductFilter(rows) {
+      const current = els.productSelect.value || "all";
+      const names = [...new Set(rows.map(row => productNormName(row.product)).filter(Boolean))].sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.productSelect.innerHTML = `<option value="all">Semua Produk</option>` +
+        names.map(n => `<option value="${escapeHtml(n)}"${n === current ? " selected" : ""}>${escapeHtml(n)}</option>`).join("");
+    }
+
+    function getProductRange() {
+      return [parseDateValue(els.productStartDate.value), parseDateValue(els.productEndDate.value)];
+    }
+
+    function prevMonthRange(start) {
+      const y = start.getFullYear();
+      const m = start.getMonth();
+      return [new Date(y, m - 1, 1), new Date(y, m, 0)];
+    }
+
+    function filterByProduct(rows, selectedProduct) {
+      if (selectedProduct === "all") return rows;
+      return rows.filter(row => productNormName(row.product) === selectedProduct);
+    }
+
+    function renderProductPage() {
+      if (!els.productStartDate || !els.productEndDate) return;
+
+      const [thisStart, thisEnd] = getProductRange();
+      if (!thisStart || !thisEnd) return;
+
+      const [prevStart, prevEnd] = prevMonthRange(thisStart);
+      const selectedProduct = els.productSelect.value || "all";
+
+      // All rows for both periods (untuk populate filter pakai bulan ini dulu)
+      const thisAllRows = productRowsForRange(thisStart, thisEnd);
+      populateProductFilter(thisAllRows);
+
+      // Apply filter produk
+      const thisRows = filterByProduct(thisAllRows, selectedProduct);
+      const prevRows = filterByProduct(productRowsForRange(prevStart, prevEnd), selectedProduct);
+
+      // ── KPI ──
+      const thisTotal = thisRows.reduce((s, r) => s + r.revenue, 0);
+      const prevTotal = prevRows.reduce((s, r) => s + r.revenue, 0);
+      const growth = prevTotal > 0 ? ((thisTotal - prevTotal) / prevTotal) * 100 : null;
+      const topChannel = (() => {
+        const byChannel = {};
+        thisRows.forEach(r => {
+          const ch = productChannelLabel(r);
+          if (ch) byChannel[ch] = (byChannel[ch] || 0) + r.revenue;
+        });
+        return Object.entries(byChannel).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
+      })();
+      const uniqueProducts = new Set(thisRows.map(r => productNormName(r.product))).size;
+
+      els.productKpiGrid.innerHTML = `
+        <article class="card kpi"><div><span>Total Omset Bulan Ini</span><strong>${currency(thisTotal)}</strong></div><small>${thisRows.length.toLocaleString("id-ID")} transaksi</small></article>
+        <article class="card kpi"><div><span>Total Omset Bulan Lalu</span><strong>${currency(prevTotal)}</strong></div><small>${prevRows.length.toLocaleString("id-ID")} transaksi</small></article>
+        <article class="card kpi"><div><span>Growth</span><strong>${growth === null ? "—" : percent(growth)}</strong></div><small>${growth === null ? "tidak ada data pembanding" : growth >= 0 ? "naik dari bulan lalu" : "turun dari bulan lalu"}</small></article>
+        <article class="card kpi"><div><span>Top Channel</span><strong>${escapeHtml(topChannel)}</strong></div><small>${uniqueProducts} produk terjual</small></article>
+      `;
+
+      // ── WEEKLY LINE CHART ──
+      const WEEKS = ["Minggu 1", "Minggu 2", "Minggu 3", "Minggu 4"];
+      const thisWeeks = productWeekGroups(thisRows);
+      const prevWeeks = productWeekGroups(prevRows);
+
+      if (productWeeklyChartInstance) { productWeeklyChartInstance.destroy(); productWeeklyChartInstance = null; }
+      productWeeklyChartInstance = new Chart(els.productWeeklyChart, {
+        type: "line",
+        data: {
+          labels: WEEKS,
+          datasets: [
+            {
+              label: "Bulan Ini",
+              data: WEEKS.map(w => thisWeeks[w] || 0),
+              borderColor: "#2563eb",
+              backgroundColor: "rgba(37,99,235,0.10)",
+              pointBackgroundColor: "#2563eb",
+              tension: 0.35,
+              fill: true,
+              pointRadius: 5
+            },
+            {
+              label: "Bulan Lalu",
+              data: WEEKS.map(w => prevWeeks[w] || 0),
+              borderColor: "#94a3b8",
+              backgroundColor: "rgba(148,163,184,0.07)",
+              pointBackgroundColor: "#94a3b8",
+              tension: 0.35,
+              fill: true,
+              borderDash: [5, 4],
+              pointRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { font: { size: 12 } } },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` ${ctx.dataset.label}: ${currency(ctx.parsed.y)}`
+              }
+            }
+          },
+          scales: {
+            y: {
+              ticks: {
+                callback: v => {
+                  if (v >= 1e9) return `${(v / 1e9).toFixed(1)}M`;
+                  if (v >= 1e6) return `${(v / 1e6).toFixed(0)}jt`;
+                  if (v >= 1e3) return `${(v / 1e3).toFixed(0)}rb`;
+                  return v;
+                },
+                font: { size: 11 }
+              },
+              grid: { color: "rgba(0,0,0,0.05)" }
+            },
+            x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+          }
+        }
+      });
+
+      // ── PARETO GROUPED BAR CHART (per minggu, tiap minggu ada 4 channel) ──
+      const CHANNEL_COLORS = {
+        "ADV": "#2563eb",
+        "CRM": "#7c3aed",
+        "Shopee": "#f97316",
+        "Tiktokshop": "#e11d48"
+      };
+
+      // Hitung omset per channel per minggu
+      // weekChannelMap[week][channel] = total omset
+      const weekChannelMap = {};
+      WEEKS.forEach(w => {
+        weekChannelMap[w] = {};
+        PRODUCT_CHANNELS.forEach(ch => { weekChannelMap[w][ch] = 0; });
+      });
+      thisRows.forEach(row => {
+        const ch = productChannelLabel(row);
+        const w = weekLabel(row.date);
+        if (ch && weekChannelMap[w] && weekChannelMap[w][ch] !== undefined) {
+          weekChannelMap[w][ch] += row.revenue;
+        }
+      });
+
+      // Hitung total per minggu (untuk persen)
+      const weekTotals = {};
+      WEEKS.forEach(w => {
+        weekTotals[w] = PRODUCT_CHANNELS.reduce((s, ch) => s + weekChannelMap[w][ch], 0);
+      });
+
+      if (productParetoChartInstance) { productParetoChartInstance.destroy(); productParetoChartInstance = null; }
+      productParetoChartInstance = new Chart(els.productParetoChart, {
+        plugins: [ChartDataLabels],
+        type: "bar",
+        data: {
+          labels: WEEKS,
+          datasets: PRODUCT_CHANNELS.map(ch => ({
+            label: ch,
+            data: WEEKS.map(w => weekChannelMap[w][ch]),
+            backgroundColor: CHANNEL_COLORS[ch],
+            borderRadius: 4,
+            borderSkipped: false
+          }))
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { font: { size: 11 }, boxWidth: 12 } },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  const w = WEEKS[ctx.dataIndex];
+                  const total = weekTotals[w];
+                  const pct = total > 0 ? (ctx.parsed.y / total * 100).toFixed(1) : "0.0";
+                  return ` ${ctx.dataset.label}: ${currency(ctx.parsed.y)} (${pct}%)`;
+                }
+              }
+            },
+            datalabels: {
+              anchor: "end",
+              align: "end",
+              formatter: (value, ctx) => {
+                const w = WEEKS[ctx.dataIndex];
+                const total = weekTotals[w];
+                if (!total || value === 0) return "";
+                return (value / total * 100).toFixed(1) + "%";
+              },
+              color: "#18212f",
+              font: { size: 10, weight: "700" }
+            }
+          },
+          scales: {
+            y: {
+              ticks: {
+                callback: v => {
+                  if (v >= 1e6) return `${(v / 1e6).toFixed(0)}jt`;
+                  if (v >= 1e3) return `${(v / 1e3).toFixed(0)}rb`;
+                  return v;
+                },
+                font: { size: 11 }
+              },
+              grid: { color: "rgba(0,0,0,0.05)" }
+            },
+            x: { grid: { display: false }, ticks: { font: { size: 12 } } }
+          }
+        }
+      });
+
+      // ── SUMMARY TABLE ──
+      const productMap = new Map();
+      thisRows.forEach(row => {
+        const name = productNormName(row.product) || "Tanpa produk";
+        const item = productMap.get(name) || { name, thisRevenue: 0, count: 0 };
+        item.thisRevenue += row.revenue;
+        item.count++;
+        productMap.set(name, item);
+      });
+      prevRows.forEach(row => {
+        const name = productNormName(row.product) || "Tanpa produk";
+        const item = productMap.get(name) || { name, thisRevenue: 0, count: 0 };
+        item.prevRevenue = (item.prevRevenue || 0) + row.revenue;
+        productMap.set(name, item);
+      });
+
+      const sortedProducts = [...productMap.values()].sort((a, b) => b.thisRevenue - a.thisRevenue);
+      const grandTotal = sortedProducts.reduce((s, p) => s + p.thisRevenue, 0);
+
+      const totalPrev = sortedProducts.reduce((s, p) => s + (p.prevRevenue || 0), 0);
+      const totalGrowth = totalPrev > 0 ? ((grandTotal - totalPrev) / totalPrev) * 100 : null;
+      const totalCount = sortedProducts.reduce((s, p) => s + p.count, 0);
+
+      const growthCell = (thisRev, prevRev) => {
+        if (!prevRev) return `<span class="product-growth-neu">—</span>`;
+        const g = ((thisRev - prevRev) / prevRev) * 100;
+        const cls = g >= 0 ? "product-growth-pos" : "product-growth-neg";
+        const arrow = g >= 0 ? "▲" : "▼";
+        return `<span class="${cls}">${arrow} ${percent(g)}</span>`;
+      };
+
+      els.productTableBody.innerHTML =
+        `<tr class="total-row">
+          <td>Total</td>
+          <td style="text-align:right">${totalCount.toLocaleString("id-ID")}</td>
+          <td style="text-align:right">${currency(grandTotal)}</td>
+          <td style="text-align:right">${currency(totalPrev)}</td>
+          <td style="text-align:right">${growthCell(grandTotal, totalPrev)}</td>
+          <td style="text-align:right">100%</td>
+        </tr>` +
+        sortedProducts.map(p => {
+          const kontribusi = grandTotal > 0 ? (p.thisRevenue / grandTotal * 100).toFixed(1) + "%" : "—";
+          return `<tr>
+            <td>${escapeHtml(p.name)}</td>
+            <td style="text-align:right">${p.count.toLocaleString("id-ID")}</td>
+            <td style="text-align:right">${currency(p.thisRevenue)}</td>
+            <td style="text-align:right">${currency(p.prevRevenue || 0)}</td>
+            <td style="text-align:right">${growthCell(p.thisRevenue, p.prevRevenue || 0)}</td>
+            <td style="text-align:right">${kontribusi}</td>
+          </tr>`;
+        }).join("");
+
+      els.productTableNote.textContent = `${sortedProducts.length} produk — bulan ini vs bulan lalu`;
+      els.productStatus.textContent = `${thisRows.length.toLocaleString("id-ID")} transaksi bulan ini`;
+    }
+
+    function setupProductPage() {
+      const [thisStart, thisEnd] = rangePreset("thisMonth");
+      els.productStartDate.value = toInputDate(thisStart);
+      els.productEndDate.value = toInputDate(thisEnd);
+      els.productApplyBtn.addEventListener("click", renderProductPage);
+      els.productSelect.addEventListener("change", renderProductPage);
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     function renderCurrentPage() {
       if (activePage === "advertiser") return renderAdvertiserReport();
       if (activePage === "cs") return renderCsReport();
@@ -8753,6 +9091,7 @@
       if (activePage === "tiktok") return renderTiktokReport();
       if (activePage === "weekly-budgeting") return renderWeeklyBudgetingPage();
       if (activePage === "admin-marketplace") return renderAdminMarketplacePage();
+      if (activePage === "product") return renderProductPage();
       return render();
     }
 
@@ -9000,6 +9339,7 @@
       loadTiktokBudgetInputs();
       setupNavigation();
       setupFilters();
+      setupProductPage();
       setupChartHover();
       setupCrmStackTooltip();
       updateInputs(...rangePreset("thisMonth"));

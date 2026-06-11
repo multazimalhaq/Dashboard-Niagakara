@@ -4779,17 +4779,21 @@
     function projectionGrowth(currentProjection, previousProjection) {
       return previousProjection > 0
         ? ((currentProjection - previousProjection) / previousProjection) * 100
-        : (currentProjection > 0 ? 100 : 0);
+        : null;
     }
 
     function setProjectionMetric(element, currentProjection, previousProjection) {
       const growth = projectionGrowth(currentProjection, previousProjection);
-      const positive = growth >= 0;
-      const detail = `Growth proyeksi dari periode sebelumnya (${currency(previousProjection)})`;
+      const detail = previousProjection > 0
+        ? `Growth proyeksi dari periode sebelumnya (${currency(previousProjection)})`
+        : "Data periode sebelumnya belum tersedia";
+      const growthTag = growth === null
+        ? `<span class="projection-growth" title="${escapeHtml(detail)}" style="opacity:0.45">— belum ada data pembanding</span>`
+        : `<span class="projection-growth ${growth >= 0 ? "positive" : "negative"}" title="${escapeHtml(detail)}">${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}</span>`;
       element.innerHTML = `
         <span class="projection-value">
           <span>${currency(currentProjection)}</span>
-          <span class="projection-growth ${positive ? "positive" : "negative"}" title="${escapeHtml(detail)}">${positive ? "&uarr;" : "&darr;"} ${percent(growth)}</span>
+          ${growthTag}
         </span>
       `;
     }
@@ -5613,9 +5617,9 @@
         const roasDataOrder = budget > 0 ? row.dataOrderRevenue / budget : 0;
         const cacAfterAdmin = percentRatio(totalBudget, row.dashgoRevenue);
         const roasAfterAdmin = totalBudget > 0 ? row.dashgoRevenue / totalBudget : 0;
-        const growth = previousRevenue > 0 ? ((row.dashgoRevenue - previousRevenue) / previousRevenue) * 100 : (row.dashgoRevenue > 0 ? 100 : 0);
-        const growthText = row.dashgoRevenue || previousRevenue ? `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}` : "-";
-        const growthClass = growth >= 0 ? "positive-cell" : "negative-cell";
+        const growth = previousRevenue > 0 ? ((row.dashgoRevenue - previousRevenue) / previousRevenue) * 100 : null;
+        const growthText = growth === null ? "—" : `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}`;
+        const growthClass = growth === null ? "" : (growth >= 0 ? "positive-cell" : "negative-cell");
         previousRevenue = row.dashgoRevenue;
         return `
           <tr>
@@ -7099,9 +7103,9 @@
         const costPerLead = row.leadDashboard > 0 ? budget / row.leadDashboard : 0;
         const cacAfterAdmin = percentRatio(totalBudget, row.dashgoRevenue);
         const roasAfterAdmin = totalBudget > 0 ? row.dashgoRevenue / totalBudget : 0;
-        const growth = previousRevenue > 0 ? ((row.dashgoRevenue - previousRevenue) / previousRevenue) * 100 : (row.dashgoRevenue > 0 ? 100 : 0);
-        const growthText = row.dashgoRevenue || previousRevenue ? `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}` : "-";
-        const growthClass = growth >= 0 ? "positive-cell" : "negative-cell";
+        const growth = previousRevenue > 0 ? ((row.dashgoRevenue - previousRevenue) / previousRevenue) * 100 : null;
+        const growthText = growth === null ? "—" : `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}`;
+        const growthClass = growth === null ? "" : (growth >= 0 ? "positive-cell" : "negative-cell");
         previousRevenue = row.dashgoRevenue;
         return `
           <tr>
@@ -7138,7 +7142,7 @@
       const previous = rowsInRange(prevStart, prevEnd);
       const gross = sumRows(current);
       const prevGross = sumRows(previous);
-      const growth = prevGross > 0 ? ((gross - prevGross) / prevGross) * 100 : (gross > 0 ? 100 : 0);
+      const growth = prevGross > 0 ? ((gross - prevGross) / prevGross) * 100 : null;
       const projected = projectionFrom(current, start, end);
       const previousProjected = projectionFrom(previous, prevStart, prevEnd);
       const totalOrder = countUniqueOrders(current);
@@ -7161,9 +7165,9 @@
 
       els.grossOmset.textContent = currency(gross);
       els.grossMeta.textContent = `${current.length.toLocaleString("id-ID")} transaksi valid`;
-      els.growthOmset.textContent = percent(growth);
-      els.growthOmset.className = growth >= 0 ? "delta-up" : "delta-down";
-      els.growthMeta.textContent = `${currency(prevGross)} pada periode sebelumnya`;
+      els.growthOmset.textContent = growth === null ? "—" : percent(growth);
+      els.growthOmset.className = growth === null ? "" : (growth >= 0 ? "delta-up" : "delta-down");
+      els.growthMeta.textContent = growth === null ? "Data periode sebelumnya belum tersedia" : `${currency(prevGross)} pada periode sebelumnya`;
       els.dashboardBudget.textContent = currency(dashboardBudget.total);
       els.dashboardCac.textContent = percent(dashboardCac);
       els.dashboardRoas.textContent = roas(dashboardRoas);
@@ -7563,7 +7567,7 @@
       const costLeadCs = row.leadCs > 0 ? budget / row.leadCs : 0;
       const pamValue = row.revenue - (row.revenue * 0.455) - budget;
       const pamPct = percentRatio(pamValue, row.revenue);
-      const growth = previousRevenue > 0 ? ((row.revenue - previousRevenue) / previousRevenue) * 100 : (row.revenue > 0 ? 100 : 0);
+      const growth = previousRevenue > 0 ? ((row.revenue - previousRevenue) / previousRevenue) * 100 : null;
       return { budget, cac, closingRate, upsell, costLeadDashboard, costLeadCs, pamValue, pamPct, growth };
     }
 
@@ -7603,8 +7607,8 @@
       const bodyRows = rows.map(row => {
         const calc = calculateDailyReportRow(row, previousRevenue);
         previousRevenue = row.revenue;
-        const growthClass = calc.growth >= 0 ? "positive-cell" : "negative-cell";
-        const growthText = `${calc.growth >= 0 ? "↑" : "↓"} ${percent(calc.growth)}`;
+        const growthClass = calc.growth === null ? "" : (calc.growth >= 0 ? "positive-cell" : "negative-cell");
+        const growthText = calc.growth === null ? "—" : `${calc.growth >= 0 ? "↑" : "↓"} ${percent(calc.growth)}`;
         return `
           <tr>
             ${reportCell(longIndonesianDate(row.date), isHolidayDate(row.date) ? "holiday-cell" : "")}
@@ -7621,7 +7625,7 @@
             ${reportCell(currency(calc.costLeadDashboard))}
             ${reportCell(currency(calc.costLeadCs))}
             ${reportCell(percent(calc.pamPct), calc.pamValue >= 0 ? "positive-cell" : "negative-cell")}
-            ${reportCell(row.revenue || previousRevenue ? growthText : "-", growthClass)}
+            ${reportCell(growthText, growthClass)}
           </tr>
         `;
       }).join("");
@@ -7929,9 +7933,9 @@
       const bodyRows = rows.map(row => {
         const closingRate = percentRatio(row.closing, row.leadCs);
         const upsell = row.closing > 0 ? row.quantity / row.closing : 0;
-        const growth = previousRevenue > 0 ? ((row.revenue - previousRevenue) / previousRevenue) * 100 : (row.revenue > 0 ? 100 : 0);
-        const growthClass = growth >= 0 ? "positive-cell" : "negative-cell";
-        const growthText = row.revenue || previousRevenue ? `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}` : "-";
+        const growth = previousRevenue > 0 ? ((row.revenue - previousRevenue) / previousRevenue) * 100 : null;
+        const growthClass = growth === null ? "" : (growth >= 0 ? "positive-cell" : "negative-cell");
+        const growthText = growth === null ? "—" : `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}`;
         previousRevenue = row.revenue;
         return `
           <tr>
@@ -8230,9 +8234,9 @@
         const cac = percentRatio(row.budget, totalRevenue);
         const pamValue = totalRevenue - (totalRevenue * 0.455) - row.budget;
         const pamPct = percentRatio(pamValue, totalRevenue);
-        const growth = previousRevenue > 0 ? ((totalRevenue - previousRevenue) / previousRevenue) * 100 : (totalRevenue > 0 ? 100 : 0);
-        const growthText = totalRevenue || previousRevenue ? `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}` : "-";
-        const growthClass = growth >= 0 ? "positive-cell" : "negative-cell";
+        const growth = previousRevenue > 0 ? ((totalRevenue - previousRevenue) / previousRevenue) * 100 : null;
+        const growthText = growth === null ? "—" : `${growth >= 0 ? "&uarr;" : "&darr;"} ${percent(growth)}`;
+        const growthClass = growth === null ? "" : (growth >= 0 ? "positive-cell" : "negative-cell");
         previousRevenue = totalRevenue;
         return `
           <tr>
@@ -8838,18 +8842,29 @@
       return start >= loadedRangeStart && end <= loadedRangeEnd;
     }
 
+    function isPrevRangeLoaded(start) {
+      if (!loadedRangeStart) return false;
+      const prevEnd = addDays(startOfDay(start), -1);
+      return prevEnd >= loadedRangeStart;
+    }
+
     async function ensureCoreDataForRange(start, end) {
-      if (!start || !end || isRangeCovered(start, end) || coreDataLoading) return;
+      if (!start || !end || coreDataLoading) return;
+      // Hitung periode sebelumnya juga
+      const [prevStart] = [previousRange(start, end)[0]];
+      const fetchStart = prevStart < (loadedRangeStart || start) ? prevStart : start;
+      const fetchEnd = end > (loadedRangeEnd || end) ? end : end;
+      if (isRangeCovered(fetchStart, fetchEnd)) return;
       coreDataLoading = true;
       try {
         els.sourceStatus.textContent = "Memuat data untuk rentang yang dipilih...";
         const [webotResult, marketplaceResult] = await Promise.allSettled([
-          loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(start, end)),
-          loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(start, end)),
+          loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(fetchStart, fetchEnd)),
+          loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(fetchStart, fetchEnd)),
         ]);
         const webotRows = settledRows(webotResult);
         const marketplaceRows = settledRows(marketplaceResult);
-        await applyCoreRowsAsync(webotRows, marketplaceRows, start, end);
+        await applyCoreRowsAsync(webotRows, marketplaceRows, fetchStart, fetchEnd);
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca`;
         applyLatestFallbacks();
         renderCurrentPage();
@@ -8996,9 +9011,13 @@
       updateAdminMarketplaceInputs(...rangePreset("thisMonth"));
 
       // FASE 1: Load core data (webot + marketplace) — prioritas utama
+      // Load 2 bulan (bulan lalu + bulan ini) supaya growth langsung bisa dihitung
       try {
         els.sourceStatus.textContent = "Memuat data utama...";
-        const [initStart, initEnd] = rangePreset("thisMonth");
+        const [thisStart, thisEnd] = rangePreset("thisMonth");
+        const [lastStart] = rangePreset("lastMonth");
+        const initStart = lastStart;   // mulai dari awal bulan lalu
+        const initEnd = thisEnd;       // sampai akhir bulan ini
         const [webotResult, marketplaceResult] = await Promise.allSettled([
           loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(initStart, initEnd)),
           loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(initStart, initEnd)),

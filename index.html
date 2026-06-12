@@ -573,6 +573,39 @@
       color: #ffffff !important;
     }
 
+    .daily-table.daily-avg-table {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .daily-table.daily-avg-table th,
+    .daily-table.daily-avg-table td,
+    .daily-table.daily-avg-table th:first-child,
+    .daily-table.daily-avg-table td:first-child,
+    .daily-table.daily-avg-table .total-row td,
+    .daily-table.daily-avg-table .total-row td:first-child {
+      position: static;
+      min-width: 0;
+      box-shadow: none;
+    }
+
+    .daily-table.daily-avg-table th,
+    .daily-table.daily-avg-table th:first-child {
+      background: #082b45;
+      color: #ffffff;
+    }
+
+    .daily-table.daily-avg-table td {
+      padding: 8px 12px;
+    }
+
+    .daily-table.daily-avg-table .total-row td,
+    .daily-table.daily-avg-table .total-row td:first-child {
+      background: #111827;
+      color: #ffd84d;
+      font-weight: 900;
+    }
+
     .advertiser-chart-card h2,
     #advertiser-page .panel-header h2 {
       color: #082b45;
@@ -1721,10 +1754,21 @@
           </article>
           <article class="card panel">
             <div class="panel-header">
-              <h2>Catatan Status</h2>
-              <span class="panel-note">ringkasan periode</span>
+              <h2>Rata-rata Transaksi Harian</h2>
+              <span class="panel-note" id="dailyAvgNote">berdasarkan periode filter</span>
             </div>
-            <div class="ratio-list" id="statusSummary"></div>
+            <div class="daily-table-wrap" style="max-height:none">
+              <table class="daily-table daily-avg-table">
+                <thead>
+                  <tr>
+                    <th>Channel</th>
+                    <th style="text-align:right">Jumlah</th>
+                    <th style="text-align:right">Nominal</th>
+                  </tr>
+                </thead>
+                <tbody id="dailyAvgBody"></tbody>
+              </table>
+            </div>
           </article>
         </section>
 
@@ -3408,7 +3452,7 @@
       returnCount: document.getElementById("returnCount"),
       periodLabel: document.getElementById("periodLabel"),
       statusRatios: document.getElementById("statusRatios"),
-      statusSummary: document.getElementById("statusSummary"),
+      dailyAvgBody: document.getElementById("dailyAvgBody"),
       topProducts: document.getElementById("topProducts"),
       topAdvertisers: document.getElementById("topAdvertisers"),
       topCs: document.getElementById("topCs"),
@@ -7183,6 +7227,7 @@
       chartPoints = buildDailySeries(current, start, end);
       drawChart();
       renderStatusRatios(current, gross);
+      renderDailyAvgTransaction(current, start, end);
       renderRanks(current);
       renderStatusInsights(current);
     }
@@ -7214,19 +7259,46 @@
         `;
       }).join("") : `<div class="ratio-amount">Belum ada data status pada periode ini.</div>`;
 
-      const totalOrder = countUniqueOrders(rows);
-      const returnOrder = countUniqueOrders(rows.filter(row => isReturnStatus(row.status)));
-      els.statusSummary.innerHTML = `
-        <div class="ratio-item">
-          <div class="ratio-top"><strong>Total Order</strong><span>${totalOrder.toLocaleString("id-ID")}</span></div>
-          <div class="bar"><i class="bar-process" style="width:100%"></i></div>
-          <div class="ratio-amount">Order unik dalam periode filter</div>
-        </div>
-        <div class="ratio-item">
-          <div class="ratio-top"><strong>Order Return</strong><span>${returnOrder.toLocaleString("id-ID")}</span></div>
-          <div class="bar"><i class="bar-return" style="width:${totalOrder ? Math.min(100, returnOrder / totalOrder * 100) : 0}%"></i></div>
-          <div class="ratio-amount">${percent(totalOrder ? returnOrder / totalOrder * 100 : 0)} dari total order</div>
-        </div>
+    }
+
+    function renderDailyAvgTransaction(rows, start, end) {
+      const days = Math.max(1, Math.round((startOfDay(end) - startOfDay(start)) / 86400000) + 1);
+      const channels = [
+        { key: "new", label: "SOSCOM" },
+        { key: "repeat", label: "CRM" },
+        { key: "shopee", label: "SHOPEE" },
+        { key: "tiktok", label: "TIKTOKSHOP" }
+      ];
+      const channelRows = {
+        new: rows.filter(row => row.source === "Webot" && row.type.toLowerCase() === "new"),
+        repeat: rows.filter(row => row.source === "Webot" && row.type.toLowerCase() === "repeat"),
+        shopee: rows.filter(row => row.type.toLowerCase().includes("shopee")),
+        tiktok: rows.filter(row => row.type.toLowerCase().includes("tiktok"))
+      };
+
+      let totalCount = 0;
+      let totalNominal = 0;
+      const bodyRows = channels.map(channel => {
+        const data = channelRows[channel.key];
+        const avgCount = countUniqueOrders(data) / days;
+        const avgNominal = sumRows(data) / days;
+        totalCount += avgCount;
+        totalNominal += avgNominal;
+        return `
+          <tr>
+            <td>${channel.label}</td>
+            <td style="text-align:right">${Math.round(avgCount).toLocaleString("id-ID")}</td>
+            <td style="text-align:right">${currency(avgNominal)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      els.dailyAvgBody.innerHTML = bodyRows + `
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td style="text-align:right">${Math.round(totalCount).toLocaleString("id-ID")}</td>
+          <td style="text-align:right">${currency(totalNominal)}</td>
+        </tr>
       `;
     }
 

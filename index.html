@@ -3681,6 +3681,8 @@
     let coreDataLoading = false;
     let loadedRangeStart = null;
     let loadedRangeEnd = null;
+    const FULL_RANGE_START = new Date(2000, 0, 1);
+    const FULL_RANGE_END = new Date(2100, 0, 1);
     let advertiserBudgetInputs = [];
     let csReportInputs = [];
     let shopeeBudgetInputs = [];
@@ -8508,10 +8510,14 @@
         els.advertiserQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateAdvertiserInputs(...rangePreset(button.dataset.range));
+        const [advStart, advEnd] = getAdvertiserRange();
+        ensureCoreDataForRange(advStart, advEnd).then(() => renderAdvertiserReport());
         renderAdvertiserReport();
       });
       els.applyAdvertiserFilter.addEventListener("click", () => {
         els.advertiserQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        const [advStart, advEnd] = getAdvertiserRange();
+        ensureCoreDataForRange(advStart, advEnd).then(() => renderAdvertiserReport());
         renderAdvertiserReport();
       });
       els.advertiserSelect.addEventListener("change", renderAdvertiserReport);
@@ -8545,10 +8551,14 @@
         els.csQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateCsInputs(...rangePreset(button.dataset.range));
+        const [csStart, csEnd] = getCsRange();
+        ensureCoreDataForRange(csStart, csEnd).then(() => renderCsReport());
         renderCsReport();
       });
       els.applyCsFilter.addEventListener("click", () => {
         els.csQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        const [csStart, csEnd] = getCsRange();
+        ensureCoreDataForRange(csStart, csEnd).then(() => renderCsReport());
         renderCsReport();
       });
       els.csSelect.addEventListener("change", renderCsReport);
@@ -8581,10 +8591,14 @@
         els.crmQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateCrmInputs(...rangePreset(button.dataset.range));
+        const [crmStart, crmEnd] = getCrmRange();
+        ensureCoreDataForRange(crmStart, crmEnd).then(() => renderCrmReport());
         renderCrmReport();
       });
       els.applyCrmFilter.addEventListener("click", () => {
         els.crmQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        const [crmStart, crmEnd] = getCrmRange();
+        ensureCoreDataForRange(crmStart, crmEnd).then(() => renderCrmReport());
         renderCrmReport();
       });
       els.crmSelect.addEventListener("change", renderCrmReport);
@@ -8596,10 +8610,14 @@
         els.shopeeQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateShopeeInputs(...rangePreset(button.dataset.range));
+        const [shopeeStart, shopeeEnd] = getShopeeRange();
+        ensureCoreDataForRange(shopeeStart, shopeeEnd).then(() => renderShopeeReport());
         renderShopeeReport();
       });
       els.applyShopeeFilter.addEventListener("click", () => {
         els.shopeeQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        const [shopeeStart, shopeeEnd] = getShopeeRange();
+        ensureCoreDataForRange(shopeeStart, shopeeEnd).then(() => renderShopeeReport());
         renderShopeeReport();
       });
       els.shopeeStoreSelect.addEventListener("change", renderShopeeReport);
@@ -8632,10 +8650,14 @@
         els.tiktokQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateTiktokInputs(...rangePreset(button.dataset.range));
+        const [tiktokStart, tiktokEnd] = getTiktokRange();
+        ensureCoreDataForRange(tiktokStart, tiktokEnd).then(() => renderTiktokReport());
         renderTiktokReport();
       });
       els.applyTiktokFilter.addEventListener("click", () => {
         els.tiktokQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        const [tiktokStart, tiktokEnd] = getTiktokRange();
+        ensureCoreDataForRange(tiktokStart, tiktokEnd).then(() => renderTiktokReport());
         renderTiktokReport();
       });
       els.tiktokStoreSelect.addEventListener("change", renderTiktokReport);
@@ -9261,21 +9283,22 @@
 
     async function ensureCoreDataForRange(start, end) {
       if (!start || !end || coreDataLoading) return;
-      // Hitung periode sebelumnya juga
-      const [prevStart] = [previousRange(start, end)[0]];
-      const fetchStart = prevStart < (loadedRangeStart || start) ? prevStart : start;
-      const fetchEnd = end > (loadedRangeEnd || end) ? end : end;
-      if (isRangeCovered(fetchStart, fetchEnd)) return;
+      if (isRangeCovered(start, end)) return;
       coreDataLoading = true;
       try {
         els.sourceStatus.textContent = "Memuat data untuk rentang yang dipilih...";
+        // Pakai base query (tanpa filter "where" tanggal) supaya gak bergantung
+        // pada tipe kolom tanggal di sheet (IMPORTRANGE kadang bikin tanggal
+        // jadi teks untuk bulan-bulan tertentu, bikin filter "where A >= date"
+        // gagal match dan balik 0 baris). Filter tanggal dilakukan di JS lewat
+        // parseDateValue (rowsInRange) yang sudah robust untuk Date maupun teks.
         const [webotResult, marketplaceResult] = await Promise.allSettled([
-          loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(fetchStart, fetchEnd)),
-          loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(fetchStart, fetchEnd)),
+          loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(null, null)),
+          loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(null, null)),
         ]);
         const webotRows = settledRows(webotResult);
         const marketplaceRows = settledRows(marketplaceResult);
-        await applyCoreRowsAsync(webotRows, marketplaceRows, fetchStart, fetchEnd);
+        await applyCoreRowsAsync(webotRows, marketplaceRows, FULL_RANGE_START, FULL_RANGE_END);
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca`;
         applyLatestFallbacks();
         renderCurrentPage();
@@ -9303,10 +9326,9 @@
     async function loadFullDataInBackground() {
       try {
         els.sourceStatus.textContent += " | Sinkronisasi data lengkap berjalan...";
-        const [bgStart, bgEnd] = rangePreset("thisYear");
         const [webotResult, marketplaceResult, ...supportResults] = await Promise.allSettled([
-          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(bgStart, bgEnd)),
-          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(bgStart, bgEnd)),
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(null, null)),
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(null, null)),
           ...supportingSheetPromises()
         ]);
         const sourceNotes = [];
@@ -9316,7 +9338,7 @@
         const webotRows = settledRows(webotResult);
         const marketplaceRows = settledRows(marketplaceResult);
         if (webotRows.length || marketplaceRows.length) {
-          await applyCoreRowsAsync(webotRows, marketplaceRows, bgStart, bgEnd);
+          await applyCoreRowsAsync(webotRows, marketplaceRows, FULL_RANGE_START, FULL_RANGE_END);
         }
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris data lengkap tersinkron${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
         applyLatestFallbacks();

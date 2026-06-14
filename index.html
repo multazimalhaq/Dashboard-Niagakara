@@ -720,6 +720,114 @@
       background: #14532d !important;
     }
 
+    /* ── CLV Table ─────────────────────────────────────────── */
+    .daily-table.clv-table th,
+    .daily-table.clv-table th:first-child {
+      background: #1e3a5f !important;
+      color: #ffffff !important;
+    }
+
+    .daily-table.clv-table .total-row td,
+    .daily-table.clv-table .total-row td:first-child {
+      color: #ffd84d !important;
+    }
+
+    .daily-table.clv-table th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .daily-table.clv-table th.sortable:hover {
+      background: #2a4e7f !important;
+    }
+
+    .daily-table.clv-table th .sort-icon {
+      margin-left: 4px;
+      opacity: 0.55;
+      font-style: normal;
+    }
+
+    .daily-table.clv-table th.sort-asc .sort-icon::after { content: " ▲"; opacity: 1; }
+    .daily-table.clv-table th.sort-desc .sort-icon::after { content: " ▼"; opacity: 1; }
+    .daily-table.clv-table th:not(.sort-asc):not(.sort-desc) .sort-icon::after { content: " ⇅"; }
+
+    .clv-search-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .clv-search-row input {
+      flex: 1 1 220px;
+      max-width: 340px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      font-size: 13px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .clv-search-row input:focus {
+      outline: none;
+      border-color: #1e3a5f;
+      box-shadow: 0 0 0 2px rgba(30,58,95,0.12);
+    }
+
+    .clv-search-row .clv-count {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .clv-pagination {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .clv-pagination button {
+      min-width: 32px;
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--ink);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 140ms, color 140ms;
+    }
+
+    .clv-pagination button:hover:not(:disabled) {
+      background: #1e3a5f;
+      color: #ffffff;
+      border-color: #1e3a5f;
+    }
+
+    .clv-pagination button.active {
+      background: #1e3a5f;
+      color: #ffffff;
+      border-color: #1e3a5f;
+      font-weight: 700;
+    }
+
+    .clv-pagination button:disabled {
+      opacity: 0.38;
+      cursor: default;
+    }
+
+    .clv-loading {
+      padding: 32px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     .stack-tooltip {
       position: fixed;
       z-index: 20;
@@ -2826,6 +2934,7 @@
         </section>
       </section>
 
+      <!-- ===== CUSTOMER MANAGEMENT PAGE ===== -->
       <section id="customer-management-page" class="hidden">
         <div class="topbar">
           <div>
@@ -2919,6 +3028,43 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+        </section>
+
+        <!-- ── Customer Lifetime Value ────────────────────────── -->
+        <section class="card panel" style="margin-top:18px">
+          <div class="panel-header">
+            <h2>Customer Lifetime Value</h2>
+            <span class="panel-note" id="clvPanelNote">berdasarkan semua histori transaksi Webot</span>
+          </div>
+          <div id="clvLoadingMsg" class="clv-loading">Memuat data lifetime value...</div>
+          <div id="clvContent" style="display:none">
+            <div class="clv-search-row">
+              <input id="clvSearch" type="text" placeholder="Cari nomor / nama customer..." autocomplete="off">
+              <span class="clv-count" id="clvCount"></span>
+            </div>
+            <div class="daily-table-wrap">
+              <table class="daily-table clv-table" style="min-width:1300px">
+                <thead>
+                  <tr>
+                    <th style="min-width:44px;text-align:center">No</th>
+                    <th class="sortable" data-col="phone" style="min-width:160px">Nomor Customer<i class="sort-icon"></i></th>
+                    <th class="sortable sort-desc" data-col="omset" style="min-width:130px;text-align:right">Omset<i class="sort-icon"></i></th>
+                    <th class="sortable" data-col="first" style="min-width:120px;text-align:center">First Transaksi<i class="sort-icon"></i></th>
+                    <th class="sortable" data-col="last" style="min-width:120px;text-align:center">Last Transaksi<i class="sort-icon"></i></th>
+                    <th class="sortable" data-col="closing" style="min-width:100px;text-align:right">Transaksi (Closing)<i class="sort-icon"></i></th>
+                    <th class="sortable" data-col="qty" style="min-width:80px;text-align:right">Qty<i class="sort-icon"></i></th>
+                    <th style="min-width:200px">Nama Produk</th>
+                    <th style="min-width:160px">Nama Customer</th>
+                    <th style="min-width:140px">Nama CS (First)</th>
+                    <th style="min-width:140px">Nama CRM (Last)</th>
+                    <th style="min-width:160px">Nama ADV (First)</th>
+                  </tr>
+                </thead>
+                <tbody id="clvTableBody"></tbody>
+              </table>
+            </div>
+            <div class="clv-pagination" id="clvPagination"></div>
           </div>
         </section>
       </section>
@@ -3614,6 +3760,13 @@
       weeklyProductOptions: document.getElementById("weeklyProductOptions"),
       productPage: document.getElementById("product-page"),
       customerManagementPage: document.getElementById("customer-management-page"),
+      clvLoadingMsg: document.getElementById("clvLoadingMsg"),
+      clvContent: document.getElementById("clvContent"),
+      clvSearch: document.getElementById("clvSearch"),
+      clvCount: document.getElementById("clvCount"),
+      clvTableBody: document.getElementById("clvTableBody"),
+      clvPagination: document.getElementById("clvPagination"),
+      clvPanelNote: document.getElementById("clvPanelNote"),
       financePage: document.getElementById("finance-page"),
       adminMarketplacePage: document.getElementById("admin-marketplace-page"),
       adminMarketplaceStatus: document.getElementById("adminMarketplaceStatus"),
@@ -3683,6 +3836,16 @@
     let loadedRangeEnd = null;
     const FULL_RANGE_START = new Date(2000, 0, 1);
     const FULL_RANGE_END = new Date(2100, 0, 1);
+
+    // ── CLV state ──────────────────────────────────────────────
+    let clvFullDataLoaded = false;
+    let clvFullDataLoading = false;
+    let clvRows = [];          // aggregated per-phone
+    let clvFiltered = [];      // setelah search
+    let clvSortCol = "omset";
+    let clvSortDir = "desc";
+    let clvPage = 1;
+    const CLV_PAGE_SIZE = 10;
     let advertiserBudgetInputs = [];
     let csReportInputs = [];
     let shopeeBudgetInputs = [];
@@ -8469,6 +8632,7 @@
           }
           if (page === "customer-management") {
             els.customerManagementPage.classList.remove("hidden");
+            loadClvFullData();
             return;
           }
           if (page === "finance") {
@@ -9175,6 +9339,220 @@
       els.productApplyBtn.addEventListener("click", renderProductPage);
       els.productSelect.addEventListener("change", renderProductPage);
     }
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CUSTOMER LIFETIME VALUE
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    function fmtDate(d) {
+      if (!d) return "-";
+      return d.toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function buildClvRows(rows) {
+      // Hanya ambil dari sumber Webot, punya nomor telepon valid
+      const webotOnly = rows.filter(r => r.source === "Webot" && r.customerPhone);
+      const map = new Map();
+      webotOnly.forEach(r => {
+        const key = r.customerPhone;
+        if (!map.has(key)) {
+          map.set(key, {
+            phone: r.customerPhoneRaw || r.customerPhone,
+            omset: 0,
+            closing: 0,
+            qty: 0,
+            products: new Set(),
+            firstDate: null,
+            lastDate: null,
+            firstRow: null,
+            lastRow: null,
+            name: ""
+          });
+        }
+        const e = map.get(key);
+        e.omset += r.revenue || 0;
+        e.closing += r.closing || 0;
+        e.qty += r.quantity || 0;
+        if (r.product && r.product !== "Tanpa produk") e.products.add(r.product);
+        if (!e.firstDate || r.date < e.firstDate) { e.firstDate = r.date; e.firstRow = r; }
+        if (!e.lastDate || r.date > e.lastDate) { e.lastDate = r.date; e.lastRow = r; }
+      });
+
+      return Array.from(map.values()).map(e => ({
+        phone: e.phone,
+        omset: e.omset,
+        closing: e.closing,
+        qty: e.qty,
+        products: [...e.products].join(", ") || "-",
+        firstDate: e.firstDate,
+        lastDate: e.lastDate,
+        name: (e.lastRow && e.lastRow.customerName) || "-",
+        csFirst: (e.firstRow && e.firstRow.cs && /^cs /i.test(e.firstRow.cs)) ? e.firstRow.cs : "-",
+        crmLast: (e.lastRow && e.lastRow.cs && /^crm /i.test(e.lastRow.cs)) ? e.lastRow.cs : "-",
+        advFirst: (e.firstRow && e.firstRow.advertiser && e.firstRow.advertiser !== "Tanpa advertiser") ? e.firstRow.advertiser : "-"
+      }));
+    }
+
+    function clvSortRows(rows) {
+      const col = clvSortCol;
+      const dir = clvSortDir === "asc" ? 1 : -1;
+      return [...rows].sort((a, b) => {
+        let va, vb;
+        if (col === "omset") { va = a.omset; vb = b.omset; }
+        else if (col === "closing") { va = a.closing; vb = b.closing; }
+        else if (col === "qty") { va = a.qty; vb = b.qty; }
+        else if (col === "first") { va = a.firstDate ? a.firstDate.getTime() : 0; vb = b.firstDate ? b.firstDate.getTime() : 0; }
+        else if (col === "last") { va = a.lastDate ? a.lastDate.getTime() : 0; vb = b.lastDate ? b.lastDate.getTime() : 0; }
+        else { va = String(a[col] || "").toLowerCase(); vb = String(b[col] || "").toLowerCase(); }
+        if (va < vb) return -1 * dir;
+        if (va > vb) return 1 * dir;
+        return 0;
+      });
+    }
+
+    function renderClvTable() {
+      if (!clvFullDataLoaded) return;
+      const sorted = clvSortRows(clvFiltered);
+      const totalPages = Math.max(1, Math.ceil(sorted.length / CLV_PAGE_SIZE));
+      if (clvPage > totalPages) clvPage = totalPages;
+      const slice = sorted.slice((clvPage - 1) * CLV_PAGE_SIZE, clvPage * CLV_PAGE_SIZE);
+      const offset = (clvPage - 1) * CLV_PAGE_SIZE;
+
+      els.clvTableBody.innerHTML = slice.map((r, i) => `
+        <tr>
+          <td style="text-align:center;color:var(--muted);font-size:12px">${offset + i + 1}</td>
+          <td>${escapeHtml(r.phone)}</td>
+          <td style="text-align:right">${currency(r.omset)}</td>
+          <td style="text-align:center">${fmtDate(r.firstDate)}</td>
+          <td style="text-align:center">${fmtDate(r.lastDate)}</td>
+          <td style="text-align:right">${r.closing.toLocaleString("id-ID")}</td>
+          <td style="text-align:right">${r.qty.toLocaleString("id-ID")}</td>
+          <td style="font-size:12px">${escapeHtml(r.products)}</td>
+          <td>${escapeHtml(r.name)}</td>
+          <td style="font-size:12px">${escapeHtml(r.csFirst)}</td>
+          <td style="font-size:12px">${escapeHtml(r.crmLast)}</td>
+          <td style="font-size:12px">${escapeHtml(r.advFirst)}</td>
+        </tr>`).join("");
+
+      // Count info
+      els.clvCount.textContent = `${clvFiltered.length.toLocaleString("id-ID")} customer unik`;
+
+      // Pagination
+      const pag = els.clvPagination;
+      pag.innerHTML = "";
+      const btnPrev = document.createElement("button");
+      btnPrev.textContent = "‹ Prev";
+      btnPrev.disabled = clvPage <= 1;
+      btnPrev.addEventListener("click", () => { clvPage--; renderClvTable(); });
+      pag.appendChild(btnPrev);
+
+      // Tampilkan max 5 page buttons
+      const range = 2;
+      const startP = Math.max(1, clvPage - range);
+      const endP = Math.min(totalPages, clvPage + range);
+      if (startP > 1) {
+        const b = document.createElement("button");
+        b.textContent = "1";
+        b.addEventListener("click", () => { clvPage = 1; renderClvTable(); });
+        pag.appendChild(b);
+        if (startP > 2) { const sp = document.createElement("span"); sp.textContent = "…"; sp.style.padding = "0 4px"; sp.style.color = "var(--muted)"; pag.appendChild(sp); }
+      }
+      for (let p = startP; p <= endP; p++) {
+        const b = document.createElement("button");
+        b.textContent = p;
+        if (p === clvPage) b.classList.add("active");
+        b.addEventListener("click", () => { clvPage = p; renderClvTable(); });
+        pag.appendChild(b);
+      }
+      if (endP < totalPages) {
+        if (endP < totalPages - 1) { const sp = document.createElement("span"); sp.textContent = "…"; sp.style.padding = "0 4px"; sp.style.color = "var(--muted)"; pag.appendChild(sp); }
+        const b = document.createElement("button");
+        b.textContent = totalPages;
+        b.addEventListener("click", () => { clvPage = totalPages; renderClvTable(); });
+        pag.appendChild(b);
+      }
+
+      const btnNext = document.createElement("button");
+      btnNext.textContent = "Next ›";
+      btnNext.disabled = clvPage >= totalPages;
+      btnNext.addEventListener("click", () => { clvPage++; renderClvTable(); });
+      pag.appendChild(btnNext);
+
+      // Update sort icons
+      document.querySelectorAll(".clv-table th.sortable").forEach(th => {
+        th.classList.remove("sort-asc", "sort-desc");
+        if (th.dataset.col === clvSortCol) {
+          th.classList.add(clvSortDir === "asc" ? "sort-asc" : "sort-desc");
+        }
+      });
+    }
+
+    function clvApplySearch() {
+      const q = (els.clvSearch.value || "").toLowerCase().trim();
+      if (!q) {
+        clvFiltered = clvRows;
+      } else {
+        clvFiltered = clvRows.filter(r =>
+          r.phone.toLowerCase().includes(q) ||
+          r.name.toLowerCase().includes(q)
+        );
+      }
+      clvPage = 1;
+      renderClvTable();
+    }
+
+    function setupClvSort() {
+      document.querySelectorAll(".clv-table th.sortable").forEach(th => {
+        th.addEventListener("click", () => {
+          const col = th.dataset.col;
+          if (clvSortCol === col) {
+            clvSortDir = clvSortDir === "asc" ? "desc" : "asc";
+          } else {
+            clvSortCol = col;
+            clvSortDir = col === "omset" || col === "closing" || col === "qty" || col === "last" ? "desc" : "asc";
+          }
+          clvPage = 1;
+          renderClvTable();
+        });
+      });
+      els.clvSearch.addEventListener("input", clvApplySearch);
+    }
+
+    async function loadClvFullData() {
+      if (clvFullDataLoaded || clvFullDataLoading) return;
+      clvFullDataLoading = true;
+      els.clvLoadingMsg.style.display = "";
+      els.clvContent.style.display = "none";
+      els.clvLoadingMsg.textContent = "Memuat data lifetime value...";
+      try {
+        // Kalau allRows sudah cover full range, langsung pakai
+        if (!isRangeCovered(FULL_RANGE_START, FULL_RANGE_END)) {
+          els.clvLoadingMsg.textContent = "Mengambil semua histori transaksi...";
+          const [webotResult, marketplaceResult] = await Promise.allSettled([
+            loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(null, null)),
+            loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(null, null)),
+          ]);
+          const webotRows = settledRows(webotResult);
+          const marketplaceRows = settledRows(marketplaceResult);
+          await applyCoreRowsAsync(webotRows, marketplaceRows, FULL_RANGE_START, FULL_RANGE_END);
+        }
+        clvRows = buildClvRows(allRows);
+        clvFiltered = clvRows;
+        clvFullDataLoaded = true;
+        els.clvPanelNote.textContent = `${clvRows.length.toLocaleString("id-ID")} customer unik — semua histori Webot`;
+        els.clvLoadingMsg.style.display = "none";
+        els.clvContent.style.display = "";
+        setupClvSort();
+        renderClvTable();
+      } catch (err) {
+        console.warn("CLV load error:", err);
+        els.clvLoadingMsg.textContent = `Gagal memuat data CLV: ${err.message}. Coba refresh halaman.`;
+      } finally {
+        clvFullDataLoading = false;
+      }
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
 
     function renderCurrentPage() {

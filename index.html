@@ -751,6 +751,28 @@
     .daily-table.clv-table th.sort-desc .sort-icon::after { content: " ▼"; opacity: 1; }
     .daily-table.clv-table th:not(.sort-asc):not(.sort-desc) .sort-icon::after { content: " ⇅"; }
 
+    .daily-table.clv-table th {
+      white-space: normal;
+      word-break: keep-all;
+      line-height: 1.3;
+      font-size: 11px;
+      padding: 6px 8px;
+      vertical-align: bottom;
+    }
+
+    .daily-table.clv-table td {
+      font-size: 12px;
+      padding: 5px 8px;
+      white-space: nowrap;
+    }
+
+    .daily-table.clv-table td:nth-child(8) {
+      white-space: normal;
+      word-break: break-word;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
     .clv-search-row {
       display: flex;
       align-items: center;
@@ -826,6 +848,41 @@
       text-align: center;
       color: var(--muted);
       font-size: 14px;
+    }
+
+    /* ── Trendline New Customer Chart ──────────────────────── */
+    .trendline-wrap {
+      overflow-x: auto;
+      overflow-y: visible;
+    }
+
+    .trendline-chart {
+      width: 100%;
+      min-width: 600px;
+      display: block;
+    }
+
+    .trendline-legend {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 13px;
+    }
+
+    .trendline-legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trendline-legend i {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      flex-shrink: 0;
     }
 
     .stack-tooltip {
@@ -3031,6 +3088,25 @@
           </div>
         </section>
 
+        <!-- ── Trendline New Customer Soscom ─────────────────── -->
+        <section class="card panel" style="margin-top:18px">
+          <div class="panel-header">
+            <h2>Trendline New Customer Soscom</h2>
+            <span class="panel-note" id="trendlinePanelNote">berdasarkan first transaksi per bulan — Webot</span>
+          </div>
+          <div id="trendlineLoadingMsg" class="clv-loading">Memuat data trendline...</div>
+          <div id="trendlineContent" style="display:none">
+            <div class="trendline-legend">
+              <span><i style="background:#4472c4"></i> New Customer</span>
+              <span><i style="background:#e84040"></i> All New Customer (Kumulatif)</span>
+            </div>
+            <div class="trendline-wrap">
+              <svg id="trendlineChart" class="trendline-chart"></svg>
+            </div>
+            <div id="trendlineYearBtns" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;"></div>
+          </div>
+        </section>
+
         <!-- ── Customer Lifetime Value ────────────────────────── -->
         <section class="card panel" style="margin-top:18px">
           <div class="panel-header">
@@ -3044,21 +3120,21 @@
               <span class="clv-count" id="clvCount"></span>
             </div>
             <div class="daily-table-wrap">
-              <table class="daily-table clv-table" style="min-width:1300px">
+              <table class="daily-table clv-table" style="min-width:900px">
                 <thead>
                   <tr>
-                    <th style="min-width:44px;text-align:center">No</th>
-                    <th class="sortable" data-col="phone" style="min-width:160px">Nomor Customer<i class="sort-icon"></i></th>
-                    <th class="sortable sort-desc" data-col="omset" style="min-width:130px;text-align:right">Omset<i class="sort-icon"></i></th>
-                    <th class="sortable" data-col="first" style="min-width:120px;text-align:center">First Transaksi<i class="sort-icon"></i></th>
-                    <th class="sortable" data-col="last" style="min-width:120px;text-align:center">Last Transaksi<i class="sort-icon"></i></th>
-                    <th class="sortable" data-col="closing" style="min-width:100px;text-align:right">Transaksi (Closing)<i class="sort-icon"></i></th>
-                    <th class="sortable" data-col="qty" style="min-width:80px;text-align:right">Qty<i class="sort-icon"></i></th>
-                    <th style="min-width:200px">Nama Produk</th>
-                    <th style="min-width:160px">Nama Customer</th>
-                    <th style="min-width:140px">Nama CS (First)</th>
-                    <th style="min-width:140px">Nama CRM (Last)</th>
-                    <th style="min-width:160px">Nama ADV (First)</th>
+                    <th style="width:32px;min-width:32px;text-align:center">No</th>
+                    <th class="sortable" data-col="phone" style="min-width:130px">Nomor<br>Customer<i class="sort-icon"></i></th>
+                    <th class="sortable sort-desc" data-col="omset" style="min-width:100px;text-align:right">Omset<i class="sort-icon"></i></th>
+                    <th class="sortable" data-col="first" style="min-width:82px;text-align:center">First<br>Transaksi<i class="sort-icon"></i></th>
+                    <th class="sortable" data-col="last" style="min-width:82px;text-align:center">Last<br>Transaksi<i class="sort-icon"></i></th>
+                    <th class="sortable" data-col="closing" style="min-width:58px;text-align:right">Trx<br>(Closing)<i class="sort-icon"></i></th>
+                    <th class="sortable" data-col="qty" style="min-width:44px;text-align:right">Qty<i class="sort-icon"></i></th>
+                    <th style="min-width:160px">Nama Produk</th>
+                    <th style="min-width:120px">Nama<br>Customer</th>
+                    <th style="min-width:110px">Nama CS<br>(First)</th>
+                    <th style="min-width:110px">Nama CRM<br>(Last)</th>
+                    <th style="min-width:120px">Nama ADV<br>(First)</th>
                   </tr>
                 </thead>
                 <tbody id="clvTableBody"></tbody>
@@ -3767,6 +3843,10 @@
       clvTableBody: document.getElementById("clvTableBody"),
       clvPagination: document.getElementById("clvPagination"),
       clvPanelNote: document.getElementById("clvPanelNote"),
+      trendlineLoadingMsg: document.getElementById("trendlineLoadingMsg"),
+      trendlineContent: document.getElementById("trendlineContent"),
+      trendlineChart: document.getElementById("trendlineChart"),
+      trendlinePanelNote: document.getElementById("trendlinePanelNote"),
       financePage: document.getElementById("finance-page"),
       adminMarketplacePage: document.getElementById("admin-marketplace-page"),
       adminMarketplaceStatus: document.getElementById("adminMarketplaceStatus"),
@@ -9342,6 +9422,127 @@
     // ─────────────────────────────────────────────────────────────────────────
 
     // ═══════════════════════════════════════════════════════════════════════════
+    // TRENDLINE NEW CUSTOMER SOSCOM
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    function buildTrendlineData(rows) {
+      // Hanya Webot, punya customerPhone
+      const webotOnly = rows.filter(r => r.source === "Webot" && r.customerPhone);
+
+      // Cari firstDate per nomor HP
+      const firstDateMap = new Map();
+      webotOnly.forEach(r => {
+        const key = r.customerPhone;
+        if (!firstDateMap.has(key) || r.date < firstDateMap.get(key)) {
+          firstDateMap.set(key, r.date);
+        }
+      });
+
+      // Group per bulan (yyyy-mm)
+      const monthMap = new Map();
+      firstDateMap.forEach(date => {
+        if (!date) return;
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+        monthMap.set(key, (monthMap.get(key) || 0) + 1);
+      });
+
+      // Sort bulan
+      const months = Array.from(monthMap.keys()).sort();
+      let cumulative = 0;
+      return months.map(m => {
+        const newCount = monthMap.get(m);
+        cumulative += newCount;
+        const [y, mo] = m.split("-");
+        const label = new Date(+y, +mo - 1, 1).toLocaleDateString("id-ID", { month: "short", year: "numeric" });
+        return { month: m, label, newCount, cumulative };
+      });
+    }
+
+    let trendlineAllData = [];   // semua bulan hasil buildTrendlineData
+    let trendlineActiveYear = String(new Date().getFullYear());
+
+    function renderTrendlineChart(data) {
+      // data = semua bulan; filter ke tahun aktif saja untuk tampilan
+      const filtered = data.filter(d => d.month.startsWith(trendlineActiveYear));
+
+      const svg = els.trendlineChart;
+      const ROW_H = 36;
+      const LABEL_W = 80;
+      const PAD_T = 12;
+      const PAD_B = 28;
+      const BAR_GAP = 3;
+      const BAR_H = (ROW_H - BAR_GAP * 3) / 2;
+      const LABEL_OFFSET = 6;
+      const LABEL_VAL_W = 68;
+
+      const maxVal = Math.max(...filtered.map(d => d.cumulative), 1);
+      const niceMax = Math.ceil(maxVal / 1000) * 1000 || 1000;
+
+      const svgW = svg.clientWidth || 700;
+      const chartW = svgW - LABEL_W - LABEL_VAL_W;
+      const totalH = PAD_T + filtered.length * ROW_H + PAD_B;
+
+      svg.setAttribute("viewBox", `0 0 ${svgW} ${totalH}`);
+      svg.setAttribute("height", totalH);
+
+      // Grid lines
+      const gridCount = 5;
+      let gridHtml = "";
+      for (let i = 0; i <= gridCount; i++) {
+        const val = Math.round((niceMax / gridCount) * i);
+        const x = LABEL_W + (val / niceMax) * chartW;
+        gridHtml += `<line x1="${x}" y1="${PAD_T}" x2="${x}" y2="${PAD_T + filtered.length * ROW_H}" stroke="#e5ebf2" stroke-width="1"/>`;
+        gridHtml += `<text x="${x}" y="${PAD_T + filtered.length * ROW_H + 16}" text-anchor="middle" font-size="10" fill="#94a3b8">${val.toLocaleString("id-ID")}</text>`;
+      }
+
+      // Bars
+      let barsHtml = "";
+      filtered.forEach((d, i) => {
+        const y = PAD_T + i * ROW_H;
+        const barNewW = Math.max(2, (d.newCount / niceMax) * chartW);
+        const barCumW = Math.max(2, (d.cumulative / niceMax) * chartW);
+        const y1 = y + BAR_GAP;
+        const y2 = y + BAR_GAP * 2 + BAR_H;
+
+        if (i % 2 === 0) {
+          barsHtml += `<rect x="0" y="${y}" width="${svgW}" height="${ROW_H}" fill="#f8fafc"/>`;
+        }
+
+        // Label bulan
+        barsHtml += `<text x="${LABEL_W - 8}" y="${y + ROW_H / 2 + 4}" text-anchor="end" font-size="11" fill="#475569">${escapeHtml(d.label)}</text>`;
+
+        // Bar new (biru) + label di luar
+        barsHtml += `<rect x="${LABEL_W}" y="${y1}" width="${barNewW}" height="${BAR_H}" fill="#4472c4" rx="2"/>`;
+        barsHtml += `<text x="${LABEL_W + barNewW + LABEL_OFFSET}" y="${y1 + BAR_H - 2}" text-anchor="start" font-size="10" fill="#4472c4" font-weight="700">${d.newCount.toLocaleString("id-ID")}</text>`;
+
+        // Bar cumulative (merah) + label di luar
+        barsHtml += `<rect x="${LABEL_W}" y="${y2}" width="${barCumW}" height="${BAR_H}" fill="#e84040" rx="2"/>`;
+        barsHtml += `<text x="${LABEL_W + barCumW + LABEL_OFFSET}" y="${y2 + BAR_H - 2}" text-anchor="start" font-size="10" fill="#e84040" font-weight="700">${d.cumulative.toLocaleString("id-ID")}</text>`;
+      });
+
+      svg.innerHTML = gridHtml + barsHtml;
+
+      // Render tombol tahun di bawah chart
+      const years = [...new Set(data.map(d => d.month.split("-")[0]))].sort();
+      const pag = document.getElementById("trendlineYearBtns");
+      if (pag) {
+        pag.innerHTML = years.map(y => `
+          <button onclick="trendlineSetYear('${y}')"
+            style="min-width:64px;height:32px;padding:0 12px;border:1px solid ${y === trendlineActiveYear ? "#1e3a5f" : "var(--line)"};
+            border-radius:6px;background:${y === trendlineActiveYear ? "#1e3a5f" : "#fff"};
+            color:${y === trendlineActiveYear ? "#fff" : "var(--ink)"};
+            font-size:13px;font-weight:${y === trendlineActiveYear ? "700" : "400"};cursor:pointer;">
+            ${escapeHtml(y)}
+          </button>`).join("");
+      }
+    }
+
+    window.trendlineSetYear = function(year) {
+      trendlineActiveYear = year;
+      renderTrendlineChart(trendlineAllData);
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
     // CUSTOMER LIFETIME VALUE
     // ═══════════════════════════════════════════════════════════════════════════
 
@@ -9522,13 +9723,19 @@
     async function loadClvFullData() {
       if (clvFullDataLoaded || clvFullDataLoading) return;
       clvFullDataLoading = true;
+
+      // Show loading state for both sections
       els.clvLoadingMsg.style.display = "";
       els.clvContent.style.display = "none";
+      els.trendlineLoadingMsg.style.display = "";
+      els.trendlineContent.style.display = "none";
       els.clvLoadingMsg.textContent = "Memuat data lifetime value...";
+      els.trendlineLoadingMsg.textContent = "Memuat data trendline...";
+
       try {
-        // Kalau allRows sudah cover full range, langsung pakai
         if (!isRangeCovered(FULL_RANGE_START, FULL_RANGE_END)) {
           els.clvLoadingMsg.textContent = "Mengambil semua histori transaksi...";
+          els.trendlineLoadingMsg.textContent = "Mengambil semua histori transaksi...";
           const [webotResult, marketplaceResult] = await Promise.allSettled([
             loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(null, null)),
             loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(null, null)),
@@ -9537,6 +9744,31 @@
           const marketplaceRows = settledRows(marketplaceResult);
           await applyCoreRowsAsync(webotRows, marketplaceRows, FULL_RANGE_START, FULL_RANGE_END);
         }
+
+        // Build & render trendline
+        const trendData = buildTrendlineData(allRows);
+        trendlineAllData = trendData;
+        trendlineActiveYear = String(new Date().getFullYear());
+        // fallback ke tahun terakhir di data kalau tahun ini belum ada
+        const availYears = [...new Set(trendData.map(d => d.month.split("-")[0]))];
+        if (!availYears.includes(trendlineActiveYear)) {
+          trendlineActiveYear = availYears[availYears.length - 1] || trendlineActiveYear;
+        }
+        els.trendlinePanelNote.textContent = `${trendData.length} bulan data — Webot/Soscom`;
+        els.trendlineLoadingMsg.style.display = "none";
+        els.trendlineContent.style.display = "";
+        // Wait one frame so SVG is visible and has width
+        await new Promise(r => requestAnimationFrame(r));
+        renderTrendlineChart(trendlineAllData);
+
+        // Re-render on resize
+        let resizeTrendTimer = 0;
+        window.addEventListener("resize", () => {
+          clearTimeout(resizeTrendTimer);
+          resizeTrendTimer = setTimeout(() => renderTrendlineChart(trendlineAllData), 200);
+        });
+
+        // Build & render CLV
         clvRows = buildClvRows(allRows);
         clvFiltered = clvRows;
         clvFullDataLoaded = true;
@@ -9546,8 +9778,9 @@
         setupClvSort();
         renderClvTable();
       } catch (err) {
-        console.warn("CLV load error:", err);
-        els.clvLoadingMsg.textContent = `Gagal memuat data CLV: ${err.message}. Coba refresh halaman.`;
+        console.warn("CLV/Trendline load error:", err);
+        els.clvLoadingMsg.textContent = `Gagal memuat data: ${err.message}. Coba refresh halaman.`;
+        els.trendlineLoadingMsg.textContent = `Gagal memuat data: ${err.message}. Coba refresh halaman.`;
       } finally {
         clvFullDataLoading = false;
       }

@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NIAGAKARA MITRA JUARA</title>
+  <link rel="icon" type="image/jpeg" href="logo-niagakara.jpg">
+  <link rel="apple-touch-icon" href="logo-niagakara.jpg">
   <style>
     :root {
       --bg: #eaf3fb;
@@ -188,6 +190,139 @@
       background: currentColor;
       opacity: 0.76;
       flex: 0 0 auto;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.10);
+      display: grid;
+      gap: 10px;
+    }
+
+    .user-card {
+      display: grid;
+      gap: 3px;
+      color: #ffffff;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .user-card span {
+      color: #c7e8ef;
+      font-size: 12px;
+      text-transform: capitalize;
+    }
+
+    .logout-btn {
+      min-height: 38px;
+      border: 1px solid rgba(255,255,255,0.20);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.16);
+    }
+
+    .app.sidebar-collapsed .sidebar-footer {
+      align-items: center;
+    }
+
+    .app.sidebar-collapsed .user-card {
+      display: none;
+    }
+
+    .login-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        linear-gradient(180deg, rgba(239, 247, 252, 0.94), rgba(218, 233, 244, 0.96)),
+        radial-gradient(circle at top left, rgba(35, 108, 155, 0.18), transparent 34rem),
+        var(--bg);
+    }
+
+    .login-card {
+      width: min(420px, 100%);
+      background: rgba(255,255,255,0.94);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 26px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .login-brand img {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+    }
+
+    .login-brand strong {
+      display: block;
+      font-size: 16px;
+      line-height: 1.18;
+      text-transform: uppercase;
+    }
+
+    .login-brand span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .login-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .login-form input {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0 12px;
+      color: var(--ink);
+      background: #ffffff;
+    }
+
+    .login-form button {
+      height: 44px;
+      border: 0;
+      border-radius: var(--radius);
+      background: #0b3554;
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .login-form button:disabled {
+      cursor: wait;
+      opacity: 0.72;
+    }
+
+    .login-message {
+      min-height: 18px;
+      color: #c2415d;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .auth-hidden {
+      display: none !important;
     }
 
     main {
@@ -1745,7 +1880,29 @@
   </style>
 </head>
 <body>
-  <div class="app" id="appShell">
+  <section class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-brand">
+        <img src="logo-niagakara.jpg" alt="Logo Niagakara">
+        <div>
+          <strong>NIAGAKARA MITRA JUARA</strong>
+          <span>Dashboard internal</span>
+        </div>
+      </div>
+      <form class="login-form" id="loginForm">
+        <label>Email
+          <input id="loginEmail" type="email" autocomplete="username" required>
+        </label>
+        <label>Password
+          <input id="loginPassword" type="password" autocomplete="current-password" required>
+        </label>
+        <button id="loginSubmit" type="submit">Login</button>
+        <div class="login-message" id="loginMessage"></div>
+      </form>
+    </div>
+  </section>
+
+  <div class="app auth-hidden" id="appShell">
     <aside class="sidebar">
       <div class="sidebar-top">
         <div class="brand">
@@ -1769,7 +1926,15 @@
         <button data-page="customer-management"><span class="dot"></span><span class="nav-full">Customer Management</span><span class="nav-short">Cust</span></button>
         <button data-page="finance"><span class="dot"></span><span class="nav-full">Finance</span><span class="nav-short">Fin</span></button>
         <button class="nav-sub" data-page="admin-marketplace"><span class="dot"></span><span class="nav-full">Admin Marketplace</span><span class="nav-short">Admin</span></button>
+        <button class="nav-sub" data-page="user-management"><span class="dot"></span><span class="nav-full">User Management</span><span class="nav-short">Users</span></button>
       </nav>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <strong id="currentUserName">User</strong>
+          <span id="currentUserRole">role</span>
+        </div>
+        <button class="logout-btn" id="logoutButton" type="button">Logout</button>
+      </div>
     </aside>
 
     <main>
@@ -3339,6 +3504,65 @@
         </section>
       </section>
 
+      <section id="user-management-page" class="hidden">
+        <div class="topbar">
+          <div>
+            <h1>User Management</h1>
+            <p class="subtitle">Tambah user dan atur role akses dashboard</p>
+          </div>
+          <div class="status-pill" id="userManagementStatus">Khusus admin</div>
+        </div>
+
+        <section class="card panel" style="margin-bottom:18px">
+          <div class="panel-header">
+            <h2>Tambah User</h2>
+            <span class="panel-note">user dibuat langsung ke Supabase Auth</span>
+          </div>
+          <form id="createUserForm" class="date-row" style="align-items:end">
+            <label>Nama
+              <input id="newUserName" type="text" placeholder="Nama user" required>
+            </label>
+            <label>Email
+              <input id="newUserEmail" type="email" placeholder="nama@niagakara.id" required>
+            </label>
+            <label>Password awal
+              <input id="newUserPassword" type="text" placeholder="Minimal 8 karakter" minlength="8" required>
+            </label>
+            <label>Role
+              <select id="newUserRole" required>
+                <option value="tamu">Tamu</option>
+                <option value="advertiser">Advertiser</option>
+                <option value="cs">CS</option>
+                <option value="crm">CRM</option>
+                <option value="admin">Admin</option>
+              </select>
+            </label>
+            <button class="apply-btn" id="createUserSubmit" type="submit">Tambah User</button>
+          </form>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2>Daftar User</h2>
+            <span class="panel-note" id="userListNote">memuat user...</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table" style="min-width:720px">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Dibuat</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
       <section id="coming-page" class="empty-page hidden">
         <article class="card">
           <h2 id="comingTitle">Coming soon ....</h2>
@@ -3516,9 +3740,132 @@
     </form>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script>
+    const SUPABASE_URL = "https://uqbonijjapvyklzzxxff.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_aedpCh3PBuzzo0l-1XqGiA_VbSOgiN5";
+    const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+
+    const ROLE_PAGE_ACCESS = {
+      admin: ["dashboard", "advertiser", "cs", "crm", "shopee", "tiktok", "weekly-budgeting", "product", "customer-management", "finance", "admin-marketplace", "user-management"],
+      tamu: ["dashboard"],
+      advertiser: ["dashboard", "advertiser", "cs", "crm", "shopee", "tiktok"],
+      cs: ["dashboard", "advertiser", "cs", "crm", "shopee", "tiktok"],
+      crm: ["dashboard", "advertiser", "cs", "crm", "shopee", "tiktok"]
+    };
+
+    let currentProfile = null;
+    let appStarted = false;
+
+    function canAccessPage(page) {
+      const role = currentProfile?.role;
+      return Boolean(role && ROLE_PAGE_ACCESS[role]?.includes(page));
+    }
+
+    function updateRoleMenu() {
+      document.querySelectorAll(".nav button[data-page]").forEach(button => {
+        button.classList.toggle("auth-hidden", !canAccessPage(button.dataset.page));
+      });
+    }
+
+    function setLoginMessage(message) {
+      const el = document.getElementById("loginMessage");
+      if (el) el.textContent = message || "";
+    }
+
+    function showLogin(message = "") {
+      document.getElementById("loginScreen").classList.remove("auth-hidden");
+      document.getElementById("appShell").classList.add("auth-hidden");
+      setLoginMessage(message);
+    }
+
+    function showApp() {
+      document.getElementById("loginScreen").classList.add("auth-hidden");
+      document.getElementById("appShell").classList.remove("auth-hidden");
+    }
+
+    async function fetchCurrentProfile(userId) {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("full_name, role, is_active")
+        .eq("id", userId)
+        .single();
+      if (error) throw error;
+      if (!data?.is_active) throw new Error("Akun ini belum aktif. Hubungi admin.");
+      return data;
+    }
+
+    async function startAuthenticatedApp(profile) {
+      currentProfile = profile;
+      document.getElementById("currentUserName").textContent = profile.full_name || "User";
+      document.getElementById("currentUserRole").textContent = profile.role || "";
+      updateRoleMenu();
+      showApp();
+      if (!appStarted) {
+        appStarted = true;
+        await init();
+      } else if (!canAccessPage(activePage)) {
+        document.querySelector('.nav button[data-page="dashboard"]')?.click();
+      }
+    }
+
+    async function restoreSession() {
+      if (!supabaseClient) {
+        showLogin("Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di index.html.");
+        return;
+      }
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data.session?.user;
+      if (!user) {
+        showLogin();
+        return;
+      }
+      try {
+        const profile = await fetchCurrentProfile(user.id);
+        await startAuthenticatedApp(profile);
+      } catch (error) {
+        await supabaseClient.auth.signOut();
+        showLogin(error.message || "Session tidak valid. Silakan login ulang.");
+      }
+    }
+
+    function setupAuth() {
+      const form = document.getElementById("loginForm");
+      const submit = document.getElementById("loginSubmit");
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!supabaseClient) {
+          showLogin("Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di index.html.");
+          return;
+        }
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+        submit.disabled = true;
+        setLoginMessage("");
+        try {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          const profile = await fetchCurrentProfile(data.user.id);
+          await startAuthenticatedApp(profile);
+          form.reset();
+        } catch (error) {
+          setLoginMessage(error.message || "Login gagal. Cek email dan password.");
+        } finally {
+          submit.disabled = false;
+        }
+      });
+
+      document.getElementById("logoutButton").addEventListener("click", async () => {
+        if (supabaseClient) await supabaseClient.auth.signOut();
+        currentProfile = null;
+        showLogin();
+      });
+    }
+
     const SHEETS = {
       webot: {
         id: "1GbKWkojWFT71dS2wP4Qa5WyYKrEYuk6lQEZuaHw-v9M",
@@ -3873,6 +4220,16 @@
       adminMarketplaceRowCount: document.getElementById("adminMarketplaceRowCount"),
       adminShopeeBody: document.getElementById("adminShopeeBody"),
       adminTiktokBody: document.getElementById("adminTiktokBody"),
+      userManagementPage: document.getElementById("user-management-page"),
+      userManagementStatus: document.getElementById("userManagementStatus"),
+      createUserForm: document.getElementById("createUserForm"),
+      createUserSubmit: document.getElementById("createUserSubmit"),
+      newUserName: document.getElementById("newUserName"),
+      newUserEmail: document.getElementById("newUserEmail"),
+      newUserPassword: document.getElementById("newUserPassword"),
+      newUserRole: document.getElementById("newUserRole"),
+      userTableBody: document.getElementById("userTableBody"),
+      userListNote: document.getElementById("userListNote"),
       dashboardPage: document.getElementById("dashboard-page"),
       comingTitle: document.getElementById("comingTitle"),
       productStartDate: document.getElementById("productStartDate"),
@@ -7644,6 +8001,79 @@
       }[char]));
     }
 
+    function formatUserDate(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "-";
+      return date.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+    }
+
+    function renderUserRows(users) {
+      if (!els.userTableBody) return;
+      els.userTableBody.innerHTML = users.map(user => `
+        <tr>
+          <td>${escapeHtml(user.full_name || "-")}</td>
+          <td>${escapeHtml(user.email || "-")}</td>
+          <td>${escapeHtml(user.role || "-")}</td>
+          <td>${user.is_active ? '<span class="positive-cell">Aktif</span>' : '<span class="negative-cell">Nonaktif</span>'}</td>
+          <td>${formatUserDate(user.created_at)}</td>
+        </tr>
+      `).join("") || `
+        <tr>
+          <td colspan="5">Belum ada user.</td>
+        </tr>
+      `;
+      els.userListNote.textContent = `${users.length.toLocaleString("id-ID")} user terdaftar`;
+    }
+
+    async function loadUsers() {
+      if (!supabaseClient || currentProfile?.role !== "admin" || !els.userTableBody) return;
+      els.userListNote.textContent = "memuat user...";
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("id, full_name, email, role, is_active, created_at")
+        .order("created_at", { ascending: false });
+      if (error) {
+        els.userListNote.textContent = `Gagal memuat user: ${error.message}`;
+        return;
+      }
+      renderUserRows(data || []);
+    }
+
+    async function createUserFromForm(event) {
+      event.preventDefault();
+      if (!supabaseClient || currentProfile?.role !== "admin") return;
+      const fullName = els.newUserName.value.trim();
+      const email = els.newUserEmail.value.trim();
+      const password = els.newUserPassword.value;
+      const role = els.newUserRole.value;
+      els.createUserSubmit.disabled = true;
+      els.userManagementStatus.textContent = "Membuat user...";
+      try {
+        const { data: sessionData } = await supabaseClient.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (!token) throw new Error("Session admin tidak ditemukan. Login ulang dulu.");
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/create-user`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "apikey": SUPABASE_ANON_KEY
+          },
+          body: JSON.stringify({ full_name: fullName, email, password, role })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || "Gagal membuat user.");
+        els.createUserForm.reset();
+        els.userManagementStatus.textContent = "User berhasil dibuat";
+        await loadUsers();
+      } catch (error) {
+        els.userManagementStatus.textContent = error.message || "Gagal membuat user";
+      } finally {
+        els.createUserSubmit.disabled = false;
+      }
+    }
+
     function labelRatio(key) {
       return {
         new: "New",
@@ -8646,9 +9076,10 @@
       });
       document.querySelectorAll(".nav button").forEach(button => {
         button.addEventListener("click", () => {
+          const page = button.dataset.page;
+          if (!canAccessPage(page)) return;
           document.querySelectorAll(".nav button").forEach(item => item.classList.remove("active"));
           button.classList.add("active");
-          const page = button.dataset.page;
           activePage = page;
           if (window.matchMedia("(max-width: 1120px)").matches) {
             els.appShell.classList.add("sidebar-collapsed");
@@ -8664,6 +9095,7 @@
           els.customerManagementPage.classList.add("hidden");
           els.financePage.classList.add("hidden");
           els.adminMarketplacePage.classList.add("hidden");
+          els.userManagementPage.classList.add("hidden");
           els.comingPage.classList.add("hidden");
           if (page === "dashboard") {
             els.dashboardPage.classList.remove("hidden");
@@ -8723,6 +9155,11 @@
             els.adminMarketplacePage.classList.remove("hidden");
             loadSupportDataInBackground();
             renderAdminMarketplacePage();
+            return;
+          }
+          if (page === "user-management") {
+            els.userManagementPage.classList.remove("hidden");
+            loadUsers();
             return;
           }
           els.comingPage.classList.remove("hidden");
@@ -8954,6 +9391,7 @@
       els.nextAdminMarketplaceInput.addEventListener("click", goToAdminMarketplaceStepTwo);
       els.backAdminMarketplaceInput.addEventListener("click", backToAdminMarketplaceStepOne);
       els.adminMarketplaceInputForm.addEventListener("submit", handleAdminMarketplaceSubmit);
+      els.createUserForm.addEventListener("submit", createUserFromForm);
       [
         els.weeklyHppInput,
         els.weeklyMinPamInput,
@@ -10089,7 +10527,8 @@
       scheduleSupportDataLoad();
     }
 
-    init();
+    setupAuth();
+    restoreSession();
   </script>
 </body>
 </html>

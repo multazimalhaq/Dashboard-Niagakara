@@ -3555,6 +3555,7 @@
                   <th>Role</th>
                   <th>Status</th>
                   <th>Dibuat</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody id="userTableBody"></tbody>
@@ -8011,20 +8012,106 @@
     function renderUserRows(users) {
       if (!els.userTableBody) return;
       els.userTableBody.innerHTML = users.map(user => `
-        <tr>
-          <td>${escapeHtml(user.full_name || "-")}</td>
+        <tr data-id="${user.id}" data-editing="false">
+          <td class="cell-nama">${escapeHtml(user.full_name || "-")}</td>
           <td>${escapeHtml(user.email || "-")}</td>
-          <td>${escapeHtml(user.role || "-")}</td>
-          <td>${user.is_active ? '<span class="positive-cell">Aktif</span>' : '<span class="negative-cell">Nonaktif</span>'}</td>
+          <td class="cell-role">${escapeHtml(user.role || "-")}</td>
+          <td class="cell-status">${user.is_active ? '<span class="positive-cell">Aktif</span>' : '<span class="negative-cell">Nonaktif</span>'}</td>
           <td>${formatUserDate(user.created_at)}</td>
+          <td class="cell-aksi">
+            <button class="btn-edit-user" onclick="startEditUser(this)" style="font-size:12px;padding:4px 10px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer">Edit</button>
+          </td>
         </tr>
       `).join("") || `
         <tr>
-          <td colspan="5">Belum ada user.</td>
+          <td colspan="6">Belum ada user.</td>
         </tr>
       `;
       els.userListNote.textContent = `${users.length.toLocaleString("id-ID")} user terdaftar`;
     }
+
+    function startEditUser(btn) {
+      const tr = btn.closest("tr");
+      if (tr.dataset.editing === "true") return;
+      tr.dataset.editing = "true";
+
+      const nama = tr.querySelector(".cell-nama").textContent.trim();
+      const role = tr.querySelector(".cell-role").textContent.trim();
+      const isActive = tr.querySelector(".cell-status .positive-cell") !== null;
+
+      tr.querySelector(".cell-nama").innerHTML = `<input type="text" value="${escapeHtml(nama)}" style="width:100%;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:13px">`;
+      tr.querySelector(".cell-role").innerHTML = `
+        <select style="padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:13px">
+          <option value="tamu" ${role==="tamu"?"selected":""}>Tamu</option>
+          <option value="advertiser" ${role==="advertiser"?"selected":""}>Advertiser</option>
+          <option value="cs" ${role==="cs"?"selected":""}>CS</option>
+          <option value="crm" ${role==="crm"?"selected":""}>CRM</option>
+          <option value="admin" ${role==="admin"?"selected":""}>Admin</option>
+        </select>`;
+      tr.querySelector(".cell-status").innerHTML = `
+        <select style="padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:13px">
+          <option value="true" ${isActive?"selected":""}>Aktif</option>
+          <option value="false" ${!isActive?"selected":""}>Nonaktif</option>
+        </select>`;
+      tr.querySelector(".cell-aksi").innerHTML = `
+        <input type="text" placeholder="Password baru (opsional)" style="width:120px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:12px;margin-right:4px" class="input-new-password">
+        <button onclick="saveEditUser(this)" style="font-size:12px;padding:4px 10px;background:#22c55e;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px">Simpan</button>
+        <button onclick="cancelEditUser(this)" style="font-size:12px;padding:4px 10px;background:#94a3b8;color:#fff;border:none;border-radius:6px;cursor:pointer">Batal</button>`;
+    }
+
+    function cancelEditUser(btn) {
+      loadUsers();
+    }
+
+    async function saveEditUser(btn) {
+      const tr = btn.closest("tr");
+      const userId = tr.dataset.id;
+      const fullName = tr.querySelector(".cell-nama input").value.trim();
+      const role = tr.querySelector(".cell-role select").value;
+      const isActive = tr.querySelector(".cell-status select").value === "true";
+      const newPassword = tr.querySelector(".input-new-password").value.trim();
+
+      btn.disabled = true;
+      btn.textContent = "Menyimpan...";
+
+      try {
+        // Update profiles
+        const { error: updateError } = await supabaseClient
+          .from("profiles")
+          .update({ full_name: fullName, role, is_active: isActive })
+          .eq("id", userId);
+        if (updateError) throw updateError;
+
+        // Update password via Edge Function jika diisi
+        if (newPassword) {
+          if (newPassword.length < 8) throw new Error("Password minimal 8 karakter.");
+          const { data: sessionData } = await supabaseClient.auth.getSession();
+          const token = sessionData.session?.access_token;
+          const response = await fetch(`${SUPABASE_URL}/functions/v1/create-user`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+              "apikey": SUPABASE_ANON_KEY
+            },
+            body: JSON.stringify({ user_id: userId, password: newPassword })
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.error || "Gagal update password.");
+        }
+
+        els.userManagementStatus.textContent = "User berhasil diupdate";
+        await loadUsers();
+      } catch (err) {
+        els.userManagementStatus.textContent = err.message || "Gagal update user";
+        btn.disabled = false;
+        btn.textContent = "Simpan";
+      }
+    }
+
+    window.startEditUser = startEditUser;
+    window.saveEditUser = saveEditUser;
+    window.cancelEditUser = cancelEditUser;
 
     async function loadUsers() {
       if (!supabaseClient || currentProfile?.role !== "admin" || !els.userTableBody) return;

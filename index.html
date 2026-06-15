@@ -1382,6 +1382,37 @@
       font-weight: 800;
     }
 
+    .user-status-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      cursor: default;
+      position: relative;
+    }
+    .user-status-dot.active {
+      background: #22c55e;
+      box-shadow: 0 0 6px #22c55e99;
+    }
+    .user-status-dot.inactive {
+      background: #ef4444;
+      box-shadow: 0 0 6px #ef444499;
+    }
+    .user-status-dot[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      left: 18px;
+      top: -4px;
+      background: #1e293b;
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+    }
+
     .pam-summary {
       display: grid;
       gap: 8px;
@@ -1926,7 +1957,7 @@
         <button data-page="customer-management"><span class="dot"></span><span class="nav-full">Customer Management</span><span class="nav-short">Cust</span></button>
         <button data-page="finance"><span class="dot"></span><span class="nav-full">Finance</span><span class="nav-short">Fin</span></button>
         <button class="nav-sub" data-page="admin-marketplace"><span class="dot"></span><span class="nav-full">Admin Marketplace</span><span class="nav-short">Admin</span></button>
-        <button class="nav-sub" data-page="user-management"><span class="dot"></span><span class="nav-full">User Management</span><span class="nav-short">Users</span></button>
+        <button data-page="user-management"><span class="dot"></span><span class="nav-full">User Management</span><span class="nav-short">Users</span></button>
       </nav>
       <div class="sidebar-footer">
         <div class="user-card">
@@ -8016,10 +8047,10 @@
           <td class="cell-nama">${escapeHtml(user.full_name || "-")}</td>
           <td>${escapeHtml(user.email || "-")}</td>
           <td class="cell-role">${escapeHtml(user.role || "-")}</td>
-          <td class="cell-status">${user.is_active ? '<span class="positive-cell">Aktif</span>' : '<span class="negative-cell">Nonaktif</span>'}</td>
+          <td class="cell-status" style="text-align:center">${user.is_active ? '<span class="user-status-dot active" title="Aktif"></span>' : '<span class="user-status-dot inactive" title="Nonaktif"></span>'}</td>
           <td>${formatUserDate(user.created_at)}</td>
           <td class="cell-aksi">
-            <button class="btn-edit-user" onclick="startEditUser(this)" style="font-size:12px;padding:4px 10px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer">Edit</button>
+            <button class="btn-edit-user" onclick="startEditUser(this)" title="Edit user" style="background:none;border:none;cursor:pointer;padding:4px 6px;color:#64748b;font-size:13px">✏️</button>
           </td>
         </tr>
       `).join("") || `
@@ -8037,7 +8068,7 @@
 
       const nama = tr.querySelector(".cell-nama").textContent.trim();
       const role = tr.querySelector(".cell-role").textContent.trim();
-      const isActive = tr.querySelector(".cell-status .positive-cell") !== null;
+      const isActive = tr.querySelector(".cell-status .user-status-dot.active") !== null;
 
       tr.querySelector(".cell-nama").innerHTML = `<input type="text" value="${escapeHtml(nama)}" style="width:100%;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:13px">`;
       tr.querySelector(".cell-role").innerHTML = `

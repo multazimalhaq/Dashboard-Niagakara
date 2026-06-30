@@ -4,8 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NIAGAKARA MITRA JUARA</title>
-  <link rel="icon" type="image/jpeg" href="logo-niagakara.jpg">
-  <link rel="apple-touch-icon" href="logo-niagakara.jpg">
   <style>
     :root {
       --bg: #eaf3fb;
@@ -190,139 +188,6 @@
       background: currentColor;
       opacity: 0.76;
       flex: 0 0 auto;
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,0.10);
-      display: grid;
-      gap: 10px;
-    }
-
-    .user-card {
-      display: grid;
-      gap: 3px;
-      color: #ffffff;
-      font-size: 13px;
-      line-height: 1.25;
-    }
-
-    .user-card span {
-      color: #c7e8ef;
-      font-size: 12px;
-      text-transform: capitalize;
-    }
-
-    .logout-btn {
-      min-height: 38px;
-      border: 1px solid rgba(255,255,255,0.20);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,0.08);
-      color: #ffffff;
-      cursor: pointer;
-      font-weight: 800;
-    }
-
-    .logout-btn:hover {
-      background: rgba(255,255,255,0.16);
-    }
-
-    .app.sidebar-collapsed .sidebar-footer {
-      align-items: center;
-    }
-
-    .app.sidebar-collapsed .user-card {
-      display: none;
-    }
-
-    .login-screen {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background:
-        linear-gradient(180deg, rgba(239, 247, 252, 0.94), rgba(218, 233, 244, 0.96)),
-        radial-gradient(circle at top left, rgba(35, 108, 155, 0.18), transparent 34rem),
-        var(--bg);
-    }
-
-    .login-card {
-      width: min(420px, 100%);
-      background: rgba(255,255,255,0.94);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 26px;
-      display: grid;
-      gap: 18px;
-    }
-
-    .login-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .login-brand img {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
-      object-fit: cover;
-      border: 1px solid var(--line);
-    }
-
-    .login-brand strong {
-      display: block;
-      font-size: 16px;
-      line-height: 1.18;
-      text-transform: uppercase;
-    }
-
-    .login-brand span {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .login-form {
-      display: grid;
-      gap: 12px;
-    }
-
-    .login-form input {
-      width: 100%;
-      height: 44px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 0 12px;
-      color: var(--ink);
-      background: #ffffff;
-    }
-
-    .login-form button {
-      height: 44px;
-      border: 0;
-      border-radius: var(--radius);
-      background: #0b3554;
-      color: #ffffff;
-      cursor: pointer;
-      font-weight: 800;
-    }
-
-    .login-form button:disabled {
-      cursor: wait;
-      opacity: 0.72;
-    }
-
-    .login-message {
-      min-height: 18px;
-      color: #c2415d;
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .auth-hidden {
-      display: none !important;
     }
 
     main {
@@ -708,39 +573,6 @@
       color: #ffffff !important;
     }
 
-    .daily-table.daily-avg-table {
-      min-width: 0;
-      width: 100%;
-    }
-
-    .daily-table.daily-avg-table th,
-    .daily-table.daily-avg-table td,
-    .daily-table.daily-avg-table th:first-child,
-    .daily-table.daily-avg-table td:first-child,
-    .daily-table.daily-avg-table .total-row td,
-    .daily-table.daily-avg-table .total-row td:first-child {
-      position: static;
-      min-width: 0;
-      box-shadow: none;
-    }
-
-    .daily-table.daily-avg-table th,
-    .daily-table.daily-avg-table th:first-child {
-      background: #082b45;
-      color: #ffffff;
-    }
-
-    .daily-table.daily-avg-table td {
-      padding: 8px 12px;
-    }
-
-    .daily-table.daily-avg-table .total-row td,
-    .daily-table.daily-avg-table .total-row td:first-child {
-      background: #111827;
-      color: #ffd84d;
-      font-weight: 900;
-    }
-
     .advertiser-chart-card h2,
     #advertiser-page .panel-header h2 {
       color: #082b45;
@@ -853,171 +685,6 @@
     .crm-tracking-table th,
     .crm-tracking-table th:first-child {
       background: #14532d !important;
-    }
-
-    /* ── CLV Table ─────────────────────────────────────────── */
-    .daily-table.clv-table th,
-    .daily-table.clv-table th:first-child {
-      background: #1e3a5f !important;
-      color: #ffffff !important;
-    }
-
-    .daily-table.clv-table .total-row td,
-    .daily-table.clv-table .total-row td:first-child {
-      color: #ffd84d !important;
-    }
-
-    .daily-table.clv-table th.sortable {
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .daily-table.clv-table th.sortable:hover {
-      background: #2a4e7f !important;
-    }
-
-    .daily-table.clv-table th .sort-icon {
-      margin-left: 4px;
-      opacity: 0.55;
-      font-style: normal;
-    }
-
-    .daily-table.clv-table th.sort-asc .sort-icon::after { content: " ▲"; opacity: 1; }
-    .daily-table.clv-table th.sort-desc .sort-icon::after { content: " ▼"; opacity: 1; }
-    .daily-table.clv-table th:not(.sort-asc):not(.sort-desc) .sort-icon::after { content: " ⇅"; }
-
-    .daily-table.clv-table th {
-      white-space: normal;
-      word-break: keep-all;
-      line-height: 1.3;
-      font-size: 11px;
-      padding: 6px 8px;
-      vertical-align: bottom;
-    }
-
-    .daily-table.clv-table td {
-      font-size: 12px;
-      padding: 5px 8px;
-      white-space: nowrap;
-    }
-
-    .daily-table.clv-table td:nth-child(8) {
-      white-space: normal;
-      word-break: break-word;
-      font-size: 11px;
-      line-height: 1.4;
-    }
-
-    .clv-search-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .clv-search-row input {
-      flex: 1 1 220px;
-      max-width: 340px;
-      padding: 8px 12px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      font-size: 13px;
-      background: #fff;
-      color: var(--ink);
-    }
-
-    .clv-search-row input:focus {
-      outline: none;
-      border-color: #1e3a5f;
-      box-shadow: 0 0 0 2px rgba(30,58,95,0.12);
-    }
-
-    .clv-search-row .clv-count {
-      font-size: 13px;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .clv-pagination {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-
-    .clv-pagination button {
-      min-width: 32px;
-      height: 32px;
-      padding: 0 8px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: #ffffff;
-      color: var(--ink);
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 140ms, color 140ms;
-    }
-
-    .clv-pagination button:hover:not(:disabled) {
-      background: #1e3a5f;
-      color: #ffffff;
-      border-color: #1e3a5f;
-    }
-
-    .clv-pagination button.active {
-      background: #1e3a5f;
-      color: #ffffff;
-      border-color: #1e3a5f;
-      font-weight: 700;
-    }
-
-    .clv-pagination button:disabled {
-      opacity: 0.38;
-      cursor: default;
-    }
-
-    .clv-loading {
-      padding: 32px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    /* ── Trendline New Customer Chart ──────────────────────── */
-    .trendline-wrap {
-      overflow-x: auto;
-      overflow-y: visible;
-    }
-
-    .trendline-chart {
-      width: 100%;
-      min-width: 600px;
-      display: block;
-    }
-
-    .trendline-legend {
-      display: flex;
-      gap: 18px;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 14px;
-      font-size: 13px;
-    }
-
-    .trendline-legend span {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .trendline-legend i {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border-radius: 2px;
-      flex-shrink: 0;
     }
 
     .stack-tooltip {
@@ -1380,37 +1047,6 @@
       background: #991b1b;
       color: #ffffff;
       font-weight: 800;
-    }
-
-    .user-status-dot {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      cursor: default;
-      position: relative;
-    }
-    .user-status-dot.active {
-      background: #22c55e;
-      box-shadow: 0 0 6px #22c55e99;
-    }
-    .user-status-dot.inactive {
-      background: #ef4444;
-      box-shadow: 0 0 6px #ef444499;
-    }
-    .user-status-dot[title]:hover::after {
-      content: attr(title);
-      position: absolute;
-      left: 18px;
-      top: -4px;
-      background: #1e293b;
-      color: #fff;
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 10;
     }
 
     .pam-summary {
@@ -1911,29 +1547,7 @@
   </style>
 </head>
 <body>
-  <section class="login-screen" id="loginScreen">
-    <div class="login-card">
-      <div class="login-brand">
-        <img src="logo-niagakara.jpg" alt="Logo Niagakara">
-        <div>
-          <strong>NIAGAKARA MITRA JUARA</strong>
-          <span>Dashboard internal</span>
-        </div>
-      </div>
-      <form class="login-form" id="loginForm">
-        <label>Email
-          <input id="loginEmail" type="email" autocomplete="username" required>
-        </label>
-        <label>Password
-          <input id="loginPassword" type="password" autocomplete="current-password" required>
-        </label>
-        <button id="loginSubmit" type="submit">Login</button>
-        <div class="login-message" id="loginMessage"></div>
-      </form>
-    </div>
-  </section>
-
-  <div class="app auth-hidden" id="appShell">
+  <div class="app" id="appShell">
     <aside class="sidebar">
       <div class="sidebar-top">
         <div class="brand">
@@ -1957,15 +1571,7 @@
         <button data-page="customer-management"><span class="dot"></span><span class="nav-full">Customer Management</span><span class="nav-short">Cust</span></button>
         <button data-page="finance"><span class="dot"></span><span class="nav-full">Finance</span><span class="nav-short">Fin</span></button>
         <button class="nav-sub" data-page="admin-marketplace"><span class="dot"></span><span class="nav-full">Admin Marketplace</span><span class="nav-short">Admin</span></button>
-        <button data-page="user-management"><span class="dot"></span><span class="nav-full">User Management</span><span class="nav-short">Users</span></button>
       </nav>
-      <div class="sidebar-footer">
-        <div class="user-card">
-          <strong id="currentUserName">User</strong>
-          <span id="currentUserRole">role</span>
-        </div>
-        <button class="logout-btn" id="logoutButton" type="button">Logout</button>
-      </div>
     </aside>
 
     <main>
@@ -2115,21 +1721,10 @@
           </article>
           <article class="card panel">
             <div class="panel-header">
-              <h2>Rata-rata Transaksi Harian</h2>
-              <span class="panel-note" id="dailyAvgNote">berdasarkan periode filter</span>
+              <h2>Catatan Status</h2>
+              <span class="panel-note">ringkasan periode</span>
             </div>
-            <div class="daily-table-wrap" style="max-height:none">
-              <table class="daily-table daily-avg-table">
-                <thead>
-                  <tr>
-                    <th>Channel</th>
-                    <th style="text-align:right">Jumlah</th>
-                    <th style="text-align:right">Nominal</th>
-                  </tr>
-                </thead>
-                <tbody id="dailyAvgBody"></tbody>
-              </table>
-            </div>
+            <div class="ratio-list" id="statusSummary"></div>
           </article>
         </section>
 
@@ -2925,7 +2520,13 @@
             <h1 id="weeklyAdvertiserTitle">Performa Advertiser Periode -</h1>
             <p class="subtitle">Review budgeting otomatis dari Senin sampai Minggu minggu sebelumnya</p>
           </div>
-          <div class="status-pill" id="weeklyAdvertiserStatus">Menunggu data...</div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <label for="weekPeriodSelect" style="font-weight: 500;">Periode:</label>
+            <select id="weekPeriodSelect" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 14px; min-width: 200px;">
+              <option value="">Memuat...</option>
+            </select>
+            <div class="status-pill" id="weeklyAdvertiserStatus">Menunggu data...</div>
+          </div>
         </div>
 
         <section class="kpi-grid">
@@ -3187,7 +2788,6 @@
         </section>
       </section>
 
-      <!-- ===== CUSTOMER MANAGEMENT PAGE ===== -->
       <section id="customer-management-page" class="hidden">
         <div class="topbar">
           <div>
@@ -3281,62 +2881,6 @@
                 </tr>
               </tbody>
             </table>
-          </div>
-        </section>
-
-        <!-- ── Trendline New Customer Soscom ─────────────────── -->
-        <section class="card panel" style="margin-top:18px">
-          <div class="panel-header">
-            <h2>Trendline New Customer Soscom</h2>
-            <span class="panel-note" id="trendlinePanelNote">berdasarkan first transaksi per bulan — Webot</span>
-          </div>
-          <div id="trendlineLoadingMsg" class="clv-loading">Memuat data trendline...</div>
-          <div id="trendlineContent" style="display:none">
-            <div class="trendline-legend">
-              <span><i style="background:#4472c4"></i> New Customer</span>
-              <span><i style="background:#e84040"></i> All New Customer (Kumulatif)</span>
-            </div>
-            <div class="trendline-wrap">
-              <svg id="trendlineChart" class="trendline-chart"></svg>
-            </div>
-            <div id="trendlineYearBtns" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;"></div>
-          </div>
-        </section>
-
-        <!-- ── Customer Lifetime Value ────────────────────────── -->
-        <section class="card panel" style="margin-top:18px">
-          <div class="panel-header">
-            <h2>Customer Lifetime Value</h2>
-            <span class="panel-note" id="clvPanelNote">berdasarkan semua histori transaksi Webot</span>
-          </div>
-          <div id="clvLoadingMsg" class="clv-loading">Memuat data lifetime value...</div>
-          <div id="clvContent" style="display:none">
-            <div class="clv-search-row">
-              <input id="clvSearch" type="text" placeholder="Cari nomor / nama customer..." autocomplete="off">
-              <span class="clv-count" id="clvCount"></span>
-            </div>
-            <div class="daily-table-wrap">
-              <table class="daily-table clv-table" style="min-width:900px">
-                <thead>
-                  <tr>
-                    <th style="width:32px;min-width:32px;text-align:center">No</th>
-                    <th class="sortable" data-col="phone" style="min-width:130px">Nomor<br>Customer<i class="sort-icon"></i></th>
-                    <th class="sortable sort-desc" data-col="omset" style="min-width:100px;text-align:right">Omset<i class="sort-icon"></i></th>
-                    <th class="sortable" data-col="first" style="min-width:82px;text-align:center">First<br>Transaksi<i class="sort-icon"></i></th>
-                    <th class="sortable" data-col="last" style="min-width:82px;text-align:center">Last<br>Transaksi<i class="sort-icon"></i></th>
-                    <th class="sortable" data-col="closing" style="min-width:58px;text-align:right">Trx<br>(Closing)<i class="sort-icon"></i></th>
-                    <th class="sortable" data-col="qty" style="min-width:44px;text-align:right">Qty<i class="sort-icon"></i></th>
-                    <th style="min-width:160px">Nama Produk</th>
-                    <th style="min-width:120px">Nama<br>Customer</th>
-                    <th style="min-width:110px">Nama CS<br>(First)</th>
-                    <th style="min-width:110px">Nama CRM<br>(Last)</th>
-                    <th style="min-width:120px">Nama ADV<br>(First)</th>
-                  </tr>
-                </thead>
-                <tbody id="clvTableBody"></tbody>
-              </table>
-            </div>
-            <div class="clv-pagination" id="clvPagination"></div>
           </div>
         </section>
       </section>
@@ -3535,66 +3079,6 @@
         </section>
       </section>
 
-      <section id="user-management-page" class="hidden">
-        <div class="topbar">
-          <div>
-            <h1>User Management</h1>
-            <p class="subtitle">Tambah user dan atur role akses dashboard</p>
-          </div>
-          <div class="status-pill" id="userManagementStatus">Khusus admin</div>
-        </div>
-
-        <section class="card panel" style="margin-bottom:18px">
-          <div class="panel-header">
-            <h2>Tambah User</h2>
-            <span class="panel-note">user dibuat langsung ke Supabase Auth</span>
-          </div>
-          <form id="createUserForm" class="date-row" style="align-items:end">
-            <label>Nama
-              <input id="newUserName" type="text" placeholder="Nama user" required>
-            </label>
-            <label>Email
-              <input id="newUserEmail" type="email" placeholder="nama@niagakara.id" required>
-            </label>
-            <label>Password awal
-              <input id="newUserPassword" type="text" placeholder="Minimal 8 karakter" minlength="8" required>
-            </label>
-            <label>Role
-              <select id="newUserRole" required>
-                <option value="tamu">Tamu</option>
-                <option value="advertiser">Advertiser</option>
-                <option value="cs">CS</option>
-                <option value="crm">CRM</option>
-                <option value="admin">Admin</option>
-              </select>
-            </label>
-            <button class="apply-btn" id="createUserSubmit" type="submit">Tambah User</button>
-          </form>
-        </section>
-
-        <section class="card panel">
-          <div class="panel-header">
-            <h2>Daftar User</h2>
-            <span class="panel-note" id="userListNote">memuat user...</span>
-          </div>
-          <div class="daily-table-wrap">
-            <table class="daily-table" style="min-width:720px">
-              <thead>
-                <tr>
-                  <th>Nama</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                  <th>Dibuat</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="userTableBody"></tbody>
-            </table>
-          </div>
-        </section>
-      </section>
-
       <section id="coming-page" class="empty-page hidden">
         <article class="card">
           <h2 id="comingTitle">Coming soon ....</h2>
@@ -3772,132 +3256,9 @@
     </form>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script>
-    const SUPABASE_URL = "https://uqbonijjapvyklzzxxff.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_aedpCh3PBuzzo0l-1XqGiA_VbSOgiN5";
-    const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-      : null;
-
-    const ROLE_PAGE_ACCESS = {
-      admin: ["dashboard", "advertiser", "cs", "crm", "shopee", "tiktok", "weekly-budgeting", "product", "customer-management", "finance", "admin-marketplace", "user-management"],
-      tamu: ["dashboard"],
-      advertiser: ["dashboard", "advertiser", "cs", "crm", "shopee", "tiktok"],
-      cs: ["dashboard", "advertiser", "cs", "crm", "shopee", "tiktok"],
-      crm: ["dashboard", "advertiser", "cs", "crm", "shopee", "tiktok"]
-    };
-
-    let currentProfile = null;
-    let appStarted = false;
-
-    function canAccessPage(page) {
-      const role = currentProfile?.role;
-      return Boolean(role && ROLE_PAGE_ACCESS[role]?.includes(page));
-    }
-
-    function updateRoleMenu() {
-      document.querySelectorAll(".nav button[data-page]").forEach(button => {
-        button.classList.toggle("auth-hidden", !canAccessPage(button.dataset.page));
-      });
-    }
-
-    function setLoginMessage(message) {
-      const el = document.getElementById("loginMessage");
-      if (el) el.textContent = message || "";
-    }
-
-    function showLogin(message = "") {
-      document.getElementById("loginScreen").classList.remove("auth-hidden");
-      document.getElementById("appShell").classList.add("auth-hidden");
-      setLoginMessage(message);
-    }
-
-    function showApp() {
-      document.getElementById("loginScreen").classList.add("auth-hidden");
-      document.getElementById("appShell").classList.remove("auth-hidden");
-    }
-
-    async function fetchCurrentProfile(userId) {
-      const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("full_name, role, is_active")
-        .eq("id", userId)
-        .single();
-      if (error) throw error;
-      if (!data?.is_active) throw new Error("Akun ini belum aktif. Hubungi admin.");
-      return data;
-    }
-
-    async function startAuthenticatedApp(profile) {
-      currentProfile = profile;
-      document.getElementById("currentUserName").textContent = profile.full_name || "User";
-      document.getElementById("currentUserRole").textContent = profile.role || "";
-      updateRoleMenu();
-      showApp();
-      if (!appStarted) {
-        appStarted = true;
-        await init();
-      } else if (!canAccessPage(activePage)) {
-        document.querySelector('.nav button[data-page="dashboard"]')?.click();
-      }
-    }
-
-    async function restoreSession() {
-      if (!supabaseClient) {
-        showLogin("Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di index.html.");
-        return;
-      }
-      const { data } = await supabaseClient.auth.getSession();
-      const user = data.session?.user;
-      if (!user) {
-        showLogin();
-        return;
-      }
-      try {
-        const profile = await fetchCurrentProfile(user.id);
-        await startAuthenticatedApp(profile);
-      } catch (error) {
-        await supabaseClient.auth.signOut();
-        showLogin(error.message || "Session tidak valid. Silakan login ulang.");
-      }
-    }
-
-    function setupAuth() {
-      const form = document.getElementById("loginForm");
-      const submit = document.getElementById("loginSubmit");
-      form.addEventListener("submit", async event => {
-        event.preventDefault();
-        if (!supabaseClient) {
-          showLogin("Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di index.html.");
-          return;
-        }
-        const email = document.getElementById("loginEmail").value.trim();
-        const password = document.getElementById("loginPassword").value;
-        submit.disabled = true;
-        setLoginMessage("");
-        try {
-          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-          const profile = await fetchCurrentProfile(data.user.id);
-          await startAuthenticatedApp(profile);
-          form.reset();
-        } catch (error) {
-          setLoginMessage(error.message || "Login gagal. Cek email dan password.");
-        } finally {
-          submit.disabled = false;
-        }
-      });
-
-      document.getElementById("logoutButton").addEventListener("click", async () => {
-        if (supabaseClient) await supabaseClient.auth.signOut();
-        currentProfile = null;
-        showLogin();
-      });
-    }
-
     const SHEETS = {
       webot: {
         id: "1GbKWkojWFT71dS2wP4Qa5WyYKrEYuk6lQEZuaHw-v9M",
@@ -4053,7 +3414,7 @@
       returnCount: document.getElementById("returnCount"),
       periodLabel: document.getElementById("periodLabel"),
       statusRatios: document.getElementById("statusRatios"),
-      dailyAvgBody: document.getElementById("dailyAvgBody"),
+      statusSummary: document.getElementById("statusSummary"),
       topProducts: document.getElementById("topProducts"),
       topAdvertisers: document.getElementById("topAdvertisers"),
       topCs: document.getElementById("topCs"),
@@ -4184,6 +3545,7 @@
       shopeePage: document.getElementById("shopee-page"),
       tiktokPage: document.getElementById("tiktok-page"),
       weeklyBudgetingPage: document.getElementById("weekly-budgeting-page"),
+      weekPeriodSelect: document.getElementById("weekPeriodSelect"),
       weeklyAdvertiserTitle: document.getElementById("weeklyAdvertiserTitle"),
       weeklyAdvertiserStatus: document.getElementById("weeklyAdvertiserStatus"),
       weeklyTotalBudget: document.getElementById("weeklyTotalBudget"),
@@ -4215,17 +3577,6 @@
       weeklyProductOptions: document.getElementById("weeklyProductOptions"),
       productPage: document.getElementById("product-page"),
       customerManagementPage: document.getElementById("customer-management-page"),
-      clvLoadingMsg: document.getElementById("clvLoadingMsg"),
-      clvContent: document.getElementById("clvContent"),
-      clvSearch: document.getElementById("clvSearch"),
-      clvCount: document.getElementById("clvCount"),
-      clvTableBody: document.getElementById("clvTableBody"),
-      clvPagination: document.getElementById("clvPagination"),
-      clvPanelNote: document.getElementById("clvPanelNote"),
-      trendlineLoadingMsg: document.getElementById("trendlineLoadingMsg"),
-      trendlineContent: document.getElementById("trendlineContent"),
-      trendlineChart: document.getElementById("trendlineChart"),
-      trendlinePanelNote: document.getElementById("trendlinePanelNote"),
       financePage: document.getElementById("finance-page"),
       adminMarketplacePage: document.getElementById("admin-marketplace-page"),
       adminMarketplaceStatus: document.getElementById("adminMarketplaceStatus"),
@@ -4252,16 +3603,6 @@
       adminMarketplaceRowCount: document.getElementById("adminMarketplaceRowCount"),
       adminShopeeBody: document.getElementById("adminShopeeBody"),
       adminTiktokBody: document.getElementById("adminTiktokBody"),
-      userManagementPage: document.getElementById("user-management-page"),
-      userManagementStatus: document.getElementById("userManagementStatus"),
-      createUserForm: document.getElementById("createUserForm"),
-      createUserSubmit: document.getElementById("createUserSubmit"),
-      newUserName: document.getElementById("newUserName"),
-      newUserEmail: document.getElementById("newUserEmail"),
-      newUserPassword: document.getElementById("newUserPassword"),
-      newUserRole: document.getElementById("newUserRole"),
-      userTableBody: document.getElementById("userTableBody"),
-      userListNote: document.getElementById("userListNote"),
       dashboardPage: document.getElementById("dashboard-page"),
       comingTitle: document.getElementById("comingTitle"),
       productStartDate: document.getElementById("productStartDate"),
@@ -4303,18 +3644,6 @@
     let coreDataLoading = false;
     let loadedRangeStart = null;
     let loadedRangeEnd = null;
-    const FULL_RANGE_START = new Date(2000, 0, 1);
-    const FULL_RANGE_END = new Date(2100, 0, 1);
-
-    // ── CLV state ──────────────────────────────────────────────
-    let clvFullDataLoaded = false;
-    let clvFullDataLoading = false;
-    let clvRows = [];          // aggregated per-phone
-    let clvFiltered = [];      // setelah search
-    let clvSortCol = "omset";
-    let clvSortDir = "desc";
-    let clvPage = 1;
-    const CLV_PAGE_SIZE = 10;
     let advertiserBudgetInputs = [];
     let csReportInputs = [];
     let shopeeBudgetInputs = [];
@@ -5130,6 +4459,95 @@
       const mondayLastWeek = new Date(mondayThisWeek.getFullYear(), mondayThisWeek.getMonth(), mondayThisWeek.getDate() - 7);
       const sundayLastWeek = new Date(mondayLastWeek.getFullYear(), mondayLastWeek.getMonth(), mondayLastWeek.getDate() + 6);
       return [mondayLastWeek, sundayLastWeek];
+    }
+
+    function generateWeekPeriods() {
+      // Pekan 1 dimulai pada 29 Desember 2025 (Senin)
+      const startDate = new Date(2025, 11, 29); // month 11 = December (0-indexed)
+      const today = startOfDay(new Date());
+      const day = today.getDay();
+
+      // Cari hari Senin minggu ini
+      const mondayThisWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - ((day + 6) % 7));
+
+      // Pekan terakhir yang sudah selesai adalah minggu lalu (sebelum Senin minggu ini)
+      const lastCompletedMonday = new Date(mondayThisWeek.getFullYear(), mondayThisWeek.getMonth(), mondayThisWeek.getDate() - 7);
+
+      const periods = [];
+      let currentMonday = new Date(startDate);
+      let weekNumber = 1;
+
+      // Generate semua pekan dari Pekan 1 sampai pekan terakhir yang sudah selesai
+      while (currentMonday <= lastCompletedMonday) {
+        const sunday = new Date(currentMonday.getFullYear(), currentMonday.getMonth(), currentMonday.getDate() + 6);
+
+        periods.push({
+          weekNumber: weekNumber,
+          start: new Date(currentMonday),
+          end: new Date(sunday),
+          label: formatWeekPeriodLabel(weekNumber, currentMonday, sunday)
+        });
+
+        // Pindah ke Senin berikutnya
+        currentMonday = new Date(currentMonday.getFullYear(), currentMonday.getMonth(), currentMonday.getDate() + 7);
+        weekNumber++;
+      }
+
+      return periods;
+    }
+
+    function formatWeekPeriodLabel(weekNumber, start, end) {
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+      const startDay = start.getDate();
+      const endDay = end.getDate();
+      const startMonth = monthNames[start.getMonth()];
+      const endMonth = monthNames[end.getMonth()];
+
+      if (start.getMonth() === end.getMonth()) {
+        return `Pekan ${weekNumber} (${startDay.toString().padStart(2, '0')} - ${endDay.toString().padStart(2, '0')} ${startMonth})`;
+      } else {
+        return `Pekan ${weekNumber} (${startDay.toString().padStart(2, '0')} ${startMonth} - ${endDay.toString().padStart(2, '0')} ${endMonth})`;
+      }
+    }
+
+    function populateWeekPeriodSelect() {
+      const periods = generateWeekPeriods();
+
+      if (periods.length === 0) {
+        els.weekPeriodSelect.innerHTML = '<option value="">Belum ada data</option>';
+        return;
+      }
+
+      // Urutkan dari yang terbaru ke yang terlama (reverse)
+      const reversedPeriods = [...periods].reverse();
+
+      const options = reversedPeriods.map(period => {
+        const value = `${period.weekNumber}|${period.start.toISOString()}|${period.end.toISOString()}`;
+        return `<option value="${value}">${period.label}</option>`;
+      }).join('');
+
+      els.weekPeriodSelect.innerHTML = options;
+
+      // Select pekan terakhir (minggu lalu) sebagai default
+      if (reversedPeriods.length > 0) {
+        const lastPeriod = reversedPeriods[0];
+        const defaultValue = `${lastPeriod.weekNumber}|${lastPeriod.start.toISOString()}|${lastPeriod.end.toISOString()}`;
+        els.weekPeriodSelect.value = defaultValue;
+      }
+    }
+
+    function getSelectedWeekRange() {
+      const selectedValue = els.weekPeriodSelect.value;
+
+      if (!selectedValue) {
+        return previousWeekRange();
+      }
+
+      const [weekNumber, startISO, endISO] = selectedValue.split('|');
+      const start = new Date(startISO);
+      const end = new Date(endISO);
+
+      return [start, end];
     }
 
     function compactPeriodLabel(start, end) {
@@ -7094,7 +6512,7 @@
     }
 
     function renderWeeklyBudgetingPage() {
-      const [start, end] = previousWeekRange();
+      const [start, end] = getSelectedWeekRange();
       const [nextStart, nextEnd] = nextWeekRangeFrom(start);
       const label = compactPeriodLabel(start, end);
       const settings = currentWeeklySettings();
@@ -7861,7 +7279,6 @@
       chartPoints = buildDailySeries(current, start, end);
       drawChart();
       renderStatusRatios(current, gross);
-      renderDailyAvgTransaction(current, start, end);
       renderRanks(current);
       renderStatusInsights(current);
     }
@@ -7893,46 +7310,19 @@
         `;
       }).join("") : `<div class="ratio-amount">Belum ada data status pada periode ini.</div>`;
 
-    }
-
-    function renderDailyAvgTransaction(rows, start, end) {
-      const days = Math.max(1, Math.round((startOfDay(end) - startOfDay(start)) / 86400000) + 1);
-      const channels = [
-        { key: "new", label: "SOSCOM" },
-        { key: "repeat", label: "CRM" },
-        { key: "shopee", label: "SHOPEE" },
-        { key: "tiktok", label: "TIKTOKSHOP" }
-      ];
-      const channelRows = {
-        new: rows.filter(row => row.source === "Webot" && row.type.toLowerCase() === "new"),
-        repeat: rows.filter(row => row.source === "Webot" && row.type.toLowerCase() === "repeat"),
-        shopee: rows.filter(row => row.type.toLowerCase().includes("shopee")),
-        tiktok: rows.filter(row => row.type.toLowerCase().includes("tiktok"))
-      };
-
-      let totalCount = 0;
-      let totalNominal = 0;
-      const bodyRows = channels.map(channel => {
-        const data = channelRows[channel.key];
-        const avgCount = countUniqueOrders(data) / days;
-        const avgNominal = sumRows(data) / days;
-        totalCount += avgCount;
-        totalNominal += avgNominal;
-        return `
-          <tr>
-            <td>${channel.label}</td>
-            <td style="text-align:right">${Math.round(avgCount).toLocaleString("id-ID")}</td>
-            <td style="text-align:right">${currency(avgNominal)}</td>
-          </tr>
-        `;
-      }).join("");
-
-      els.dailyAvgBody.innerHTML = bodyRows + `
-        <tr class="total-row">
-          <td>TOTAL</td>
-          <td style="text-align:right">${Math.round(totalCount).toLocaleString("id-ID")}</td>
-          <td style="text-align:right">${currency(totalNominal)}</td>
-        </tr>
+      const totalOrder = countUniqueOrders(rows);
+      const returnOrder = countUniqueOrders(rows.filter(row => isReturnStatus(row.status)));
+      els.statusSummary.innerHTML = `
+        <div class="ratio-item">
+          <div class="ratio-top"><strong>Total Order</strong><span>${totalOrder.toLocaleString("id-ID")}</span></div>
+          <div class="bar"><i class="bar-process" style="width:100%"></i></div>
+          <div class="ratio-amount">Order unik dalam periode filter</div>
+        </div>
+        <div class="ratio-item">
+          <div class="ratio-top"><strong>Order Return</strong><span>${returnOrder.toLocaleString("id-ID")}</span></div>
+          <div class="bar"><i class="bar-return" style="width:${totalOrder ? Math.min(100, returnOrder / totalOrder * 100) : 0}%"></i></div>
+          <div class="ratio-amount">${percent(totalOrder ? returnOrder / totalOrder * 100 : 0)} dari total order</div>
+        </div>
       `;
     }
 
@@ -8031,165 +7421,6 @@
         '"': "&quot;",
         "'": "&#039;"
       }[char]));
-    }
-
-    function formatUserDate(value) {
-      if (!value) return "-";
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return "-";
-      return date.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
-    }
-
-    function renderUserRows(users) {
-      if (!els.userTableBody) return;
-      els.userTableBody.innerHTML = users.map(user => `
-        <tr data-id="${user.id}" data-editing="false">
-          <td class="cell-nama">${escapeHtml(user.full_name || "-")}</td>
-          <td>${escapeHtml(user.email || "-")}</td>
-          <td class="cell-role">${escapeHtml(user.role || "-")}</td>
-          <td class="cell-status" style="text-align:center">${user.is_active ? '<span class="user-status-dot active" title="Aktif"></span>' : '<span class="user-status-dot inactive" title="Nonaktif"></span>'}</td>
-          <td>${formatUserDate(user.created_at)}</td>
-          <td class="cell-aksi">
-            <button class="btn-edit-user" onclick="startEditUser(this)" title="Edit user" style="background:none;border:none;cursor:pointer;padding:4px 6px;color:#64748b;font-size:13px">✏️</button>
-          </td>
-        </tr>
-      `).join("") || `
-        <tr>
-          <td colspan="6">Belum ada user.</td>
-        </tr>
-      `;
-      els.userListNote.textContent = `${users.length.toLocaleString("id-ID")} user terdaftar`;
-    }
-
-    function startEditUser(btn) {
-      const tr = btn.closest("tr");
-      if (tr.dataset.editing === "true") return;
-      tr.dataset.editing = "true";
-
-      const nama = tr.querySelector(".cell-nama").textContent.trim();
-      const role = tr.querySelector(".cell-role").textContent.trim();
-      const isActive = tr.querySelector(".cell-status .user-status-dot.active") !== null;
-
-      tr.querySelector(".cell-nama").innerHTML = `<input type="text" value="${escapeHtml(nama)}" style="width:100%;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:13px">`;
-      tr.querySelector(".cell-role").innerHTML = `
-        <select style="padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:13px">
-          <option value="tamu" ${role==="tamu"?"selected":""}>Tamu</option>
-          <option value="advertiser" ${role==="advertiser"?"selected":""}>Advertiser</option>
-          <option value="cs" ${role==="cs"?"selected":""}>CS</option>
-          <option value="crm" ${role==="crm"?"selected":""}>CRM</option>
-          <option value="admin" ${role==="admin"?"selected":""}>Admin</option>
-        </select>`;
-      tr.querySelector(".cell-status").innerHTML = `
-        <select style="padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:13px">
-          <option value="true" ${isActive?"selected":""}>Aktif</option>
-          <option value="false" ${!isActive?"selected":""}>Nonaktif</option>
-        </select>`;
-      tr.querySelector(".cell-aksi").innerHTML = `
-        <input type="text" placeholder="Password baru (opsional)" style="width:120px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:12px;margin-right:4px" class="input-new-password">
-        <button onclick="saveEditUser(this)" style="font-size:12px;padding:4px 10px;background:#22c55e;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px">Simpan</button>
-        <button onclick="cancelEditUser(this)" style="font-size:12px;padding:4px 10px;background:#94a3b8;color:#fff;border:none;border-radius:6px;cursor:pointer">Batal</button>`;
-    }
-
-    function cancelEditUser(btn) {
-      loadUsers();
-    }
-
-    async function saveEditUser(btn) {
-      const tr = btn.closest("tr");
-      const userId = tr.dataset.id;
-      const fullName = tr.querySelector(".cell-nama input").value.trim();
-      const role = tr.querySelector(".cell-role select").value;
-      const isActive = tr.querySelector(".cell-status select").value === "true";
-      const newPassword = tr.querySelector(".input-new-password").value.trim();
-
-      btn.disabled = true;
-      btn.textContent = "Menyimpan...";
-
-      try {
-        // Update profiles
-        const { error: updateError } = await supabaseClient
-          .from("profiles")
-          .update({ full_name: fullName, role, is_active: isActive })
-          .eq("id", userId);
-        if (updateError) throw updateError;
-
-        // Update password via Edge Function jika diisi
-        if (newPassword) {
-          if (newPassword.length < 8) throw new Error("Password minimal 8 karakter.");
-          const { data: sessionData } = await supabaseClient.auth.getSession();
-          const token = sessionData.session?.access_token;
-          const response = await fetch(`${SUPABASE_URL}/functions/v1/create-user`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-              "apikey": SUPABASE_ANON_KEY
-            },
-            body: JSON.stringify({ user_id: userId, password: newPassword })
-          });
-          const result = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(result.error || "Gagal update password.");
-        }
-
-        els.userManagementStatus.textContent = "User berhasil diupdate";
-        await loadUsers();
-      } catch (err) {
-        els.userManagementStatus.textContent = err.message || "Gagal update user";
-        btn.disabled = false;
-        btn.textContent = "Simpan";
-      }
-    }
-
-    window.startEditUser = startEditUser;
-    window.saveEditUser = saveEditUser;
-    window.cancelEditUser = cancelEditUser;
-
-    async function loadUsers() {
-      if (!supabaseClient || currentProfile?.role !== "admin" || !els.userTableBody) return;
-      els.userListNote.textContent = "memuat user...";
-      const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("id, full_name, email, role, is_active, created_at")
-        .order("created_at", { ascending: false });
-      if (error) {
-        els.userListNote.textContent = `Gagal memuat user: ${error.message}`;
-        return;
-      }
-      renderUserRows(data || []);
-    }
-
-    async function createUserFromForm(event) {
-      event.preventDefault();
-      if (!supabaseClient || currentProfile?.role !== "admin") return;
-      const fullName = els.newUserName.value.trim();
-      const email = els.newUserEmail.value.trim();
-      const password = els.newUserPassword.value;
-      const role = els.newUserRole.value;
-      els.createUserSubmit.disabled = true;
-      els.userManagementStatus.textContent = "Membuat user...";
-      try {
-        const { data: sessionData } = await supabaseClient.auth.getSession();
-        const token = sessionData.session?.access_token;
-        if (!token) throw new Error("Session admin tidak ditemukan. Login ulang dulu.");
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/create-user`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-            "apikey": SUPABASE_ANON_KEY
-          },
-          body: JSON.stringify({ full_name: fullName, email, password, role })
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(result.error || "Gagal membuat user.");
-        els.createUserForm.reset();
-        els.userManagementStatus.textContent = "User berhasil dibuat";
-        await loadUsers();
-      } catch (error) {
-        els.userManagementStatus.textContent = error.message || "Gagal membuat user";
-      } finally {
-        els.createUserSubmit.disabled = false;
-      }
     }
 
     function labelRatio(key) {
@@ -9194,10 +8425,9 @@
       });
       document.querySelectorAll(".nav button").forEach(button => {
         button.addEventListener("click", () => {
-          const page = button.dataset.page;
-          if (!canAccessPage(page)) return;
           document.querySelectorAll(".nav button").forEach(item => item.classList.remove("active"));
           button.classList.add("active");
+          const page = button.dataset.page;
           activePage = page;
           if (window.matchMedia("(max-width: 1120px)").matches) {
             els.appShell.classList.add("sidebar-collapsed");
@@ -9213,7 +8443,6 @@
           els.customerManagementPage.classList.add("hidden");
           els.financePage.classList.add("hidden");
           els.adminMarketplacePage.classList.add("hidden");
-          els.userManagementPage.classList.add("hidden");
           els.comingPage.classList.add("hidden");
           if (page === "dashboard") {
             els.dashboardPage.classList.remove("hidden");
@@ -9252,6 +8481,7 @@
           if (page === "weekly-budgeting") {
             els.weeklyBudgetingPage.classList.remove("hidden");
             loadSupportDataInBackground();
+            populateWeekPeriodSelect();
             renderWeeklyBudgetingPage();
             return;
           }
@@ -9262,7 +8492,6 @@
           }
           if (page === "customer-management") {
             els.customerManagementPage.classList.remove("hidden");
-            loadClvFullData();
             return;
           }
           if (page === "finance") {
@@ -9273,11 +8502,6 @@
             els.adminMarketplacePage.classList.remove("hidden");
             loadSupportDataInBackground();
             renderAdminMarketplacePage();
-            return;
-          }
-          if (page === "user-management") {
-            els.userManagementPage.classList.remove("hidden");
-            loadUsers();
             return;
           }
           els.comingPage.classList.remove("hidden");
@@ -9309,14 +8533,10 @@
         els.advertiserQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateAdvertiserInputs(...rangePreset(button.dataset.range));
-        const [advStart, advEnd] = getAdvertiserRange();
-        ensureCoreDataForRange(advStart, advEnd).then(() => renderAdvertiserReport());
         renderAdvertiserReport();
       });
       els.applyAdvertiserFilter.addEventListener("click", () => {
         els.advertiserQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
-        const [advStart, advEnd] = getAdvertiserRange();
-        ensureCoreDataForRange(advStart, advEnd).then(() => renderAdvertiserReport());
         renderAdvertiserReport();
       });
       els.advertiserSelect.addEventListener("change", renderAdvertiserReport);
@@ -9350,14 +8570,10 @@
         els.csQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateCsInputs(...rangePreset(button.dataset.range));
-        const [csStart, csEnd] = getCsRange();
-        ensureCoreDataForRange(csStart, csEnd).then(() => renderCsReport());
         renderCsReport();
       });
       els.applyCsFilter.addEventListener("click", () => {
         els.csQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
-        const [csStart, csEnd] = getCsRange();
-        ensureCoreDataForRange(csStart, csEnd).then(() => renderCsReport());
         renderCsReport();
       });
       els.csSelect.addEventListener("change", renderCsReport);
@@ -9390,14 +8606,10 @@
         els.crmQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateCrmInputs(...rangePreset(button.dataset.range));
-        const [crmStart, crmEnd] = getCrmRange();
-        ensureCoreDataForRange(crmStart, crmEnd).then(() => renderCrmReport());
         renderCrmReport();
       });
       els.applyCrmFilter.addEventListener("click", () => {
         els.crmQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
-        const [crmStart, crmEnd] = getCrmRange();
-        ensureCoreDataForRange(crmStart, crmEnd).then(() => renderCrmReport());
         renderCrmReport();
       });
       els.crmSelect.addEventListener("change", renderCrmReport);
@@ -9409,14 +8621,10 @@
         els.shopeeQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateShopeeInputs(...rangePreset(button.dataset.range));
-        const [shopeeStart, shopeeEnd] = getShopeeRange();
-        ensureCoreDataForRange(shopeeStart, shopeeEnd).then(() => renderShopeeReport());
         renderShopeeReport();
       });
       els.applyShopeeFilter.addEventListener("click", () => {
         els.shopeeQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
-        const [shopeeStart, shopeeEnd] = getShopeeRange();
-        ensureCoreDataForRange(shopeeStart, shopeeEnd).then(() => renderShopeeReport());
         renderShopeeReport();
       });
       els.shopeeStoreSelect.addEventListener("change", renderShopeeReport);
@@ -9449,14 +8657,10 @@
         els.tiktokQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
         button.classList.add("active");
         updateTiktokInputs(...rangePreset(button.dataset.range));
-        const [tiktokStart, tiktokEnd] = getTiktokRange();
-        ensureCoreDataForRange(tiktokStart, tiktokEnd).then(() => renderTiktokReport());
         renderTiktokReport();
       });
       els.applyTiktokFilter.addEventListener("click", () => {
         els.tiktokQuickFilters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
-        const [tiktokStart, tiktokEnd] = getTiktokRange();
-        ensureCoreDataForRange(tiktokStart, tiktokEnd).then(() => renderTiktokReport());
         renderTiktokReport();
       });
       els.tiktokStoreSelect.addEventListener("change", renderTiktokReport);
@@ -9509,7 +8713,6 @@
       els.nextAdminMarketplaceInput.addEventListener("click", goToAdminMarketplaceStepTwo);
       els.backAdminMarketplaceInput.addEventListener("click", backToAdminMarketplaceStepOne);
       els.adminMarketplaceInputForm.addEventListener("submit", handleAdminMarketplaceSubmit);
-      els.createUserForm.addEventListener("submit", createUserFromForm);
       [
         els.weeklyHppInput,
         els.weeklyMinPamInput,
@@ -9517,6 +8720,7 @@
         els.weeklyShopeeTaxInput,
         els.weeklyTiktokAdminInput
       ].forEach(input => input.addEventListener("input", renderWeeklyBudgetingPage));
+      els.weekPeriodSelect.addEventListener("change", renderWeeklyBudgetingPage);
       els.weeklyTargetCrmInput.addEventListener("input", () => {
         normalizePlainNumberInput(els.weeklyTargetCrmInput);
         renderWeeklyBudgetingPage();
@@ -9977,373 +9181,6 @@
     }
     // ─────────────────────────────────────────────────────────────────────────
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // TRENDLINE NEW CUSTOMER SOSCOM
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    function buildTrendlineData(rows) {
-      // Hanya Webot, punya customerPhone
-      const webotOnly = rows.filter(r => r.source === "Webot" && r.customerPhone);
-
-      // Cari firstDate per nomor HP
-      const firstDateMap = new Map();
-      webotOnly.forEach(r => {
-        const key = r.customerPhone;
-        if (!firstDateMap.has(key) || r.date < firstDateMap.get(key)) {
-          firstDateMap.set(key, r.date);
-        }
-      });
-
-      // Group per bulan (yyyy-mm)
-      const monthMap = new Map();
-      firstDateMap.forEach(date => {
-        if (!date) return;
-        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-        monthMap.set(key, (monthMap.get(key) || 0) + 1);
-      });
-
-      // Sort bulan
-      const months = Array.from(monthMap.keys()).sort();
-      let cumulative = 0;
-      return months.map(m => {
-        const newCount = monthMap.get(m);
-        cumulative += newCount;
-        const [y, mo] = m.split("-");
-        const label = new Date(+y, +mo - 1, 1).toLocaleDateString("id-ID", { month: "short", year: "numeric" });
-        return { month: m, label, newCount, cumulative };
-      });
-    }
-
-    let trendlineAllData = [];   // semua bulan hasil buildTrendlineData
-    let trendlineActiveYear = String(new Date().getFullYear());
-
-    function renderTrendlineChart(data) {
-      // data = semua bulan; filter ke tahun aktif saja untuk tampilan
-      const filtered = data.filter(d => d.month.startsWith(trendlineActiveYear));
-
-      const svg = els.trendlineChart;
-      const ROW_H = 36;
-      const LABEL_W = 80;
-      const PAD_T = 12;
-      const PAD_B = 28;
-      const BAR_GAP = 3;
-      const BAR_H = (ROW_H - BAR_GAP * 3) / 2;
-      const LABEL_OFFSET = 6;
-      const LABEL_VAL_W = 68;
-
-      const maxVal = Math.max(...filtered.map(d => d.cumulative), 1);
-      const niceMax = Math.ceil(maxVal / 1000) * 1000 || 1000;
-
-      const svgW = svg.clientWidth || 700;
-      const chartW = svgW - LABEL_W - LABEL_VAL_W;
-      const totalH = PAD_T + filtered.length * ROW_H + PAD_B;
-
-      svg.setAttribute("viewBox", `0 0 ${svgW} ${totalH}`);
-      svg.setAttribute("height", totalH);
-
-      // Grid lines
-      const gridCount = 5;
-      let gridHtml = "";
-      for (let i = 0; i <= gridCount; i++) {
-        const val = Math.round((niceMax / gridCount) * i);
-        const x = LABEL_W + (val / niceMax) * chartW;
-        gridHtml += `<line x1="${x}" y1="${PAD_T}" x2="${x}" y2="${PAD_T + filtered.length * ROW_H}" stroke="#e5ebf2" stroke-width="1"/>`;
-        gridHtml += `<text x="${x}" y="${PAD_T + filtered.length * ROW_H + 16}" text-anchor="middle" font-size="10" fill="#94a3b8">${val.toLocaleString("id-ID")}</text>`;
-      }
-
-      // Bars
-      let barsHtml = "";
-      filtered.forEach((d, i) => {
-        const y = PAD_T + i * ROW_H;
-        const barNewW = Math.max(2, (d.newCount / niceMax) * chartW);
-        const barCumW = Math.max(2, (d.cumulative / niceMax) * chartW);
-        const y1 = y + BAR_GAP;
-        const y2 = y + BAR_GAP * 2 + BAR_H;
-
-        if (i % 2 === 0) {
-          barsHtml += `<rect x="0" y="${y}" width="${svgW}" height="${ROW_H}" fill="#f8fafc"/>`;
-        }
-
-        // Label bulan
-        barsHtml += `<text x="${LABEL_W - 8}" y="${y + ROW_H / 2 + 4}" text-anchor="end" font-size="11" fill="#475569">${escapeHtml(d.label)}</text>`;
-
-        // Bar new (biru) + label di luar
-        barsHtml += `<rect x="${LABEL_W}" y="${y1}" width="${barNewW}" height="${BAR_H}" fill="#4472c4" rx="2"/>`;
-        barsHtml += `<text x="${LABEL_W + barNewW + LABEL_OFFSET}" y="${y1 + BAR_H - 2}" text-anchor="start" font-size="10" fill="#4472c4" font-weight="700">${d.newCount.toLocaleString("id-ID")}</text>`;
-
-        // Bar cumulative (merah) + label di luar
-        barsHtml += `<rect x="${LABEL_W}" y="${y2}" width="${barCumW}" height="${BAR_H}" fill="#e84040" rx="2"/>`;
-        barsHtml += `<text x="${LABEL_W + barCumW + LABEL_OFFSET}" y="${y2 + BAR_H - 2}" text-anchor="start" font-size="10" fill="#e84040" font-weight="700">${d.cumulative.toLocaleString("id-ID")}</text>`;
-      });
-
-      svg.innerHTML = gridHtml + barsHtml;
-
-      // Render tombol tahun di bawah chart
-      const years = [...new Set(data.map(d => d.month.split("-")[0]))].sort();
-      const pag = document.getElementById("trendlineYearBtns");
-      if (pag) {
-        pag.innerHTML = years.map(y => `
-          <button onclick="trendlineSetYear('${y}')"
-            style="min-width:64px;height:32px;padding:0 12px;border:1px solid ${y === trendlineActiveYear ? "#1e3a5f" : "var(--line)"};
-            border-radius:6px;background:${y === trendlineActiveYear ? "#1e3a5f" : "#fff"};
-            color:${y === trendlineActiveYear ? "#fff" : "var(--ink)"};
-            font-size:13px;font-weight:${y === trendlineActiveYear ? "700" : "400"};cursor:pointer;">
-            ${escapeHtml(y)}
-          </button>`).join("");
-      }
-    }
-
-    window.trendlineSetYear = function(year) {
-      trendlineActiveYear = year;
-      renderTrendlineChart(trendlineAllData);
-    };
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // CUSTOMER LIFETIME VALUE
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    function fmtDate(d) {
-      if (!d) return "-";
-      return d.toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" });
-    }
-
-    function buildClvRows(rows) {
-      // Hanya ambil dari sumber Webot, punya nomor telepon valid
-      const webotOnly = rows.filter(r => r.source === "Webot" && r.customerPhone);
-      const map = new Map();
-      webotOnly.forEach(r => {
-        const key = r.customerPhone;
-        if (!map.has(key)) {
-          map.set(key, {
-            phone: r.customerPhoneRaw || r.customerPhone,
-            omset: 0,
-            closing: 0,
-            qty: 0,
-            products: new Set(),
-            firstDate: null,
-            lastDate: null,
-            firstRow: null,
-            lastRow: null,
-            name: ""
-          });
-        }
-        const e = map.get(key);
-        e.omset += r.revenue || 0;
-        e.closing += r.closing || 0;
-        e.qty += r.quantity || 0;
-        if (r.product && r.product !== "Tanpa produk") e.products.add(r.product);
-        if (!e.firstDate || r.date < e.firstDate) { e.firstDate = r.date; e.firstRow = r; }
-        if (!e.lastDate || r.date > e.lastDate) { e.lastDate = r.date; e.lastRow = r; }
-      });
-
-      return Array.from(map.values()).map(e => ({
-        phone: e.phone,
-        omset: e.omset,
-        closing: e.closing,
-        qty: e.qty,
-        products: [...e.products].join(", ") || "-",
-        firstDate: e.firstDate,
-        lastDate: e.lastDate,
-        name: (e.lastRow && e.lastRow.customerName) || "-",
-        csFirst: (e.firstRow && e.firstRow.cs && /^cs /i.test(e.firstRow.cs)) ? e.firstRow.cs : "-",
-        crmLast: (e.lastRow && e.lastRow.cs && /^crm /i.test(e.lastRow.cs)) ? e.lastRow.cs : "-",
-        advFirst: (e.firstRow && e.firstRow.advertiser && e.firstRow.advertiser !== "Tanpa advertiser") ? e.firstRow.advertiser : "-"
-      }));
-    }
-
-    function clvSortRows(rows) {
-      const col = clvSortCol;
-      const dir = clvSortDir === "asc" ? 1 : -1;
-      return [...rows].sort((a, b) => {
-        let va, vb;
-        if (col === "omset") { va = a.omset; vb = b.omset; }
-        else if (col === "closing") { va = a.closing; vb = b.closing; }
-        else if (col === "qty") { va = a.qty; vb = b.qty; }
-        else if (col === "first") { va = a.firstDate ? a.firstDate.getTime() : 0; vb = b.firstDate ? b.firstDate.getTime() : 0; }
-        else if (col === "last") { va = a.lastDate ? a.lastDate.getTime() : 0; vb = b.lastDate ? b.lastDate.getTime() : 0; }
-        else { va = String(a[col] || "").toLowerCase(); vb = String(b[col] || "").toLowerCase(); }
-        if (va < vb) return -1 * dir;
-        if (va > vb) return 1 * dir;
-        return 0;
-      });
-    }
-
-    function renderClvTable() {
-      if (!clvFullDataLoaded) return;
-      const sorted = clvSortRows(clvFiltered);
-      const totalPages = Math.max(1, Math.ceil(sorted.length / CLV_PAGE_SIZE));
-      if (clvPage > totalPages) clvPage = totalPages;
-      const slice = sorted.slice((clvPage - 1) * CLV_PAGE_SIZE, clvPage * CLV_PAGE_SIZE);
-      const offset = (clvPage - 1) * CLV_PAGE_SIZE;
-
-      els.clvTableBody.innerHTML = slice.map((r, i) => `
-        <tr>
-          <td style="text-align:center;color:var(--muted);font-size:12px">${offset + i + 1}</td>
-          <td>${escapeHtml(r.phone)}</td>
-          <td style="text-align:right">${currency(r.omset)}</td>
-          <td style="text-align:center">${fmtDate(r.firstDate)}</td>
-          <td style="text-align:center">${fmtDate(r.lastDate)}</td>
-          <td style="text-align:right">${r.closing.toLocaleString("id-ID")}</td>
-          <td style="text-align:right">${r.qty.toLocaleString("id-ID")}</td>
-          <td style="font-size:12px">${escapeHtml(r.products)}</td>
-          <td>${escapeHtml(r.name)}</td>
-          <td style="font-size:12px">${escapeHtml(r.csFirst)}</td>
-          <td style="font-size:12px">${escapeHtml(r.crmLast)}</td>
-          <td style="font-size:12px">${escapeHtml(r.advFirst)}</td>
-        </tr>`).join("");
-
-      // Count info
-      els.clvCount.textContent = `${clvFiltered.length.toLocaleString("id-ID")} customer unik`;
-
-      // Pagination
-      const pag = els.clvPagination;
-      pag.innerHTML = "";
-      const btnPrev = document.createElement("button");
-      btnPrev.textContent = "‹ Prev";
-      btnPrev.disabled = clvPage <= 1;
-      btnPrev.addEventListener("click", () => { clvPage--; renderClvTable(); });
-      pag.appendChild(btnPrev);
-
-      // Tampilkan max 5 page buttons
-      const range = 2;
-      const startP = Math.max(1, clvPage - range);
-      const endP = Math.min(totalPages, clvPage + range);
-      if (startP > 1) {
-        const b = document.createElement("button");
-        b.textContent = "1";
-        b.addEventListener("click", () => { clvPage = 1; renderClvTable(); });
-        pag.appendChild(b);
-        if (startP > 2) { const sp = document.createElement("span"); sp.textContent = "…"; sp.style.padding = "0 4px"; sp.style.color = "var(--muted)"; pag.appendChild(sp); }
-      }
-      for (let p = startP; p <= endP; p++) {
-        const b = document.createElement("button");
-        b.textContent = p;
-        if (p === clvPage) b.classList.add("active");
-        b.addEventListener("click", () => { clvPage = p; renderClvTable(); });
-        pag.appendChild(b);
-      }
-      if (endP < totalPages) {
-        if (endP < totalPages - 1) { const sp = document.createElement("span"); sp.textContent = "…"; sp.style.padding = "0 4px"; sp.style.color = "var(--muted)"; pag.appendChild(sp); }
-        const b = document.createElement("button");
-        b.textContent = totalPages;
-        b.addEventListener("click", () => { clvPage = totalPages; renderClvTable(); });
-        pag.appendChild(b);
-      }
-
-      const btnNext = document.createElement("button");
-      btnNext.textContent = "Next ›";
-      btnNext.disabled = clvPage >= totalPages;
-      btnNext.addEventListener("click", () => { clvPage++; renderClvTable(); });
-      pag.appendChild(btnNext);
-
-      // Update sort icons
-      document.querySelectorAll(".clv-table th.sortable").forEach(th => {
-        th.classList.remove("sort-asc", "sort-desc");
-        if (th.dataset.col === clvSortCol) {
-          th.classList.add(clvSortDir === "asc" ? "sort-asc" : "sort-desc");
-        }
-      });
-    }
-
-    function clvApplySearch() {
-      const q = (els.clvSearch.value || "").toLowerCase().trim();
-      if (!q) {
-        clvFiltered = clvRows;
-      } else {
-        clvFiltered = clvRows.filter(r =>
-          r.phone.toLowerCase().includes(q) ||
-          r.name.toLowerCase().includes(q)
-        );
-      }
-      clvPage = 1;
-      renderClvTable();
-    }
-
-    function setupClvSort() {
-      document.querySelectorAll(".clv-table th.sortable").forEach(th => {
-        th.addEventListener("click", () => {
-          const col = th.dataset.col;
-          if (clvSortCol === col) {
-            clvSortDir = clvSortDir === "asc" ? "desc" : "asc";
-          } else {
-            clvSortCol = col;
-            clvSortDir = col === "omset" || col === "closing" || col === "qty" || col === "last" ? "desc" : "asc";
-          }
-          clvPage = 1;
-          renderClvTable();
-        });
-      });
-      els.clvSearch.addEventListener("input", clvApplySearch);
-    }
-
-    async function loadClvFullData() {
-      if (clvFullDataLoaded || clvFullDataLoading) return;
-      clvFullDataLoading = true;
-
-      // Show loading state for both sections
-      els.clvLoadingMsg.style.display = "";
-      els.clvContent.style.display = "none";
-      els.trendlineLoadingMsg.style.display = "";
-      els.trendlineContent.style.display = "none";
-      els.clvLoadingMsg.textContent = "Memuat data lifetime value...";
-      els.trendlineLoadingMsg.textContent = "Memuat data trendline...";
-
-      try {
-        if (!isRangeCovered(FULL_RANGE_START, FULL_RANGE_END)) {
-          els.clvLoadingMsg.textContent = "Mengambil semua histori transaksi...";
-          els.trendlineLoadingMsg.textContent = "Mengambil semua histori transaksi...";
-          const [webotResult, marketplaceResult] = await Promise.allSettled([
-            loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(null, null)),
-            loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(null, null)),
-          ]);
-          const webotRows = settledRows(webotResult);
-          const marketplaceRows = settledRows(marketplaceResult);
-          await applyCoreRowsAsync(webotRows, marketplaceRows, FULL_RANGE_START, FULL_RANGE_END);
-        }
-
-        // Build & render trendline
-        const trendData = buildTrendlineData(allRows);
-        trendlineAllData = trendData;
-        trendlineActiveYear = String(new Date().getFullYear());
-        // fallback ke tahun terakhir di data kalau tahun ini belum ada
-        const availYears = [...new Set(trendData.map(d => d.month.split("-")[0]))];
-        if (!availYears.includes(trendlineActiveYear)) {
-          trendlineActiveYear = availYears[availYears.length - 1] || trendlineActiveYear;
-        }
-        els.trendlinePanelNote.textContent = `${trendData.length} bulan data — Webot/Soscom`;
-        els.trendlineLoadingMsg.style.display = "none";
-        els.trendlineContent.style.display = "";
-        // Wait one frame so SVG is visible and has width
-        await new Promise(r => requestAnimationFrame(r));
-        renderTrendlineChart(trendlineAllData);
-
-        // Re-render on resize
-        let resizeTrendTimer = 0;
-        window.addEventListener("resize", () => {
-          clearTimeout(resizeTrendTimer);
-          resizeTrendTimer = setTimeout(() => renderTrendlineChart(trendlineAllData), 200);
-        });
-
-        // Build & render CLV
-        clvRows = buildClvRows(allRows);
-        clvFiltered = clvRows;
-        clvFullDataLoaded = true;
-        els.clvPanelNote.textContent = `${clvRows.length.toLocaleString("id-ID")} customer unik — semua histori Webot`;
-        els.clvLoadingMsg.style.display = "none";
-        els.clvContent.style.display = "";
-        setupClvSort();
-        renderClvTable();
-      } catch (err) {
-        console.warn("CLV/Trendline load error:", err);
-        els.clvLoadingMsg.textContent = `Gagal memuat data: ${err.message}. Coba refresh halaman.`;
-        els.trendlineLoadingMsg.textContent = `Gagal memuat data: ${err.message}. Coba refresh halaman.`;
-      } finally {
-        clvFullDataLoading = false;
-      }
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-
     function renderCurrentPage() {
       if (activePage === "advertiser") return renderAdvertiserReport();
       if (activePage === "cs") return renderCsReport();
@@ -10450,22 +9287,21 @@
 
     async function ensureCoreDataForRange(start, end) {
       if (!start || !end || coreDataLoading) return;
-      if (isRangeCovered(start, end)) return;
+      // Hitung periode sebelumnya juga
+      const [prevStart] = [previousRange(start, end)[0]];
+      const fetchStart = prevStart < (loadedRangeStart || start) ? prevStart : start;
+      const fetchEnd = end > (loadedRangeEnd || end) ? end : end;
+      if (isRangeCovered(fetchStart, fetchEnd)) return;
       coreDataLoading = true;
       try {
         els.sourceStatus.textContent = "Memuat data untuk rentang yang dipilih...";
-        // Pakai base query (tanpa filter "where" tanggal) supaya gak bergantung
-        // pada tipe kolom tanggal di sheet (IMPORTRANGE kadang bikin tanggal
-        // jadi teks untuk bulan-bulan tertentu, bikin filter "where A >= date"
-        // gagal match dan balik 0 baris). Filter tanggal dilakukan di JS lewat
-        // parseDateValue (rowsInRange) yang sudah robust untuk Date maupun teks.
         const [webotResult, marketplaceResult] = await Promise.allSettled([
-          loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(null, null)),
-          loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(null, null)),
+          loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(fetchStart, fetchEnd)),
+          loadGoogleSheetCached(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(fetchStart, fetchEnd)),
         ]);
         const webotRows = settledRows(webotResult);
         const marketplaceRows = settledRows(marketplaceResult);
-        await applyCoreRowsAsync(webotRows, marketplaceRows, FULL_RANGE_START, FULL_RANGE_END);
+        await applyCoreRowsAsync(webotRows, marketplaceRows, fetchStart, fetchEnd);
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris terbaca`;
         applyLatestFallbacks();
         renderCurrentPage();
@@ -10493,9 +9329,10 @@
     async function loadFullDataInBackground() {
       try {
         els.sourceStatus.textContent += " | Sinkronisasi data lengkap berjalan...";
+        const [bgStart, bgEnd] = rangePreset("thisYear");
         const [webotResult, marketplaceResult, ...supportResults] = await Promise.allSettled([
-          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(null, null)),
-          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(null, null)),
+          loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, webotQuery(bgStart, bgEnd)),
+          loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQuery(bgStart, bgEnd)),
           ...supportingSheetPromises()
         ]);
         const sourceNotes = [];
@@ -10505,7 +9342,7 @@
         const webotRows = settledRows(webotResult);
         const marketplaceRows = settledRows(marketplaceResult);
         if (webotRows.length || marketplaceRows.length) {
-          await applyCoreRowsAsync(webotRows, marketplaceRows, FULL_RANGE_START, FULL_RANGE_END);
+          await applyCoreRowsAsync(webotRows, marketplaceRows, bgStart, bgEnd);
         }
         els.sourceStatus.textContent = `${allRows.length.toLocaleString("id-ID")} baris data lengkap tersinkron${sourceNotes.length ? ` (${sourceNotes.join(", ")})` : ""}`;
         applyLatestFallbacks();
@@ -10645,8 +9482,7 @@
       scheduleSupportDataLoad();
     }
 
-    setupAuth();
-    restoreSession();
+    init();
   </script>
 </body>
 </html>

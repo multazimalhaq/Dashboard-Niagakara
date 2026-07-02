@@ -1723,53 +1723,6 @@
           </div>
         </section>
 
-        <!-- Target Cards -->
-        <section class="target-cards-section">
-          <article class="card target-card">
-            <div class="target-header">
-              <div>
-                <span class="target-label">Target Revenue Bulanan</span>
-                <input type="text" id="monthlyTargetInput" class="target-input" placeholder="Masukkan target bulanan..." inputmode="numeric">
-              </div>
-              <button class="btn-save-target" id="saveMonthlyTarget">Simpan Target</button>
-            </div>
-            <div class="target-progress">
-              <div class="progress-info">
-                <strong id="monthlyRevenueAchieved">Rp0</strong>
-                <span class="progress-percentage" id="monthlyProgressPercent">0%</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="monthlyProgressFill" style="width: 0%"></div>
-              </div>
-              <small>dari target <span id="monthlyTargetDisplay">Rp0</span></small>
-            </div>
-          </article>
-
-          <article class="card target-card">
-            <div class="target-header">
-              <span class="target-label">Target Revenue Mingguan</span>
-              <small class="target-note">Auto-calc dari target bulanan ÷ 4</small>
-            </div>
-            <div class="target-progress">
-              <div class="progress-info">
-                <strong id="weeklyRevenueAchieved">Rp0</strong>
-                <span class="progress-percentage" id="weeklyProgressPercent">0%</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="weeklyProgressFill" style="width: 0%"></div>
-              </div>
-
-              <small>dari target <span id="weeklyTargetDisplay">Rp0</span></small>
-              <div id="weeklyDeficitDisplay" style="font-size: 11px; color: #c2415d; margin-top: 4px; font-weight: 500;"></div>
-          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 8px; font-size: 13px;">
-            <div id="autoSaveStatus" style="color: #666;">Auto-save aktif (10 detik)</div>
-            <div id="lastSaveTime" style="color: #888;">Terakhir: -</div>
-          </div>
-
-            </div>
-          </article>
-        </section>
-
         <section class="kpi-grid">
           <article class="card kpi">
             <div>
@@ -1995,52 +1948,6 @@
           </div>
         </section>
 
-        <!-- Target & Budgeting Summary Banner -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="flex: 1;">
-              <span style="font-size: 13px; color: var(--muted); font-weight: 500;">Target Bulanan (Soscom 20%) - Pareto Share:</span>
-              <strong id="advertiserTargetDisplay" style="font-size: 18px; color: var(--ink); margin-left: 8px;">Rp0</strong>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px; flex: 2;">
-              <span style="font-size: 13px; color: var(--muted);">Pencapaian:</span>
-              <strong id="advertiserActualDisplay" style="font-size: 14px;">Rp0</strong>
-              <div style="flex-grow: 1; background: var(--soft); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
-                <div id="advertiserProgressFill" style="background: var(--teal); width: 0%; height: 100%; transition: width 0.3s;"></div>
-              </div>
-              <span id="advertiserProgressPercent" style="font-size: 13px; font-weight: bold; color: var(--teal); min-width: 45px;">0%</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Rencana Budgeting Proposal Panel -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div class="panel-header">
-            <h2>Rencana Budgeting (Rekomendasi Terpilih)</h2>
-            <span class="panel-note">Berdasarkan data budgeting yang disimpan terakhir</span>
-          </div>
-          <div class="daily-table-wrap">
-            <table class="daily-table">
-              <thead>
-                <tr>
-                  <th>Nama ADV</th>
-                  <th>Produk</th>
-                  <th>Budget</th>
-                  <th>Target Revenue</th>
-                  <th>Target CAC</th>
-                </tr>
-              </thead>
-              <tbody id="advertiserProposalTableBody">
-                <tr><td colspan="5">Belum ada proposal yang disimpan.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-    
-
-    
-
-
         <section class="card panel advertiser-main-card">
           <div class="advertiser-main-grid">
             <div class="advertiser-metric"><span>Gross Omset</span><strong id="advGross">Rp0</strong></div>
@@ -2063,23 +1970,7 @@
           </div>
         </section>
 
-        
-        <!-- Trend Analysis Chart -->
         <section class="card panel">
-          <div class="panel-header">
-            <h2>Trend Analysis (4 Minggu Terakhir)</h2>
-            <span class="panel-note">Tren budget, revenue, dan performa mingguan</span>
-          </div>
-          <div style="padding: 16px;">
-            <canvas id="trendChart" style="width: 100%; height: 300px;"></canvas>
-          </div>
-          <div style="display: flex; gap: 8px; padding: 16px; border-top: 1px solid #eee;">
-            <button class="panel-action" id="updateTrendChart" type="button">Update Chart</button>
-            <button class="panel-action" id="exportChartData" type="button">Export Data Chart</button>
-          </div>
-        </section>
-
-<section class="card panel">
           <div class="panel-header">
             <h2>Daily Report</h2>
             <span class="panel-note">Baris total dan tanggal tetap terlihat saat scroll</span>
@@ -2192,52 +2083,6 @@
             <button data-range="lastYear">Tahun lalu</button>
           </div>
         </section>
-
-        <!-- Target & Budgeting Summary Banner -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="flex: 1;">
-              <span style="font-size: 13px; color: var(--muted); font-weight: 500;">Target Bulanan (Soscom (CS) 20%) - Pareto Share:</span>
-              <strong id="csTargetDisplay" style="font-size: 18px; color: var(--ink); margin-left: 8px;">Rp0</strong>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px; flex: 2;">
-              <span style="font-size: 13px; color: var(--muted);">Pencapaian:</span>
-              <strong id="csActualDisplay" style="font-size: 14px;">Rp0</strong>
-              <div style="flex-grow: 1; background: var(--soft); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
-                <div id="csProgressFill" style="background: var(--teal); width: 0%; height: 100%; transition: width 0.3s;"></div>
-              </div>
-              <span id="csProgressPercent" style="font-size: 13px; font-weight: bold; color: var(--teal); min-width: 45px;">0%</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Rencana Budgeting Proposal Panel -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div class="panel-header">
-            <h2>Rencana Budgeting (Rekomendasi Terpilih)</h2>
-            <span class="panel-note">Berdasarkan data budgeting yang disimpan terakhir</span>
-          </div>
-          <div class="daily-table-wrap">
-            <table class="daily-table">
-              <thead>
-                <tr>
-                  <th>Nama ADV</th>
-                  <th>Produk</th>
-                  <th>Budget</th>
-                  <th>Target Revenue</th>
-                  <th>Target CAC</th>
-                </tr>
-              </thead>
-              <tbody id="csProposalTableBody">
-                <tr><td colspan="5">Belum ada proposal yang disimpan.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-    
-
-    
-
 
         <section class="card panel cs-main-card">
           <div class="advertiser-main-grid">
@@ -2409,52 +2254,6 @@
           </div>
         </section>
 
-        <!-- Target & Budgeting Summary Banner -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="flex: 1;">
-              <span style="font-size: 13px; color: var(--muted); font-weight: 500;">Target Bulanan (CRM 25%) - Pareto Share:</span>
-              <strong id="crmTargetDisplay" style="font-size: 18px; color: var(--ink); margin-left: 8px;">Rp0</strong>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px; flex: 2;">
-              <span style="font-size: 13px; color: var(--muted);">Pencapaian:</span>
-              <strong id="crmActualDisplay" style="font-size: 14px;">Rp0</strong>
-              <div style="flex-grow: 1; background: var(--soft); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
-                <div id="crmProgressFill" style="background: var(--teal); width: 0%; height: 100%; transition: width 0.3s;"></div>
-              </div>
-              <span id="crmProgressPercent" style="font-size: 13px; font-weight: bold; color: var(--teal); min-width: 45px;">0%</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Rencana Budgeting Proposal Panel -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div class="panel-header">
-            <h2>Rencana Budgeting (Rekomendasi Terpilih)</h2>
-            <span class="panel-note">Berdasarkan data budgeting yang disimpan terakhir</span>
-          </div>
-          <div class="daily-table-wrap">
-            <table class="daily-table">
-              <thead>
-                <tr>
-                  <th>Nama ADV</th>
-                  <th>Produk</th>
-                  <th>Budget</th>
-                  <th>Target Revenue</th>
-                  <th>Target CAC</th>
-                </tr>
-              </thead>
-              <tbody id="crmProposalTableBody">
-                <tr><td colspan="5">Belum ada proposal yang disimpan.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-    
-
-    
-
-
         <section class="card panel crm-main-card">
           <div class="advertiser-main-grid">
             <div class="advertiser-metric"><span>Gross Omset</span><strong id="crmGross">Rp0</strong></div>
@@ -2612,52 +2411,6 @@
           </div>
         </section>
 
-        <!-- Target & Budgeting Summary Banner -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="flex: 1;">
-              <span style="font-size: 13px; color: var(--muted); font-weight: 500;">Target Bulanan (Shopee 45%) - Pareto Share:</span>
-              <strong id="shopeeTargetDisplay" style="font-size: 18px; color: var(--ink); margin-left: 8px;">Rp0</strong>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px; flex: 2;">
-              <span style="font-size: 13px; color: var(--muted);">Pencapaian:</span>
-              <strong id="shopeeActualDisplay" style="font-size: 14px;">Rp0</strong>
-              <div style="flex-grow: 1; background: var(--soft); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
-                <div id="shopeeProgressFill" style="background: var(--teal); width: 0%; height: 100%; transition: width 0.3s;"></div>
-              </div>
-              <span id="shopeeProgressPercent" style="font-size: 13px; font-weight: bold; color: var(--teal); min-width: 45px;">0%</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Rencana Budgeting Proposal Panel -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div class="panel-header">
-            <h2>Rencana Budgeting (Rekomendasi Terpilih)</h2>
-            <span class="panel-note">Berdasarkan data budgeting yang disimpan terakhir</span>
-          </div>
-          <div class="daily-table-wrap">
-            <table class="daily-table">
-              <thead>
-                <tr>
-                  <th>Nama ADV</th>
-                  <th>Produk</th>
-                  <th>Budget</th>
-                  <th>Target Revenue</th>
-                  <th>Target CAC</th>
-                </tr>
-              </thead>
-              <tbody id="shopeeProposalTableBody">
-                <tr><td colspan="5">Belum ada proposal yang disimpan.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-    
-
-    
-
-
         <section class="card panel shopee-main-card">
           <div class="advertiser-main-grid">
             <div class="advertiser-metric"><span>Gross Omset</span><strong id="shopeeGross">Rp0</strong></div>
@@ -2786,52 +2539,6 @@
           </div>
         </section>
 
-        <!-- Target & Budgeting Summary Banner -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="flex: 1;">
-              <span style="font-size: 13px; color: var(--muted); font-weight: 500;">Target Bulanan (Tiktokshop 10%) - Pareto Share:</span>
-              <strong id="tiktokTargetDisplay" style="font-size: 18px; color: var(--ink); margin-left: 8px;">Rp0</strong>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px; flex: 2;">
-              <span style="font-size: 13px; color: var(--muted);">Pencapaian:</span>
-              <strong id="tiktokActualDisplay" style="font-size: 14px;">Rp0</strong>
-              <div style="flex-grow: 1; background: var(--soft); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
-                <div id="tiktokProgressFill" style="background: var(--teal); width: 0%; height: 100%; transition: width 0.3s;"></div>
-              </div>
-              <span id="tiktokProgressPercent" style="font-size: 13px; font-weight: bold; color: var(--teal); min-width: 45px;">0%</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Rencana Budgeting Proposal Panel -->
-        <section class="card panel" style="margin-bottom: 16px;">
-          <div class="panel-header">
-            <h2>Rencana Budgeting (Rekomendasi Terpilih)</h2>
-            <span class="panel-note">Berdasarkan data budgeting yang disimpan terakhir</span>
-          </div>
-          <div class="daily-table-wrap">
-            <table class="daily-table">
-              <thead>
-                <tr>
-                  <th>Nama ADV</th>
-                  <th>Produk</th>
-                  <th>Budget</th>
-                  <th>Target Revenue</th>
-                  <th>Target CAC</th>
-                </tr>
-              </thead>
-              <tbody id="tiktokProposalTableBody">
-                <tr><td colspan="5">Belum ada proposal yang disimpan.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-    
-
-    
-
-
         <section class="card panel tiktok-main-card">
           <div class="advertiser-main-grid">
             <div class="advertiser-metric"><span>Gross Omset</span><strong id="tiktokGross">Rp0</strong></div>
@@ -2941,18 +2648,44 @@
           </div>
         </div>
 
-        
+        <!-- Target Cards -->
+        <section class="target-cards-section">
+          <article class="card target-card">
+            <div class="target-header">
+              <div>
+                <span class="target-label">Target Revenue Bulanan</span>
+                <input type="text" id="monthlyTargetInput" class="target-input" placeholder="Masukkan target bulanan..." inputmode="numeric">
+              </div>
+              <button class="btn-save-target" id="saveMonthlyTarget">Simpan Target</button>
+            </div>
+            <div class="target-progress">
+              <div class="progress-info">
+                <strong id="monthlyRevenueAchieved">Rp0</strong>
+                <span class="progress-percentage" id="monthlyProgressPercent">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="monthlyProgressFill" style="width: 0%"></div>
+              </div>
+              <small>dari target <span id="monthlyTargetDisplay">Rp0</span></small>
+            </div>
+          </article>
 
-        
-        <!-- WoW Comparison -->
-        <section class="card panel">
-          <div class="panel-header">
-            <h2>Week-over-Week Comparison</h2>
-            <span class="panel-note">Perbandingan performa minggu ini vs minggu sebelumnya (independent dari target)</span>
-          </div>
-          <div class="wow-grid" id="wowComparisonGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 16px;">
-            <!-- Content generated by JavaScript -->
-          </div>
+          <article class="card target-card">
+            <div class="target-header">
+              <span class="target-label">Target Revenue Mingguan</span>
+              <small class="target-note">Auto-calc dari target bulanan ÷ 4</small>
+            </div>
+            <div class="target-progress">
+              <div class="progress-info">
+                <strong id="weeklyRevenueAchieved">Rp0</strong>
+                <span class="progress-percentage" id="weeklyProgressPercent">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="weeklyProgressFill" style="width: 0%"></div>
+              </div>
+              <small>dari target <span id="weeklyTargetDisplay">Rp0</span></small>
+            </div>
+          </article>
         </section>
 
         <section class="kpi-grid">
@@ -3052,22 +2785,6 @@
             <div class="row-actions">
               <button class="panel-action" id="addBudgetProposalRow" type="button">Tambah Kanal/Platform</button>
               <button class="row-action" id="resetBudgetProposalRows" type="button">Reset Rekomendasi</button>
-            <div class="row-actions" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; display: flex; gap: 8px; flex-wrap: wrap;">
-              <button class="panel-action" id="bulkImportToggle" type="button">Import CSV/Excel</button>
-              <input type="file" id="bulkImportFile" accept=".csv,.txt,.xlsx,.xls" style="display: none;">
-              <button class="panel-action" id="exportBudgetProposal" type="button">Export ke Excel</button>
-              <button class="panel-action primary" id="saveRecommendationBtn" type="button">Save Rekomendasi</button>
-            </div>
-            <div id="bulkImportArea" style="display: none; margin-top: 16px; background: #f8f9fa; padding: 16px; border-radius: 8px;">
-              <textarea id="bulkImportTextarea" placeholder="Paste CSV/Excel data (format: advertiser, platform, product, manualBudget, manualTargetCac)
-Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font-family: monospace; font-size: 14px; padding: 12px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
-              <div style="margin-top: 12px; display: flex; gap: 8px;">
-                <button class="panel-action" id="parseBulkCSV" type="button">Parse & Tambah</button>
-                <button class="row-action" id="cancelBulkImport" type="button">Cancel</button>
-              </div>
-              <div id="bulkImportPreview" style="margin-top: 16px; font-size: 13px; color: #666;"></div>
-            </div>
-
             </div>
           </div>
           <div class="form-grid">
@@ -3112,15 +2829,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             </table>
           </div>
           <div class="pam-summary" id="budgetProposalPamBody"></div>
-
-          <!-- Revenue Distribution Warning -->
-          <div id="revenueDistributionWarning" style="display: none; margin: 16px 0; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="color: #dc2626; font-weight: bold;">⚠️ Warning:</span>
-              <span id="warningMessage" style="color: #991b1b; font-weight: 500;"></span>
-            </div>
-          </div>
-
           <datalist id="weeklyAdvertiserOptions"></datalist>
           <datalist id="weeklyPlatformOptions"></datalist>
           <datalist id="weeklyProductOptions"></datalist>
@@ -3160,23 +2868,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
               <tbody id="budgetAfterCrmBody"></tbody>
             </table>
           </div>
-          
           <div class="pam-summary" id="budgetAfterCrmPamBody"></div>
-          
-          <!-- CRM Target & Export Buttons -->
-          <div style="margin-top: 24px; padding: 16px; border-top: 1px solid var(--line); display: flex; gap: 12px; align-items: center; justify-content: space-between;">
-            <div style="display: flex; gap: 12px; align-items: center; flex: 1;">
-              <label style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-weight: 500; font-size: 14px;">Target Omset CRM:</span>
-                <input type="text" id="saveCrmTargetInput" inputmode="numeric" placeholder="Masukkan target omset CRM" style="padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; font-size: 14px; width: 200px;">
-              </label>
-              <button class="panel-action" id="saveCrmTargetBtn" type="button">Simpan Target CRM</button>
-            </div>
-            <div style="display: flex; gap: 12px;">
-              <button class="panel-action" id="exportBudgetingDataBtn" type="button">Export Data</button>
-            </div>
-          </div>
-
         </section>
       </section>
 
@@ -6138,12 +5830,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       renderMarketplaceStatusTable(rows, els.shopeeStatusBody);
       renderShopeeDailyReport(dailyRows);
       renderShopeeBudgetInputs();
-      if (typeof updateChannelTargetBanner === 'function') {
-        updateChannelTargetBanner('shopee', loadMonthlyTargetByMonth(), gross);
-      }
-      if (typeof renderBudgetingProposalTable === 'function') {
-        renderBudgetingProposalTable('shopee', '#shopeeProposalTableBody');
-      }
     }
 
     function renderShopeeDailyReport(rows) {
@@ -6488,157 +6174,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return 0;
     }
 
-    
-    // ========== PARETO ALLOCATION ENGINE ==========
-    const PARETO_PLATFORMS = {
-        shopee: 45,
-        soscom: 20,
-        crm: 25,
-        tiktokshop: 10
-    };
-
-    const PARETO_ADVERTISERS = {
-        'multazim': 10,
-        'other': 10
-    };
-
-    const PARETO_PRODUCTS = {
-        'multazim': {
-            'you & milk': 5,
-            'eyebost pro': 5
-        }
-    };
-
-    function getPreviousWeekDeficit(currentStart, currentEnd) {
-        const savedTarget = loadMonthlyTarget();
-        if (!savedTarget || savedTarget <= 0) return 0;
-        
-        const baseWeeklyTarget = savedTarget / 4;
-        
-        // Calculate previous week's date range
-        const prevStart = new Date(currentStart.getTime() - 7 * 24 * 60 * 60 * 1000);
-        const prevEnd = new Date(currentEnd.getTime() - 7 * 24 * 60 * 60 * 1000);
-        
-        // Sum revenue of previous week
-        const prevRows = weeklyRowsInRange(prevStart, prevEnd).detailRows;
-        const prevRevenue = prevRows.reduce((sum, r) => sum + (r.revenue || 0), 0);
-        
-        // Deficit is target - actual
-        return Math.max(0, baseWeeklyTarget - prevRevenue);
-    }
-
-    function buildParetoBudgetRecommendations(detailRows, settings, targetCrmRevenue = 0, weeklyTarget = 0) {
-        if (weeklyTarget <= 0) {
-            return buildBudgetRecommendations(detailRows, settings, targetCrmRevenue);
-        }
-
-        // Segment proposal rows by platform
-        const shopeeRows = [];
-        const tiktokshopRows = [];
-        const soscomRows = [];
-        const crmRows = [];
-
-        detailRows.forEach(row => {
-            const platform = (row.platform || '').toLowerCase();
-            if (platform.includes('shopee')) {
-                shopeeRows.push(row);
-            } else if (platform.includes('tiktokshop')) {
-                tiktokshopRows.push(row);
-            } else if (platform.includes('meta') || platform.includes('facebook') || platform.includes('instagram') || platform.includes('google') || platform.includes('tiktok')) {
-                soscomRows.push(row);
-            } else {
-                crmRows.push(row);
-            }
-        });
-
-        // Calculate targets per category based on pareto
-        const shopeeTotalTarget = (weeklyTarget * PARETO_PLATFORMS.shopee) / 100;
-        const tiktokshopTotalTarget = (weeklyTarget * PARETO_PLATFORMS.tiktokshop) / 100;
-        const soscomTotalTarget = (weeklyTarget * PARETO_PLATFORMS.soscom) / 100;
-        const crmTotalTarget = (weeklyTarget * PARETO_PLATFORMS.crm) / 100;
-
-        return detailRows.map((row, index) => {
-            const platform = (row.platform || '').toLowerCase();
-            const advertiser = (row.advertiser || '').toLowerCase();
-            const product = (row.product || '').toLowerCase();
-            
-            let targetRevenue = 0;
-            let paretoPercent = 0;
-
-            if (platform.includes('shopee')) {
-                targetRevenue = shopeeRows.length > 0 ? shopeeTotalTarget / shopeeRows.length : 0;
-                paretoPercent = PARETO_PLATFORMS.shopee / (shopeeRows.length || 1);
-            } else if (platform.includes('tiktokshop')) {
-                targetRevenue = tiktokshopRows.length > 0 ? tiktokshopTotalTarget / tiktokshopRows.length : 0;
-                paretoPercent = PARETO_PLATFORMS.tiktokshop / (tiktokshopRows.length || 1);
-            } else if (platform.includes('meta') || platform.includes('facebook') || platform.includes('instagram') || platform.includes('google') || platform.includes('tiktok')) {
-                // Soscom/Meta - divided by advertisers and products
-                // Count unique soscom advertisers
-                const uniqueAdv = [...new Set(soscomRows.map(r => (r.advertiser || '').toLowerCase()))];
-                const advCount = uniqueAdv.length || 1;
-                
-                // Let's check advertiser specific pareto
-                let advTarget = soscomTotalTarget / advCount;
-                let advPercent = PARETO_PLATFORMS.soscom / advCount;
-                
-                if (advertiser.includes('multazim')) {
-                    advTarget = (weeklyTarget * PARETO_ADVERTISERS.multazim) / 100;
-                    advPercent = PARETO_ADVERTISERS.multazim;
-                }
-
-                // Count products for this advertiser
-                const advProductRows = soscomRows.filter(r => (r.advertiser || '').toLowerCase() === advertiser);
-                const uniqueProducts = [...new Set(advProductRows.map(r => (r.product || '').toLowerCase()))];
-                const prodCount = uniqueProducts.length || 1;
-
-                targetRevenue = advTarget / prodCount;
-                paretoPercent = advPercent / prodCount;
-            } else {
-                targetRevenue = crmRows.length > 0 ? crmTotalTarget / crmRows.length : 0;
-                paretoPercent = PARETO_PLATFORMS.crm / (crmRows.length || 1);
-            }
-
-            // Recommended Budget = targetRevenue * (historicalCAC / 100)
-            const adminRate = recommendationAdminRate(row.platform, settings.shopeeAdmin, settings.shopeeTax, settings.tiktokAdmin);
-            const historicalCac = row.cac || 20; // Default fallback to 20% CAC
-            const recommendedBudget = targetRevenue * (historicalCac / 100);
-            const adminCost = targetRevenue * adminRate / 100;
-            const budgetAdmin = recommendedBudget + adminCost;
-            const targetCac = historicalCac;
-            const estimatedPamValue = targetRevenue - (targetRevenue * settings.hpp / 100) - budgetAdmin;
-            const estimatedPamRate = percentRatio(estimatedPamValue, targetRevenue);
-
-            return {
-                ...row,
-                recommendedBudget,
-                targetCac,
-                budgetAdmin,
-                estimatedPamRate,
-                status: 'Pareto ' + paretoPercent.toFixed(1) + '%',
-                targetRevenue,
-                safe: true
-            };
-        });
-    }
-
-    function makeProposalRowFromPareto(recommendation, index, settings) {
-        return {
-            id: 'pareto-' + index + '-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-            advertiser: recommendation.advertiser || '',
-            platform: recommendation.platform || '',
-            product: recommendation.product || '',
-            mode: 'recommendation',
-            recommendationBudget: recommendation.recommendedBudget || 0,
-            recommendationTargetCac: recommendation.targetCac || 0,
-            recommendationTargetRevenue: recommendation.targetRevenue || 0,
-            manualBudget: '',
-            manualTargetCac: '',
-            adminRate: recommendation.adminRate || 0,
-            status: recommendation.status || ''
-        };
-    }
-
-
     function buildBudgetRecommendations(detailRows, settings, targetCrmRevenue = 0) {
       const baseRows = detailRows.map(row => {
         const adminRate = recommendationAdminRate(row.platform, settings.shopeeAdmin, settings.shopeeTax, settings.tiktokAdmin);
@@ -6807,16 +6342,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       };
     }
 
-    function ensureBudgetProposalRows(recommendations, settings, targetCrmRevenue = 0, weeklyTarget = 0) {
+    function ensureBudgetProposalRows(recommendations, settings, targetCrmRevenue = 0) {
       const seed = budgetProposalSeed(recommendations, settings, targetCrmRevenue);
       if (weeklyProposalSeed === seed && weeklyProposalRows.length) return;
-      
-      if (weeklyTarget > 0) {
-          const paretoRecs = buildParetoBudgetRecommendations(recommendations, settings, targetCrmRevenue, weeklyTarget);
-          weeklyProposalRows = paretoRecs.map((row, index) => makeProposalRowFromPareto(row, index, settings));
-      } else {
-          weeklyProposalRows = recommendations.map((row, index) => makeProposalRow(row, index, settings));
-      }
+      weeklyProposalRows = recommendations.map((row, index) => makeProposalRow(row, index, settings));
       weeklyProposalSeed = seed;
     }
 
@@ -7347,23 +6876,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       const productRows = weeklyProductRowsInRange(start, end);
       const weeklyCrmRevenue = crmRevenueInRange(start, end);
       const targetCrmRevenue = parseMoney(els.weeklyTargetCrmInput.value) || weeklyCrmRevenue;
-      const [cStart, cEnd] = getSelectedWeekRange();
-      const prevDeficit = getPreviousWeekDeficit(cStart, cEnd);
-      const baseWeeklyTarget = (loadMonthlyTarget() || 0) / 4;
-      const weeklyTarget = baseWeeklyTarget > 0 ? baseWeeklyTarget + prevDeficit : 0;
-
-      // Update deficit display in UI
-      const deficitDiv = document.getElementById('weeklyDeficitDisplay');
-      if (deficitDiv) {
-          if (prevDeficit > 0) {
-              deficitDiv.innerHTML = 'Defisit Pekan Lalu: <strong style="color:#c2415d;">' + currency(prevDeficit) + '</strong> (Target baru: ' + currency(weeklyTarget) + ')';
-          } else {
-              deficitDiv.innerHTML = '';
-          }
-      }
-
       const budgetRecommendations = buildBudgetRecommendations(proposalSourceRows, settings, targetCrmRevenue);
-      ensureBudgetProposalRows(budgetRecommendations, settings, targetCrmRevenue, weeklyTarget);
+      ensureBudgetProposalRows(budgetRecommendations, settings, targetCrmRevenue);
       const totalBudget = reviewRows.reduce((total, row) => total + (row.budget || 0), 0);
       const totalRevenue = reviewRows.reduce((total, row) => total + (row.revenue || 0), 0);
       const totalAdmin = reviewRows.reduce((total, row) => total + (row.adminCost || 0), 0);
@@ -7978,12 +7492,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       renderMarketplaceStatusTable(rows, els.tiktokStatusBody);
       renderTiktokDailyReport(dailyRows);
       renderTiktokBudgetInputs();
-      if (typeof updateChannelTargetBanner === 'function') {
-        updateChannelTargetBanner('tiktok', loadMonthlyTargetByMonth(), gross);
-      }
-      if (typeof renderBudgetingProposalTable === 'function') {
-        renderBudgetingProposalTable('tiktok', '#tiktokProposalTableBody');
-      }
     }
 
     function renderTiktokDailyReport(rows) {
@@ -8401,12 +7909,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       renderDailyReport(dailyRows);
       renderAdvertiserTransactions(grossRows);
       renderAdvertiserBudgetingInputs();
-      if (typeof updateChannelTargetBanner === 'function') {
-        updateChannelTargetBanner('advertiser', loadMonthlyTargetByMonth(), gross);
-      }
-      if (typeof renderBudgetingProposalTable === 'function') {
-        renderBudgetingProposalTable('advertiser', '#advertiserProposalTableBody');
-      }
     }
 
     function drawAdvertiserChart(rows) {
@@ -8425,8 +7927,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       const padBottom = 42;
       const width = rect.width - padLeft - padRight;
       const height = rect.height - padTop - padBottom;
-      const monthlyTarget = loadMonthlyTarget();
-      const target = monthlyTarget * 0.20; // 20% Pareto Share Soscom (Meta)
+      const target = 0;
       const max = Math.max(1, target, ...rows.map(row => row.revenue));
       const step = rows.length > 1 ? width / (rows.length - 1) : width;
 
@@ -8744,12 +8245,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       renderTrackingSection("cs", rows);
       renderCsDailyReport(dailyRows);
       renderCsReportInputs();
-      if (typeof updateChannelTargetBanner === 'function') {
-        updateChannelTargetBanner('cs', loadMonthlyTargetByMonth(), gross);
-      }
-      if (typeof renderBudgetingProposalTable === 'function') {
-        renderBudgetingProposalTable('cs', '#csProposalTableBody');
-      }
     }
 
     function drawCsChart(rows) {
@@ -8941,15 +8436,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       renderCrmStatusTable(allStatusRows);
       renderTrackingSection("crm", crmRows);
       renderCrmDailyReport(dailyRows);
-      if (typeof updateChannelTargetBanner === 'function') {
-        // If CRM target is set, use it; otherwise use Pareto share
-        const crmTarget = loadCrmTargetByMonth();
-        const targetToUse = crmTarget > 0 ? crmTarget : getChannelTarget(loadMonthlyTargetByMonth(), 'crm');
-        updateChannelTargetBanner('crm', targetToUse, totalGross);
-      }
-      if (typeof renderBudgetingProposalTable === 'function') {
-        renderBudgetingProposalTable('crm', '#crmProposalTableBody');
-      }
     }
 
     function drawCrmRevenueChart(rows) {
@@ -8965,8 +8451,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       const padLeft = 58, padRight = 22, padTop = 24, padBottom = 42;
       const width = rect.width - padLeft - padRight;
       const height = rect.height - padTop - padBottom;
-      const monthlyTarget = loadMonthlyTarget();
-      const target = monthlyTarget * 0.25; // 25% Pareto Share CRM
+      const target = 0;
       const max = Math.max(1, target, ...rows.map(row => row.crmRevenue));
       const step = rows.length > 1 ? width / (rows.length - 1) : width;
 
@@ -10299,1007 +9784,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     // ─────────────────────────────────────────────────────────────────────────
 
     // Setup for target management
-    
-    // ==========================================
-    // NEW FEATURES IMPLEMENTATION FOR DASHBOARD
-    // ==========================================
-
-    const AUTO_SAVE_INTERVAL = 10000; // 10 seconds
-    const PROPOSAL_STORAGE_KEY = 'ngkr_budgeting_proposal';
-    let autoSaveTimer = null;
-    let myTrendChart = null;
-
-    // Load and Setup Auto-save
-    function setupAutoSave() {
-        console.log('Setting up auto-save...');
-        
-        // Load saved proposal rows
-        const saved = localStorage.getItem(PROPOSAL_STORAGE_KEY);
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    weeklyProposalRows = parsed;
-                    console.log('Loaded', parsed.length, 'saved proposal rows');
-                    if (typeof renderWeeklyBudgetingPage === 'function') {
-                        renderWeeklyBudgetingPage();
-                    }
-                }
-            } catch (e) {
-                console.warn('Failed to load saved proposals:', e);
-            }
-        }
-
-        // Setup auto-save interval
-        if (autoSaveTimer) clearInterval(autoSaveTimer);
-        autoSaveTimer = setInterval(() => {
-            saveBudgetingData();
-        }, AUTO_SAVE_INTERVAL);
-
-        updateLastSaveTime();
-    }
-
-    function saveBudgetingData() {
-        try {
-            localStorage.setItem(PROPOSAL_STORAGE_KEY, JSON.stringify(weeklyProposalRows));
-            updateLastSaveTime();
-            return true;
-        } catch (e) {
-            console.warn('Auto-save failed:', e);
-            return false;
-        }
-    }
-
-    function updateLastSaveTime() {
-        const timeEl = document.getElementById('lastSaveTime');
-        if (timeEl) {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            timeEl.textContent = 'Terakhir: ' + timeStr;
-        }
-    }
-
-    // Bulk Import Setup & Logic
-    function setupBulkImport() {
-        const btnToggle = document.getElementById('bulkImportToggle');
-        const area = document.getElementById('bulkImportArea');
-        const btnParse = document.getElementById('parseBulkCSV');
-        const btnCancel = document.getElementById('cancelBulkImport');
-        const btnFile = document.getElementById('bulkImportFile');
-
-        if (!btnToggle) return;
-
-        btnToggle.addEventListener('click', () => {
-            area.style.display = area.style.display === 'none' ? 'block' : 'none';
-            if (area.style.display === 'block') {
-                document.getElementById('bulkImportTextarea').focus();
-            }
-        });
-
-        btnCancel.addEventListener('click', () => {
-            area.style.display = 'none';
-            document.getElementById('bulkImportTextarea').value = '';
-            document.getElementById('bulkImportPreview').innerHTML = '';
-        });
-
-        btnParse.addEventListener('click', () => {
-            const text = document.getElementById('bulkImportTextarea').value.trim();
-            if (!text) {
-                alert('Masukkan data CSV terlebih dahulu');
-                return;
-            }
-            parseBulkTextData(text);
-        });
-
-        // Add file upload support
-        const fileInputContainer = document.createElement('div');
-        fileInputContainer.style.marginTop = '12px';
-        fileInputContainer.innerHTML = `
-            <label class="panel-action" style="cursor: pointer; display: inline-block;">
-                Upload CSV / Excel
-                <input type="file" id="fileUploadInput" accept=".csv,.txt,.xlsx,.xls" style="display: none;">
-            </label>
-        `;
-        area.insertBefore(fileInputContainer, area.firstChild);
-
-        document.getElementById('fileUploadInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const data = evt.target.result;
-                if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-                    // Excel Parsing using SheetJS
-                    try {
-                        const workbook = XLSX.read(data, { type: 'binary' });
-                        const firstSheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[firstSheetName];
-                        const csv = XLSX.utils.sheet_to_csv(worksheet);
-                        document.getElementById('bulkImportTextarea').value = csv;
-                        parseBulkTextData(csv);
-                    } catch (err) {
-                        alert('Gagal membaca file Excel: ' + err.message);
-                    }
-                } else {
-                    // Plain CSV text
-                    document.getElementById('bulkImportTextarea').value = data;
-                    parseBulkTextData(data);
-                }
-            };
-
-            if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-                reader.readAsBinaryString(file);
-            } else {
-                reader.readAsText(file, 'UTF-8');
-            }
-        });
-    }
-
-    function parseBulkTextData(text) {
-        const lines = text.split('\n').filter(line => line.trim());
-        const rows = [];
-        let successCount = 0;
-        let errorCount = 0;
-
-        lines.forEach((line, index) => {
-            // Support comma or tab separators
-            const delimiter = line.includes('\t') ? '\t' : ',';
-            const columns = line.split(delimiter).map(col => col.trim().replace(/^"|"$/g, ''));
-            
-            if (columns.length >= 4) {
-                const advertiser = columns[0];
-                const platform = columns[1];
-                const product = columns[2];
-                const budgetStr = columns[3];
-                const cacStr = columns[4] || '0';
-
-                const budget = parseFloat(budgetStr.replace(/[^0-9.-]+/g, '')) || 0;
-                const cac = parseFloat(cacStr.replace(/[^0-9.-]+/g, '')) || 0;
-
-                if (advertiser && platform && product) {
-                    rows.push({
-                        id: 'bulk-' + Date.now() + '-' + index + '-' + Math.random().toString(36).substr(2, 5),
-                        advertiser: advertiser,
-                        platform: platform,
-                        product: product,
-                        mode: 'manual',
-                        manualBudget: String(budget),
-                        manualTargetCac: cac,
-                        recommendationBudget: budget,
-                        recommendationTargetCac: cac,
-                        adminRate: platform.toLowerCase().includes('shopee') ? 18 : 
-                                  platform.toLowerCase().includes('tiktok') ? 16 : 0
-                    });
-                    successCount++;
-                } else {
-                    errorCount++;
-                }
-            } else {
-                errorCount++;
-            }
-        });
-
-        if (rows.length > 0) {
-            weeklyProposalRows = weeklyProposalRows.concat(rows);
-            document.getElementById('bulkImportPreview').innerHTML = `
-                <div style="color: #15803d; font-weight: bold; margin-top: 8px;">
-                    ✅ Berhasil mengimpor ${successCount} baris!
-                </div>
-            `;
-            if (typeof renderWeeklyBudgetingPage === 'function') {
-                renderWeeklyBudgetingPage();
-            }
-            saveBudgetingData();
-        } else {
-            document.getElementById('bulkImportPreview').innerHTML = `
-                <div style="color: #b91c1c; font-weight: bold; margin-top: 8px;">
-                    ❌ Gagal mengimpor data. Periksa format kolom.
-                </div>
-            `;
-        }
-    }
-
-    // Export to Excel / CSV
-    function setupExportFunctions() {
-        const btnExport = document.getElementById('exportBudgetProposal');
-        if (btnExport) {
-            btnExport.addEventListener('click', () => {
-                if (weeklyProposalRows.length === 0) {
-                    alert('Tidak ada data budgeting untuk diexport');
-                    return;
-                }
-
-                // Generate sheet using SheetJS
-                try {
-                    const data = weeklyProposalRows.map(row => {
-                        const budget = row.mode === 'manual' ? parseFloat(row.manualBudget) : (row.recommendationBudget || 0);
-                        const cac = row.mode === 'manual' ? parseFloat(row.manualTargetCac) : (row.recommendationTargetCac || 0);
-                        const revenue = cac > 0 ? (budget / (cac / 100)) : 0;
-                        return {
-                            'Nama ADV': row.advertiser,
-                            'Platform/Kanal': row.platform,
-                            'Produk': row.product,
-                            'Mode': row.mode || 'recommendation',
-                            'Budget': budget,
-                            'Target Revenue': revenue,
-                            'Target CAC (%)': cac,
-                            'Admin Rate (%)': row.adminRate || 0
-                        };
-                    });
-
-                    const worksheet = XLSX.utils.json_to_sheet(data);
-                    const workbook = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(workbook, worksheet, 'Budget Proposal');
-                    XLSX.writeFile(workbook, 'Weekly_Budget_Proposal_' + new Date().toISOString().split('T')[0] + '.xlsx');
-                } catch (err) {
-                    // Fallback to CSV if SheetJS fails
-                    console.error('SheetJS export failed, falling back to CSV', err);
-                    let csv = 'Nama ADV,Platform/Kanal,Produk,Mode,Budget,Target Revenue,Target CAC (%),Admin Rate (%)\n';
-                    weeklyProposalRows.forEach(row => {
-                        const budget = row.mode === 'manual' ? parseFloat(row.manualBudget) : (row.recommendationBudget || 0);
-                        const cac = row.mode === 'manual' ? parseFloat(row.manualTargetCac) : (row.recommendationTargetCac || 0);
-                        const revenue = cac > 0 ? (budget / (cac / 100)) : 0;
-                        csv += `"${row.advertiser}","${row.platform}","${row.product}","${row.mode}",${budget},${revenue},${cac},${row.adminRate || 0}\n`;
-                    });
-
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.setAttribute('download', 'Weekly_Budget_Proposal_' + new Date().toISOString().split('T')[0] + '.csv');
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
-            });
-        }
-
-        const btnExportChart = document.getElementById('exportChartData');
-        if (btnExportChart) {
-            btnExportChart.addEventListener('click', () => {
-                alert('Mengekspor data chart tren...');
-                // Logic to export chart data
-            });
-        }
-    }
-
-    // Save Recommendation Action
-    function setupSaveRecommendation() {
-        const btnSave = document.getElementById('saveRecommendationBtn');
-        if (btnSave) {
-            btnSave.addEventListener('click', () => {
-                if (weeklyProposalRows.length === 0) {
-                    alert('Tidak ada data budgeting untuk disimpan');
-                    return;
-                }
-                
-                if (confirm('Simpan semua rekomendasi budgeting sekarang? Data ini akan langsung disinkronkan ke dashboard.')) {
-                    saveBudgetingData();
-                    alert('Rekomendasi budgeting berhasil disimpan secara permanen!');
-                }
-            });
-        }
-    }
-
-    // Pareto 60% Warnings Check
-    function checkParetoWarnings() {
-        const warningDiv = document.getElementById('revenueDistributionWarning');
-        const warningMsg = document.getElementById('warningMessage');
-        if (!warningDiv || !warningMsg) return;
-
-        let totalRevenue = 0;
-        let shopeeRevenue = 0;
-        let tiktokRevenue = 0;
-
-        weeklyProposalRows.forEach(row => {
-            const budget = row.mode === 'manual' ? parseFloat(row.manualBudget) : (row.recommendationBudget || 0);
-            const cac = row.mode === 'manual' ? parseFloat(row.manualTargetCac) : (row.recommendationTargetCac || 0);
-            const revenue = cac > 0 ? (budget / (cac / 100)) : 0;
-
-            totalRevenue += revenue;
-            const platformLower = (row.platform || '').toLowerCase();
-            if (platformLower.includes('shopee')) {
-                shopeeRevenue += revenue;
-            } else if (platformLower.includes('tiktok')) {
-                tiktokRevenue += revenue;
-            }
-        });
-
-        if (totalRevenue > 0) {
-            const shopeePercent = (shopeeRevenue / totalRevenue) * 100;
-            const tiktokPercent = (tiktokRevenue / totalRevenue) * 100;
-
-            let warnings = [];
-            if (shopeePercent > 60) {
-                warnings.push(`Shopee (${shopeePercent.toFixed(1)}%)`);
-            }
-            if (tiktokPercent > 60) {
-                warnings.push(`TikTokShop (${tiktokPercent.toFixed(1)}%)`);
-            }
-
-            if (warnings.length > 0) {
-                warningDiv.style.display = 'block';
-                warningMsg.innerHTML = `Revenue share <strong>${warnings.join(' & ')}</strong> melebihi batas pareto 60% dari total target revenue!`;
-                
-                // Add red highlights to proposal inputs
-                document.querySelectorAll('#budgetRecommendationBody tr').forEach(tr => {
-                    const platformCell = tr.querySelector('td:nth-child(2) input');
-                    if (platformCell) {
-                        const val = platformCell.value.toLowerCase();
-                        if ((val.includes('shopee') && shopeePercent > 60) || (val.includes('tiktok') && tiktokPercent > 60)) {
-                            tr.style.backgroundColor = '#fef2f2';
-                            tr.style.border = '1px solid #fca5a5';
-                        } else {
-                            tr.style.backgroundColor = '';
-                            tr.style.border = '';
-                        }
-                    }
-                });
-            } else {
-                warningDiv.style.display = 'none';
-                document.querySelectorAll('#budgetRecommendationBody tr').forEach(tr => {
-                    tr.style.backgroundColor = '';
-                    tr.style.border = '';
-                });
-            }
-        } else {
-            warningDiv.style.display = 'none';
-        }
-    }
-
-    // Week-over-Week Comparison Render
-    function renderWoWComparison() {
-        const grid = document.getElementById('wowComparisonGrid');
-        if (!grid) return;
-
-        const [start, end] = getSelectedWeekRange();
-        const [prevStart, prevEnd] = [new Date(start.getTime() - 7 * 24 * 60 * 60 * 1000), new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000)];
-
-        // Independent calculation - directly from actual data, not affected by target/budgeting
-        const currentWeekRows = weeklyRowsInRange(start, end).detailRows;
-        const prevWeekRows = weeklyRowsInRange(prevStart, prevEnd).detailRows;
-
-        // Calculate metrics
-        const curBudget = currentWeekRows.reduce((sum, r) => sum + (r.budget || 0), 0);
-        const curRevenue = currentWeekRows.reduce((sum, r) => sum + (r.revenue || 0), 0);
-        const curCac = curRevenue > 0 ? (curBudget / curRevenue) * 100 : 0;
-        
-        const prevBudget = prevWeekRows.reduce((sum, r) => sum + (r.budget || 0), 0);
-        const prevRevenue = prevWeekRows.reduce((sum, r) => sum + (r.revenue || 0), 0);
-        const prevCac = prevRevenue > 0 ? (prevBudget / prevRevenue) * 100 : 0;
-
-        const formatPercentChange = (cur, prev) => {
-            if (prev === 0) return cur > 0 ? '+100%' : '0%';
-            const change = ((cur - prev) / prev) * 100;
-            return (change >= 0 ? '+' : '') + change.toFixed(1) + '%';
-        };
-
-        const getDirectionClass = (cur, prev, lowerIsBetter = false) => {
-            if (cur === prev) return 'neutral';
-            const better = lowerIsBetter ? cur < prev : cur > prev;
-            return better ? 'delta-up' : 'delta-down';
-        };
-
-        const getArrow = (direction) => {
-            return direction === 'delta-up' ? '▲' : direction === 'delta-down' ? '▼' : '●';
-        };
-
-        const budgetDir = getDirectionClass(curBudget, prevBudget, true);
-        const revenueDir = getDirectionClass(curRevenue, prevRevenue);
-        const cacDir = getDirectionClass(curCac, prevCac, true);
-
-        grid.innerHTML = `
-            <div class="card kpi" style="margin: 0; border: 1px solid var(--line);">
-                <span>Budget WoW</span>
-                <strong>${currency(curBudget)}</strong>
-                <small class="${budgetDir}" style="font-weight: bold; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
-                    ${getArrow(budgetDir)} ${formatPercentChange(curBudget, prevBudget)} dibanding minggu lalu
-                </small>
-            </div>
-            <div class="card kpi" style="margin: 0; border: 1px solid var(--line);">
-                <span>Gross Revenue WoW</span>
-                <strong>${currency(curRevenue)}</strong>
-                <small class="${revenueDir}" style="font-weight: bold; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
-                    ${getArrow(revenueDir)} ${formatPercentChange(curRevenue, prevRevenue)} dibanding minggu lalu
-                </small>
-            </div>
-            <div class="card kpi" style="margin: 0; border: 1px solid var(--line);">
-                <span>CAC WoW</span>
-                <strong>${curCac.toFixed(1)}%</strong>
-                <small class="${cacDir}" style="font-weight: bold; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
-                    ${getArrow(cacDir)} ${formatPercentChange(curCac, prevCac)} dibanding minggu lalu
-                </small>
-            </div>
-            <div class="card kpi" style="margin: 0; border: 1px solid var(--line);">
-                <span>Omset Margin WoW</span>
-                <strong>${currency(curRevenue - curBudget)}</strong>
-                <small class="${getDirectionClass(curRevenue - curBudget, prevRevenue - prevBudget)}" style="font-weight: bold; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
-                    ${getArrow(getDirectionClass(curRevenue - curBudget, prevRevenue - prevBudget))} ${formatPercentChange(curRevenue - curBudget, prevRevenue - prevBudget)} dibanding minggu lalu
-                </small>
-            </div>
-        `;
-    }
-
-    // Chart.js Trend Chart Implementation
-    function renderTrendChart() {
-        const ctx = document.getElementById('trendChart');
-        if (!ctx) return;
-
-        const [start, end] = getSelectedWeekRange();
-        
-        // Generate last 4 weeks data points
-        const weeks = [];
-        for (let i = 3; i >= 0; i--) {
-            const wStart = new Date(start.getTime() - i * 7 * 24 * 60 * 60 * 1000);
-            const wEnd = new Date(end.getTime() - i * 7 * 24 * 60 * 60 * 1000);
-            weeks.push({ start: wStart, end: wEnd, label: compactPeriodLabel(wStart, wEnd) });
-        }
-
-        const labels = weeks.map(w => w.label);
-        const budgets = [];
-        const revenues = [];
-        const cacs = [];
-
-        weeks.forEach(w => {
-            const data = weeklyRowsInRange(w.start, w.end).detailRows;
-            const b = data.reduce((sum, r) => sum + (r.budget || 0), 0);
-            const r = data.reduce((sum, r) => sum + (r.revenue || 0), 0);
-            const c = r > 0 ? (b / r) * 100 : 0;
-
-            budgets.push(b);
-            revenues.push(r);
-            cacs.push(c.toFixed(1));
-        });
-
-        if (myTrendChart) {
-            myTrendChart.destroy();
-        }
-
-        myTrendChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Budget Iklan',
-                        data: budgets,
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        yAxisID: 'y',
-                        tension: 0.1,
-                        fill: true
-                    },
-                    {
-                        label: 'Gross Revenue',
-                        data: revenues,
-                        borderColor: '#0f766e',
-                        backgroundColor: 'rgba(15, 118, 110, 0.1)',
-                        yAxisID: 'y',
-                        tension: 0.1,
-                        fill: true
-                    },
-                    {
-                        label: 'CAC (%)',
-                        data: cacs,
-                        borderColor: '#b7791f',
-                        backgroundColor: 'transparent',
-                        yAxisID: 'y1',
-                        tension: 0.1,
-                        borderDash: [5, 5]
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Rupiah (IDR)'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return 'Rp ' + (value / 1000000).toFixed(0) + 'jt';
-                            }
-                        }
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        title: {
-                            display: true,
-                            text: 'CAC %'
-                        },
-                        grid: {
-                            drawOnChartArea: false, // only want the grid lines for one axis to show up
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // Hook in target monthly calculation progress
-    function updateMonthlyAndWeeklyTargetProgress() {
-        const savedTarget = loadMonthlyTarget();
-        if (savedTarget > 0) {
-            const monthlyRevenue = calculateMonthlyRevenue();
-            const weeklyRevenue = calculateWeeklyRevenueForSelectedRange();
-
-            const monthlyPercent = Math.min(100, Math.round((monthlyRevenue / savedTarget) * 100));
-            const weeklyTarget = savedTarget / 4;
-            const weeklyPercent = Math.min(100, Math.round((weeklyRevenue / weeklyTarget) * 100));
-
-            // Update UI elements
-            const monAch = document.getElementById('monthlyRevenueAchieved');
-            const monPct = document.getElementById('monthlyProgressPercent');
-            const monFill = document.getElementById('monthlyProgressFill');
-            const monDisp = document.getElementById('monthlyTargetDisplay');
-
-            const wkAch = document.getElementById('weeklyRevenueAchieved');
-            const wkPct = document.getElementById('weeklyProgressPercent');
-            const wkFill = document.getElementById('weeklyProgressFill');
-            const wkDisp = document.getElementById('weeklyTargetDisplay');
-
-            if (monAch) monAch.textContent = currency(monthlyRevenue);
-            if (monPct) monPct.textContent = monthlyPercent + '%';
-            if (monFill) monFill.style.width = monthlyPercent + '%';
-            if (monDisp) monDisp.textContent = currency(savedTarget);
-
-            if (wkAch) wkAch.textContent = currency(weeklyRevenue);
-            if (wkPct) wkPct.textContent = weeklyPercent + '%';
-            if (wkFill) wkFill.style.width = weeklyPercent + '%';
-            if (wkDisp) wkDisp.textContent = currency(weeklyTarget);
-        }
-    }
-
-    function calculateWeeklyRevenueForSelectedRange() {
-        const [start, end] = getSelectedWeekRange();
-        const currentWeekRows = weeklyRowsInRange(start, end).detailRows;
-        return currentWeekRows.reduce((sum, r) => sum + (r.revenue || 0), 0);
-    }
-
-    // Init All Custom Setup
-    
-    // ========== CRM TARGET MANAGEMENT ==========
-    const CRM_TARGET_STORAGE_KEY = 'ngkr_crm_target_history';
-    
-    function loadCrmTargetByMonth(monthKey = null) {
-        try {
-            const key = monthKey || getActiveMonthKeyFromDashboard();
-            const saved = localStorage.getItem(CRM_TARGET_STORAGE_KEY);
-            if (!saved) return 0;
-            const targets = JSON.parse(saved);
-            return targets[key] || 0;
-        } catch (_) {
-            return 0;
-        }
-    }
-    
-    function saveCrmTargetByMonth(value, monthKey = null) {
-        try {
-            const key = monthKey || getActiveMonthKeyFromDashboard();
-            const saved = localStorage.getItem(CRM_TARGET_STORAGE_KEY) || '{}';
-            const targets = JSON.parse(saved);
-            targets[key] = value > 0 ? value : 0;
-            localStorage.setItem(CRM_TARGET_STORAGE_KEY, JSON.stringify(targets));
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
-    
-    
-    function updateChannelTargetBannerWithCustom(pageType, customTarget, activeRevenue) {
-        if (customTarget <= 0) return;
-
-        const percent = activeRevenue > 0 ? Math.round((activeRevenue / customTarget) * 100) : 0;
-        const safePercent = Math.min(100, percent);
-
-        const displayElements = {
-            'shopee': { target: 'shopeeTargetDisplay', actual: 'shopeeActualDisplay', fill: 'shopeeProgressFill', percent: 'shopeeProgressPercent' },
-            'tiktok': { target: 'tiktokTargetDisplay', actual: 'tiktokActualDisplay', fill: 'tiktokProgressFill', percent: 'tiktokProgressPercent' },
-            'advertiser': { target: 'advTargetDisplay', actual: 'advActualDisplay', fill: 'advProgressFill', percent: 'advProgressPercent' },
-            'cs': { target: 'csTargetDisplay', actual: 'csActualDisplay', fill: 'csProgressFill', percent: 'csProgressPercent' },
-            'crm': { target: 'crmTargetDisplay', actual: 'crmActualDisplay', fill: 'crmProgressFill', percent: 'crmProgressPercent' }
-        };
-
-        const els = displayElements[pageType.toLowerCase()];
-        if (!els) return;
-
-        const targetEl = document.getElementById(els.target);
-        const actualEl = document.getElementById(els.actual);
-        const fillEl = document.getElementById(els.fill);
-        const percentEl = document.getElementById(els.percent);
-
-        if (targetEl) targetEl.textContent = currency(customTarget);
-        if (actualEl) actualEl.textContent = currency(activeRevenue);
-        if (fillEl) fillEl.style.width = safePercent + '%';
-        if (percentEl) percentEl.textContent = percent + '%';
-    }
-
-
-    function setupCrmTargetInput() {
-        const btnSave = document.getElementById('saveCrmTargetBtn');
-        const inputField = document.getElementById('saveCrmTargetInput');
-        
-        if (!btnSave || !inputField) return;
-        
-        // Load saved CRM target
-        const savedCrmTarget = loadCrmTargetByMonth();
-        if (savedCrmTarget > 0) {
-            inputField.value = formatCurrencyInput(savedCrmTarget);
-        }
-        
-        // Save button handler
-        btnSave.addEventListener('click', () => {
-            const inputValue = inputField.value.trim();
-            if (!inputValue) {
-                alert('Masukkan target omset CRM terlebih dahulu');
-                return;
-            }
-            
-            const numericValue = parseMoney(inputValue);
-            if (numericValue <= 0 || isNaN(numericValue)) {
-                alert('Target harus berupa angka positif');
-                return;
-            }
-            
-            if (saveCrmTargetByMonth(numericValue)) {
-                alert('Target CRM berhasil disimpan!');
-                if (typeof renderWeeklyBudgetingPage === 'function') {
-                    renderWeeklyBudgetingPage();
-                }
-            }
-        });
-        
-        // Enter key handler
-        inputField.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                btnSave.click();
-            }
-        });
-    }
-    
-    function setupExportBudgetingData() {
-        const btnExport = document.getElementById('exportBudgetingDataBtn');
-        if (!btnExport) return;
-        
-        btnExport.addEventListener('click', () => {
-            if (weeklyProposalRows.length === 0) {
-                alert('Tidak ada data budgeting untuk diexport');
-                return;
-            }
-            
-            try {
-                const data = weeklyProposalRows.map(row => {
-                    const budget = row.mode === 'manual' ? parseFloat(row.manualBudget) : (row.recommendationBudget || 0);
-                    const cac = row.mode === 'manual' ? parseFloat(row.manualTargetCac) : (row.recommendationTargetCac || 0);
-                    const revenue = cac > 0 ? (budget / (cac / 100)) : 0;
-                    return {
-                        'Nama ADV': row.advertiser,
-                        'Platform': row.platform,
-                        'Produk': row.product,
-                        'Budget': budget,
-                        'Target Revenue': revenue,
-                        'Target CAC (%)': cac
-                    };
-                });
-                
-                const worksheet = XLSX.utils.json_to_sheet(data);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, 'Budgeting Data');
-                XLSX.writeFile(workbook, 'Budgeting_Data_' + new Date().toISOString().split('T')[0] + '.xlsx');
-            } catch (err) {
-                console.error('Export failed', err);
-                alert('Gagal mengexport data');
-            }
-        });
-    }
-
-
-    function setupAllNewFeatures() {
-        setupCrmTargetInput();
-        setupExportBudgetingData();
-        console.log('setupAllNewFeatures started');
-        setupAutoSave();
-        setupBulkImport();
-        setupExportFunctions();
-        setupSaveRecommendation();
-
-        // Hook on update chart button
-        const btnUpdateTrend = document.getElementById('updateTrendChart');
-        if (btnUpdateTrend) {
-            btnUpdateTrend.addEventListener('click', () => {
-                renderTrendChart();
-                alert('Trend Chart Updated!');
-            });
-        }
-
-        // Run updates on initial load
-        setTimeout(() => {
-            renderWoWComparison();
-            renderTrendChart();
-            updateMonthlyAndWeeklyTargetProgress();
-            checkParetoWarnings();
-        }, 1000);
-    }
-
-
-    
-    // ========== MULTI-MONTH TARGET HISTORY ==========
-    const MONTHLY_TARGETS_KEY = 'ngkr_monthly_targets_history';
-
-    function getMonthKey(date = new Date()) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        return year + '-' + month;
-    }
-
-    function getActiveMonthKeyFromDashboard() {
-        const startDateVal = els.startDate ? els.startDate.value : '';
-        if (startDateVal) {
-            return startDateVal.substring(0, 7);
-        }
-        return getMonthKey();
-    }
-
-    function loadAllMonthlyTargets() {
-        try {
-            const saved = localStorage.getItem(MONTHLY_TARGETS_KEY);
-            return saved ? JSON.parse(saved) : {};
-        } catch (_) {
-            return {};
-        }
-    }
-
-    function loadMonthlyTargetByMonth(monthKey = null) {
-        const key = monthKey || getActiveMonthKeyFromDashboard();
-        const targets = loadAllMonthlyTargets();
-        return targets[key] || 0;
-    }
-
-    function saveMonthlyTargetByMonth(value, monthKey = null) {
-        try {
-            const key = monthKey || getActiveMonthKeyFromDashboard();
-            const targets = loadAllMonthlyTargets();
-            targets[key] = value > 0 ? value : 0;
-            localStorage.setItem(MONTHLY_TARGETS_KEY, JSON.stringify(targets));
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
-
-    function loadMonthlyTarget() {
-        return loadMonthlyTargetByMonth();
-    }
-
-    function saveMonthlyTarget(value) {
-        return saveMonthlyTargetByMonth(value);
-    }
-
-    function calculateParetoShares(monthlyTarget) {
-        if (!monthlyTarget || monthlyTarget <= 0) {
-            return { shopee: 0, soscom: 0, crm: 0, tiktokshop: 0 };
-        }
-        return {
-            shopee: (monthlyTarget * 45) / 100,
-            soscom: (monthlyTarget * 20) / 100,
-            crm: (monthlyTarget * 25) / 100,
-            tiktokshop: (monthlyTarget * 10) / 100
-        };
-    }
-
-    function getChannelTarget(monthlyTarget, channel) {
-        if (!monthlyTarget || monthlyTarget <= 0) return 0;
-        
-        const channelLower = (channel || '').toLowerCase();
-        
-        // Calculate shares based on monthly target
-        const shopeeShare = (monthlyTarget * 45) / 100;
-        const soscomShare = (monthlyTarget * 20) / 100;
-        const crmShare = (monthlyTarget * 25) / 100;
-        const tiktokShare = (monthlyTarget * 10) / 100;
-        
-        if (channelLower.includes('shopee')) return shopeeShare;
-        if (channelLower.includes('tiktok')) return tiktokShare;
-        if (channelLower.includes('crm')) return crmShare;
-        if (channelLower.includes('soscom') || channelLower.includes('meta') || channelLower.includes('advertiser') || channelLower.includes('cs')) {
-            return soscomShare; // Advertiser & CS both get 20%
-        }
-        return 0;
-    }
-
-    function updateChannelTargetBanner(pageType, monthlyTarget, activeRevenue) {
-        // Ensure we have a valid monthly target
-        if (!monthlyTarget || monthlyTarget <= 0) {
-            monthlyTarget = loadMonthlyTargetByMonth() || 0;
-        }
-        
-        const target = getChannelTarget(monthlyTarget, pageType);
-        if (target <= 0) return;
-
-        const percent = activeRevenue > 0 ? Math.round((activeRevenue / target) * 100) : 0;
-        const safePercent = Math.min(100, percent);
-
-        const displayElements = {
-            'shopee': { target: 'shopeeTargetDisplay', actual: 'shopeeActualDisplay', fill: 'shopeeProgressFill', percent: 'shopeeProgressPercent' },
-            'tiktok': { target: 'tiktokTargetDisplay', actual: 'tiktokActualDisplay', fill: 'tiktokProgressFill', percent: 'tiktokProgressPercent' },
-            'advertiser': { target: 'advTargetDisplay', actual: 'advActualDisplay', fill: 'advProgressFill', percent: 'advProgressPercent' },
-            'cs': { target: 'csTargetDisplay', actual: 'csActualDisplay', fill: 'csProgressFill', percent: 'csProgressPercent' },
-            'crm': { target: 'crmTargetDisplay', actual: 'crmActualDisplay', fill: 'crmProgressFill', percent: 'crmProgressPercent' }
-        };
-
-        const els = displayElements[pageType.toLowerCase()];
-        if (!els) return;
-
-        const targetEl = document.getElementById(els.target);
-        const actualEl = document.getElementById(els.actual);
-        const fillEl = document.getElementById(els.fill);
-        const percentEl = document.getElementById(els.percent);
-
-        if (targetEl) targetEl.textContent = currency(target);
-        if (actualEl) actualEl.textContent = currency(activeRevenue);
-        if (fillEl) fillEl.style.width = safePercent + '%';
-        if (percentEl) percentEl.textContent = percent + '%';
-    }
-
-    function getBudgetingProposalsByChannel(channel) {
-        const saved = localStorage.getItem('ngkr_budgeting_proposal');
-        if (!saved) return [];
-
-        try {
-            const rows = JSON.parse(saved);
-            const channelLower = (channel || '').toLowerCase();
-
-            return rows.filter(row => {
-                const platform = (row.platform || '').toLowerCase();
-                if (channelLower === 'shopee') return platform.includes('shopee');
-                if (channelLower === 'tiktok') return platform.includes('tiktokshop');
-                if (channelLower === 'crm') return platform.includes('crm') || !platform.includes('shopee') && !platform.includes('tiktokshop') && !platform.includes('meta');
-                if (channelLower === 'advertiser' || channelLower === 'cs') {
-                    return platform.includes('meta') || platform.includes('facebook') || platform.includes('instagram') || platform.includes('google') || (platform.includes('tiktok') && !platform.includes('tiktokshop'));
-                }
-                return false;
-            });
-        } catch (_) {
-            return [];
-        }
-    }
-
-    function renderBudgetingProposalTable(channel, tableBodySelector) {
-        const proposals = getBudgetingProposalsByChannel(channel);
-        if (!proposals.length) return;
-
-        const tbody = document.querySelector(tableBodySelector);
-        if (!tbody) return;
-
-        let totalBudget = 0;
-        let totalRevenue = 0;
-
-        const rows = proposals.map(row => {
-            const budget = parseFloat(row.manualBudget) || parseFloat(row.recommendationBudget) || 0;
-            const cac = parseFloat(row.manualTargetCac) || parseFloat(row.recommendationTargetCac) || 0;
-            const revenue = cac > 0 ? budget / (cac / 100) : 0;
-
-            totalBudget += budget;
-            totalRevenue += revenue;
-
-            const rowHTML = '<tr><td>' + escapeHtml(row.advertiser || '-') + '</td><td>' + escapeHtml(row.product || '-') + '</td><td>' + currency(budget) + '</td><td>' + currency(revenue) + '</td><td>' + (cac > 0 ? cac.toFixed(1) + '%' : '-') + '</td></tr>';
-            return rowHTML;
-        });
-
-        const avgCac = totalBudget > 0 ? ((totalBudget / totalRevenue) * 100).toFixed(1) : 0;
-
-        tbody.innerHTML = rows.join('') + '<tr class="total-row" style="font-weight: bold; background: var(--soft);"><td>Total Proposal</td><td>-</td><td>' + currency(totalBudget) + '</td><td>' + currency(totalRevenue) + '</td><td>' + avgCac + '%</td></tr>';
-    }
-
-
-    
-    // ========== AUTO-FILL DASHBOARD TARGETS FROM OMSET ==========
-    
-
-
-    
-    function updateMonthlyTargetDisplay(targetValue) {
-        // Display the SET TARGET value (from user input), not actual omset
-        if (targetValue > 0) {
-            els.monthlyTargetDisplay.textContent = currency(targetValue);
-            els.weeklyTargetDisplay.textContent = currency(targetValue / 4); // Weekly = Monthly ÷ 4
-        } else {
-            els.monthlyTargetDisplay.textContent = 'Rp0';
-            els.weeklyTargetDisplay.textContent = 'Rp0';
-        }
-    }
-
-    function updateDashboardTargetProgress() {
-        const monthlyTarget = loadMonthlyTarget();
-        if (monthlyTarget <= 0) return;
-
-        // Get actual revenue for current month (from dashboard filter dates)
-        const [filterStart, filterEnd] = getSelectedRange ? getSelectedRange() : rangePreset('thisMonth');
-        const monthStart = filterStart;
-        const monthEnd = filterEnd;
-        
-        const monthlyRows = allRows.filter(row => {
-            const rowDate = row.date ? parseDateValue(row.date) : null;
-            return rowDate && rowDate >= startOfDay(monthStart) && rowDate <= startOfDay(monthEnd);
-        });
-
-        const monthlyRevenue = monthlyRows.reduce((total, row) => total + (row.revenue || 0), 0);
-        const monthlyPercent = Math.min(100, Math.round((monthlyRevenue / monthlyTarget) * 100));
-
-        // Update monthly progress
-        const monthlyTargetDisplay = document.getElementById('monthlyTargetDisplay');
-        const monthlyAchievedEl = document.getElementById('monthlyRevenueAchieved');
-        const monthlyProgressPercent = document.getElementById('monthlyProgressPercent');
-        const monthlyProgressFill = document.getElementById('monthlyProgressFill');
-
-        if (monthlyTargetDisplay) monthlyTargetDisplay.textContent = currency(monthlyTarget);
-        if (monthlyAchievedEl) monthlyAchievedEl.textContent = currency(monthlyRevenue);
-        if (monthlyProgressPercent) monthlyProgressPercent.textContent = monthlyPercent + '%';
-        if (monthlyProgressFill) monthlyProgressFill.style.width = monthlyPercent + '%';
-
-        // Calculate weekly revenue from current week's start up to today (or filter end)
-        const today = new Date();
-        const currentDay = today.getDate();
-        
-        // Determine which week we're in (1-7, 8-14, 15-21, 22-31)
-        let weekStart, weekEnd;
-        if (currentDay <= 7) {
-            weekStart = new Date(today.getFullYear(), today.getMonth(), 1);
-            weekEnd = new Date(today.getFullYear(), today.getMonth(), 7);
-        } else if (currentDay <= 14) {
-            weekStart = new Date(today.getFullYear(), today.getMonth(), 8);
-            weekEnd = new Date(today.getFullYear(), today.getMonth(), 14);
-        } else if (currentDay <= 21) {
-            weekStart = new Date(today.getFullYear(), today.getMonth(), 15);
-            weekEnd = new Date(today.getFullYear(), today.getMonth(), 21);
-        } else {
-            weekStart = new Date(today.getFullYear(), today.getMonth(), 22);
-            weekEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0); // last day of month
-        }
-        
-        // But only count up to today or filter end (whichever is earlier)
-        const actualWeekEnd = monthEnd < today ? monthEnd : today;
-        
-        const weeklyTarget = monthlyTarget / 4;
-
-        const weeklyRows = allRows.filter(row => {
-            const rowDate = row.date ? parseDateValue(row.date) : null;
-            return rowDate && rowDate >= startOfDay(weekStart) && rowDate <= startOfDay(actualWeekEnd);
-        });
-
-        const weeklyRevenue = weeklyRows.reduce((total, row) => total + (row.revenue || 0), 0);
-        const weeklyPercent = Math.min(100, Math.round((weeklyRevenue / weeklyTarget) * 100));
-
-        // Update weekly progress
-        const weeklyTargetDisplay = document.getElementById('weeklyTargetDisplay');
-        const weeklyAchievedEl = document.getElementById('weeklyRevenueAchieved');
-        const weeklyProgressPercent = document.getElementById('weeklyProgressPercent');
-        const weeklyProgressFill = document.getElementById('weeklyProgressFill');
-
-        if (weeklyTargetDisplay) weeklyTargetDisplay.textContent = currency(weeklyTarget);
-        if (weeklyAchievedEl) weeklyAchievedEl.textContent = currency(weeklyRevenue);
-        if (weeklyProgressPercent) weeklyProgressPercent.textContent = weeklyPercent + '%';
-        if (weeklyProgressFill) weeklyProgressFill.style.width = weeklyPercent + '%';
-    }
-
-
     function setupTargetManagement() {
       // Load saved monthly target and set input value
       const savedTarget = loadMonthlyTarget();
@@ -11381,7 +9865,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       setupChartHover();
       setupCrmStackTooltip();
       setupTargetManagement(); // Setup target management
-      setupAllNewFeatures();
       updateInputs(...rangePreset("thisMonth"));
       updateAdvertiserInputs(...rangePreset("thisMonth"));
       updateCsInputs(...rangePreset("thisMonth"));
@@ -11425,67 +9908,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
 
     init();
-  
-    // ========== INTEGRATION HOOKS ==========
-    function setupPageTargetBanners() {
-        // This will be called when each page loads
-        const activePage = document.querySelector('.page:not(.hidden)')?.id?.replace('-page', '') || 
-                         window.activePage || 'dashboard';
-        
-        if (activePage === 'shopee' || activePage === 'tiktok' || activePage === 'advertiser' || 
-            activePage === 'cs' || activePage === 'crm') {
-            
-            // Get monthly target for active month
-            const monthlyTarget = loadMonthlyTargetByMonth();
-            
-            // Calculate active revenue for this channel
-            let activeRevenue = 0;
-            
-            // This should be calculated based on actual data for each channel
-            // For now, we'll use a placeholder - you can implement actual calculation
-            if (typeof updateChannelTargetBanner === 'function') {
-                updateChannelTargetBanner(activePage, monthlyTarget, activeRevenue);
-            }
-            
-            // Render budgeting proposal table if exists
-            const proposalContainer = document.getElementById(activePage + 'ProposalTable');
-            if (proposalContainer && typeof renderBudgetingProposalTable === 'function') {
-                renderBudgetingProposalTable(activePage, '#' + activePage + 'ProposalTable');
-            }
-        }
-    }
-    
-    // Hook into page navigation to update banners
-    const originalSetupNavigation = window.setupNavigation;
-    if (typeof originalSetupNavigation === 'function') {
-        window.setupNavigation = function() {
-            originalSetupNavigation();
-            
-            // Override page change to update banners
-            document.querySelectorAll('.nav button').forEach(button => {
-                const originalClick = button.onclick;
-                if (originalClick) {
-                    button.onclick = function(e) {
-                        originalClick.call(this, e);
-                        setTimeout(setupPageTargetBanners, 100);
-                    };
-                }
-            });
-        };
-    }
-
-      
-    // Hook into render to update dashboard targets
-    const originalRender = window.render;
-    if (typeof originalRender === 'function') {
-        window.render = function() {
-            originalRender();
-            if (typeof updateDashboardTargetProgress === 'function') {
-                setTimeout(updateDashboardTargetProgress, 100);
-            }
-        };
-    }
-
   </script>
 </body>
 </html>

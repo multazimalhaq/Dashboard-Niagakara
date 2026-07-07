@@ -1762,7 +1762,7 @@
               <small>dari target <span id="weeklyTargetDisplay">Rp0</span></small>
               <div id="weeklyDeficitDisplay" style="font-size: 11px; color: #c2415d; margin-top: 4px; font-weight: 500;"></div>
           <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 8px; font-size: 13px;">
-            <div id="autoSaveStatus" style="color: #666;">Auto-save aktif (10 detik)</div>
+            <div id="autoSaveStatus" style="color: #666;">Simpan manual (tombol Save & Kunci)</div>
             <div id="lastSaveTime" style="color: #888;">Terakhir: -</div>
           </div>
 
@@ -3052,11 +3052,13 @@
             <div class="row-actions">
               <button class="panel-action" id="addBudgetProposalRow" type="button">Tambah Kanal/Platform</button>
               <button class="row-action" id="resetBudgetProposalRows" type="button">Reset Rekomendasi</button>
-            <div class="row-actions" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; display: flex; gap: 8px; flex-wrap: wrap;">
+            <div class="row-actions" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
               <button class="panel-action" id="bulkImportToggle" type="button">Import CSV/Excel</button>
               <input type="file" id="bulkImportFile" accept=".csv,.txt,.xlsx,.xls" style="display: none;">
               <button class="panel-action" id="exportBudgetProposal" type="button">Export ke Excel</button>
-              <button class="panel-action primary" id="saveRecommendationBtn" type="button">Save Rekomendasi</button>
+              <button class="panel-action primary" id="saveRecommendationBtn" type="button">Save & Kunci Rekomendasi</button>
+              <button class="row-action" id="unlockProposalBtn" type="button" style="display:none;">🔓 Unlock / Edit</button>
+              <span id="proposalLockBadge" style="font-size:12px; font-weight:600; padding:4px 10px; border-radius:999px; display:none;"></span>
             </div>
             <div id="bulkImportArea" style="display: none; margin-top: 16px; background: #f8f9fa; padding: 16px; border-radius: 8px;">
               <textarea id="bulkImportTextarea" placeholder="Paste CSV/Excel data (format: advertiser, platform, product, manualBudget, manualTargetCac)
@@ -3126,58 +3128,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           <datalist id="weeklyProductOptions"></datalist>
         </section>
 
-        <section class="card panel">
-          <div class="panel-header">
-            <div>
-              <h2 id="nextWeekAfterCrmTitle">Pengajuan Setelah CRM Periode -</h2>
-              <span class="panel-note">fixed mengikuti pengajuan budget, ditambah target omset CRM</span>
-            </div>
-          </div>
-          <div class="form-grid">
-            <label>Target Omset CRM
-              <input id="weeklyTargetCrmInput" type="text" inputmode="numeric" placeholder="Rekomendasi dari CRM minggu lalu">
-            </label>
-          </div>
-          <div class="daily-table-wrap" style="margin-top:16px;">
-            <table class="daily-table advertiser-daily-table weekly-review-table">
-              <thead>
-                <tr>
-                  <th>Nama ADV</th>
-                  <th>Kanal</th>
-                  <th>Produk</th>
-                  <th>Budget</th>
-                  <th>Target Revenue</th>
-                  <th>Target CAC</th>
-                  <th>Total Budget</th>
-                  <th>Total Target Gross Revenue</th>
-                  <th>Total Target CAC</th>
-                  <th>Prakiraan Biaya Admin</th>
-                  <th>Admin %</th>
-                  <th>Budget + Admin</th>
-                  <th>Target CAC After Admin</th>
-                </tr>
-              </thead>
-              <tbody id="budgetAfterCrmBody"></tbody>
-            </table>
-          </div>
-          
-          <div class="pam-summary" id="budgetAfterCrmPamBody"></div>
-          
-          <!-- CRM Target & Export Buttons -->
-          <div style="margin-top: 24px; padding: 16px; border-top: 1px solid var(--line); display: flex; gap: 12px; align-items: center; justify-content: space-between;">
-            <div style="display: flex; gap: 12px; align-items: center; flex: 1;">
-              <label style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-weight: 500; font-size: 14px;">Target Omset CRM:</span>
-                <input type="text" id="saveCrmTargetInput" inputmode="numeric" placeholder="Masukkan target omset CRM" style="padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; font-size: 14px; width: 200px;">
-              </label>
-              <button class="panel-action" id="saveCrmTargetBtn" type="button">Simpan Target CRM</button>
-            </div>
-            <div style="display: flex; gap: 12px;">
-              <button class="panel-action" id="exportBudgetingDataBtn" type="button">Export Data</button>
-            </div>
-          </div>
-
-        </section>
       </section>
 
       <section id="product-page" class="hidden">
@@ -4033,12 +3983,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       weeklyTiktokAdminInput: document.getElementById("weeklyTiktokAdminInput"),
       addBudgetProposalRow: document.getElementById("addBudgetProposalRow"),
       resetBudgetProposalRows: document.getElementById("resetBudgetProposalRows"),
+      unlockProposalBtn: document.getElementById("unlockProposalBtn"),
+      proposalLockBadge: document.getElementById("proposalLockBadge"),
+      saveRecommendationBtn: document.getElementById("saveRecommendationBtn"),
       budgetRecommendationBody: document.getElementById("budgetRecommendationBody"),
       budgetProposalPamBody: document.getElementById("budgetProposalPamBody"),
-      nextWeekAfterCrmTitle: document.getElementById("nextWeekAfterCrmTitle"),
-      weeklyTargetCrmInput: document.getElementById("weeklyTargetCrmInput"),
-      budgetAfterCrmBody: document.getElementById("budgetAfterCrmBody"),
-      budgetAfterCrmPamBody: document.getElementById("budgetAfterCrmPamBody"),
       weeklyAdvertiserOptions: document.getElementById("weeklyAdvertiserOptions"),
       weeklyPlatformOptions: document.getElementById("weeklyPlatformOptions"),
       weeklyProductOptions: document.getElementById("weeklyProductOptions"),
@@ -4115,6 +4064,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     let adminTiktokSummaryRows = [];
     let weeklyProposalRows = [];
     let weeklyProposalSeed = "";
+    let weeklyProposalLockedPeriod = null; // Store locked period key (e.g., "2026-07-01|2026-07-07")
+    let lastLoadedProposalPeriodKey = null; // Guards against reloading (and clobbering edits) mid-session
     let activePage = "dashboard";
     let resizeRenderTimer = 0;
     let supportDataLoaded = false;
@@ -6633,6 +6584,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             recommendationTargetRevenue: recommendation.targetRevenue || 0,
             manualBudget: '',
             manualTargetCac: '',
+            crmRevenue: '',
             adminRate: recommendation.adminRate || 0,
             status: recommendation.status || ''
         };
@@ -6787,6 +6739,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return 0;
     }
 
+    function isCrmRow(row) {
+      return normalizeCompare(row.advertiser) === "crm" || normalizeCompare(row.platform) === "crm";
+    }
+
     function makeProposalRow(row, index, settings) {
       return {
         id: `proposal-${Date.now()}-${index}-${Math.floor(Math.random() * 10000)}`,
@@ -6803,14 +6759,24 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         adminRate: proposalAdminDefault(row.platform, settings),
         manualBudget: "",
         manualTargetCac: "",
+        crmRevenue: "",
         custom: false
       };
     }
 
     function ensureBudgetProposalRows(recommendations, settings, targetCrmRevenue = 0, weeklyTarget = 0) {
+      const [start, end] = getSelectedWeekRange();
+      const periodKey = `${dateKey(start)}|${dateKey(end)}`;
       const seed = budgetProposalSeed(recommendations, settings, targetCrmRevenue);
+
+      // If this period is locked, don't rebuild proposal rows
+      if (weeklyProposalLockedPeriod === periodKey && weeklyProposalRows.length) {
+        return;
+      }
+
+      // If seed is same and we have rows, don't rebuild
       if (weeklyProposalSeed === seed && weeklyProposalRows.length) return;
-      
+
       if (weeklyTarget > 0) {
           const paretoRecs = buildParetoBudgetRecommendations(recommendations, settings, targetCrmRevenue, weeklyTarget);
           weeklyProposalRows = paretoRecs.map((row, index) => makeProposalRowFromPareto(row, index, settings));
@@ -6821,6 +6787,22 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
 
     function effectiveProposal(row, settings) {
+      if (isCrmRow(row)) {
+        const targetRevenue = parseMoney(row.crmRevenue) || 0;
+        const estimatedPamValue = targetRevenue - (targetRevenue * settings.hpp / 100);
+        const estimatedPamRate = percentRatio(estimatedPamValue, targetRevenue);
+        return {
+          budget: 0,
+          targetRevenue,
+          targetCac: 0,
+          adminCost: 0,
+          budgetAdmin: 0,
+          estimatedPamRate,
+          safe: estimatedPamRate >= settings.minPam,
+          status: targetRevenue ? "Revenue CRM" : "Isi Target Revenue",
+          isCrm: true
+        };
+      }
       const manualBudget = parseMoney(row.manualBudget);
       const manualTargetCac = Number(row.manualTargetCac || 0);
       const useRecommendation = row.mode !== "manual";
@@ -6841,7 +6823,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         budgetAdmin,
         estimatedPamRate,
         safe,
-        status: targetRevenue ? (safe ? "Aman" : "Cek ulang") : "Manual kosong"
+        status: targetRevenue ? (safe ? "Aman" : "Cek ulang") : "Manual kosong",
+        isCrm: false
       };
     }
 
@@ -6851,7 +6834,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         ...shopeeSourceRows().map(row => row.advertiser),
         ...tiktokSourceRows().map(row => row.advertiser)
       ])].filter(name => name && name !== "Tanpa advertiser").sort((a, b) => a.localeCompare(b, "id-ID"));
-      const platforms = ["Meta", "Meta Interaksi WA", "Meta Interaksi Bx", "Tiktok", "Google", "Shopee", "Tiktokshop"];
+      advertisers.unshift("CRM");
+      const platforms = ["CRM", "Meta", "Meta Interaksi WA", "Meta Interaksi Bx", "Tiktok", "Google", "Shopee", "Tiktokshop"];
       const products = [...new Set([...mainProductNames(allRows), "Shopee", "Tiktokshop"])]
         .filter(Boolean)
         .sort((a, b) => a.localeCompare(b, "id-ID"));
@@ -6862,10 +6846,17 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
 
     function renderBudgetProposalRows(settings) {
       renderProposalOptions();
+      const locked = isCurrentProposalLocked();
+      const disabledAttr = locked ? " disabled" : "";
       const rowDetails = weeklyProposalRows.map(row => ({ row, calc: effectiveProposal(row, settings) }));
-      const totals = proposalTotals(rowDetails);
-      const totalCac = percentRatio(totals.budget, totals.targetRevenue);
-      const totalCacAfterAdmin = percentRatio(totals.budgetAdmin, totals.targetRevenue);
+      const nonCrmDetails = rowDetails.filter(item => !item.calc.isCrm);
+      const hasCrmRows = rowDetails.some(item => item.calc.isCrm);
+      const totalsBeforeCrm = proposalTotals(nonCrmDetails);
+      const totalsAfterCrm = proposalTotals(rowDetails);
+      const totalCacBefore = percentRatio(totalsBeforeCrm.budget, totalsBeforeCrm.targetRevenue);
+      const totalCacAfterAdminBefore = percentRatio(totalsBeforeCrm.budgetAdmin, totalsBeforeCrm.targetRevenue);
+      const totalCacAfter = percentRatio(totalsAfterCrm.budget, totalsAfterCrm.targetRevenue);
+      const totalCacAfterAdminAfter = percentRatio(totalsAfterCrm.budgetAdmin, totalsAfterCrm.targetRevenue);
       const groups = new Map();
       rowDetails.forEach(item => {
         const key = `${normalizeCompare(item.row.advertiser)}|${normalizeCompare(item.row.platform)}`;
@@ -6886,30 +6877,31 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         return items.map((item, index) => {
           const row = item.row;
           const calc = item.calc;
+          const isCrm = calc.isCrm;
           return `
-            <tr data-proposal-id="${escapeHtml(row.id)}">
-              <td><input class="table-input" data-proposal-field="advertiser" list="weeklyAdvertiserOptions" value="${escapeHtml(row.advertiser)}"></td>
-              <td><input class="table-input" data-proposal-field="platform" list="weeklyPlatformOptions" value="${escapeHtml(row.platform)}"></td>
-              <td><input class="table-input" data-proposal-field="product" list="weeklyProductOptions" value="${escapeHtml(row.product)}"></td>
-              <td>
-                <select class="table-input" data-proposal-field="mode">
+            <tr data-proposal-id="${escapeHtml(row.id)}"${isCrm ? ' style="background:#f5f3ff;"' : ""}>
+              <td><input class="table-input" data-proposal-field="advertiser" list="weeklyAdvertiserOptions" value="${escapeHtml(row.advertiser)}"${disabledAttr}></td>
+              <td><input class="table-input" data-proposal-field="platform" list="weeklyPlatformOptions" value="${escapeHtml(row.platform)}"${disabledAttr}></td>
+              <td><input class="table-input" data-proposal-field="product" list="weeklyProductOptions" value="${escapeHtml(row.product)}"${disabledAttr}></td>
+              <td>${isCrm ? `<span style="font-size:12px;font-weight:600;color:#6d28d9;">CRM</span>` : `
+                <select class="table-input" data-proposal-field="mode"${disabledAttr}>
                   <option value="recommendation"${row.mode !== "manual" ? " selected" : ""}>Pakai rekomendasi</option>
                   <option value="manual"${row.mode === "manual" ? " selected" : ""}>Manual</option>
                 </select>
-              </td>
-              <td><input class="table-input" data-proposal-field="manualBudget" type="text" inputmode="numeric" placeholder="${currency(row.recommendationBudget)}" value="${row.mode === "manual" ? escapeHtml(row.manualBudget) : escapeHtml(String(Math.round(row.recommendationBudget || 0)))}"${row.mode !== "manual" ? " readonly" : ""}></td>
-              <td>${currency(calc.targetRevenue)}</td>
-              <td><input class="table-input" data-proposal-field="manualTargetCac" type="number" min="0" step="0.1" placeholder="${percent(row.recommendationTargetCac)}" value="${row.mode === "manual" ? escapeHtml(row.manualTargetCac) : (row.recommendationTargetCac || 0).toFixed(1)}"${row.mode !== "manual" ? " readonly" : ""}></td>
+              `}</td>
+              <td>${isCrm ? "-" : `<input class="table-input" data-proposal-field="manualBudget" type="text" inputmode="numeric" placeholder="${currency(row.recommendationBudget)}" value="${row.mode === "manual" ? escapeHtml(row.manualBudget) : escapeHtml(String(Math.round(row.recommendationBudget || 0)))}"${row.mode !== "manual" ? " readonly" : ""}${disabledAttr}>`}</td>
+              <td>${isCrm ? `<input class="table-input" data-proposal-field="crmRevenue" type="text" inputmode="numeric" placeholder="Isi target revenue CRM" value="${escapeHtml(String(row.crmRevenue || ""))}"${disabledAttr}>` : currency(calc.targetRevenue)}</td>
+              <td>${isCrm ? "-" : `<input class="table-input" data-proposal-field="manualTargetCac" type="number" min="0" step="0.1" placeholder="${percent(row.recommendationTargetCac)}" value="${row.mode === "manual" ? escapeHtml(row.manualTargetCac) : (row.recommendationTargetCac || 0).toFixed(1)}"${row.mode !== "manual" ? " readonly" : ""}${disabledAttr}>`}</td>
               ${index === 0 ? `
                 <td rowspan="${items.length}">${currency(groupTotals.budget)}</td>
                 <td rowspan="${items.length}">${currency(groupTotals.targetRevenue)}</td>
-                <td rowspan="${items.length}">${percent(groupCac)}</td>
+                <td rowspan="${items.length}">${groupTotals.targetRevenue ? percent(groupCac) : "-"}</td>
                 <td rowspan="${items.length}">${currency(groupTotals.adminCost)}</td>
                 <td rowspan="${items.length}">${adminLabels.length === 1 ? adminLabels[0] : "-"}</td>
                 <td rowspan="${items.length}">${currency(groupTotals.budgetAdmin)}</td>
-                <td rowspan="${items.length}">${percent(groupCacAfterAdmin)}</td>
+                <td rowspan="${items.length}">${groupTotals.targetRevenue ? percent(groupCacAfterAdmin) : "-"}</td>
               ` : ""}
-              <td><button class="row-action danger" data-delete-proposal type="button">Hapus</button></td>
+              <td><button class="row-action danger" data-delete-proposal type="button"${disabledAttr}>Hapus</button></td>
             </tr>
           `;
         }).join("");
@@ -6917,30 +6909,53 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       els.budgetRecommendationBody.innerHTML = bodyRows ? `
         ${bodyRows}
         <tr class="total-row">
-          <td>Total Pengajuan</td>
+          <td>Total Pengajuan Before CRM</td>
           <td>-</td>
           <td>-</td>
           <td>-</td>
           <td>-</td>
           <td>-</td>
           <td>-</td>
-          <td>${currency(totals.budget)}</td>
-          <td>${currency(totals.targetRevenue)}</td>
-          <td>${percent(totalCac)}</td>
-          <td>${currency(totals.adminCost)}</td>
+          <td>${currency(totalsBeforeCrm.budget)}</td>
+          <td>${currency(totalsBeforeCrm.targetRevenue)}</td>
+          <td>${percent(totalCacBefore)}</td>
+          <td>${currency(totalsBeforeCrm.adminCost)}</td>
           <td>-</td>
-          <td>${currency(totals.budgetAdmin)}</td>
-          <td>${percent(totalCacAfterAdmin)}</td>
+          <td>${currency(totalsBeforeCrm.budgetAdmin)}</td>
+          <td>${percent(totalCacAfterAdminBefore)}</td>
           <td>-</td>
         </tr>
-      ` : `<tr><td colspan="15">Belum ada draft pengajuan.</td></tr>`;
+        <tr class="total-row">
+          <td>Total Pengajuan After CRM</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>${currency(totalsAfterCrm.budget)}</td>
+          <td>${currency(totalsAfterCrm.targetRevenue)}</td>
+          <td>${percent(totalCacAfter)}</td>
+          <td>${currency(totalsAfterCrm.adminCost)}</td>
+          <td>-</td>
+          <td>${currency(totalsAfterCrm.budgetAdmin)}</td>
+          <td>${percent(totalCacAfterAdminAfter)}</td>
+          <td>-</td>
+        </tr>
+      ` : `<tr><td colspan="15">Belum ada draft pengajuan. Ketik "CRM" di kolom Nama ADV atau Kanal untuk menambah baris target revenue CRM.</td></tr>`;
       els.budgetProposalPamBody.innerHTML = pamSummaryHtml({
         hppRate: settings.hpp,
-        revenue: totals.targetRevenue,
-        budget: totals.budget,
-        budgetAdmin: totals.budgetAdmin,
-        minPam: settings.minPam
+        revenue: totalsBeforeCrm.targetRevenue,
+        budget: totalsBeforeCrm.budget,
+        budgetAdmin: totalsBeforeCrm.budgetAdmin,
+        minPam: settings.minPam,
+        extraAfterAdmin: hasCrmRows ? {
+          label: "PAM After Admin + CRM",
+          revenue: totalsAfterCrm.targetRevenue,
+          budgetAdmin: totalsBeforeCrm.budgetAdmin
+        } : null
       });
+      updateProposalLockUI();
     }
 
     function proposalTotals(rowDetails) {
@@ -6959,92 +6974,31 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       ).reduce((total, row) => total + (row.revenue || 0), 0);
     }
 
-    function pamSummaryHtml({ hppRate, revenue, budget, budgetAdmin = budget, minPam }) {
+    function pamSummaryHtml({ hppRate, revenue, budget, budgetAdmin = budget, minPam, extraAfterAdmin = null }) {
       const hppValue = revenue * hppRate / 100;
       const pamBeforeValue = revenue - hppValue - budget;
       const pamBeforeRate = percentRatio(pamBeforeValue, revenue);
       const pamAfterValue = revenue - hppValue - budgetAdmin;
       const pamAfterRate = percentRatio(pamAfterValue, revenue);
       const hasAdmin = budgetAdmin !== budget;
+      let extraRow = "";
+      if (extraAfterAdmin) {
+        const exRevenue = extraAfterAdmin.revenue || 0;
+        const exBudgetAdmin = extraAfterAdmin.budgetAdmin || 0;
+        const exHppValue = exRevenue * hppRate / 100;
+        const exPamValue = exRevenue - exHppValue - exBudgetAdmin;
+        const exPamRate = percentRatio(exPamValue, exRevenue);
+        extraRow = `<div class="pam-summary-row"><span>${escapeHtml(extraAfterAdmin.label)}</span><strong class="${exPamRate >= minPam ? "good" : "bad"}">${percent(exPamRate)}</strong><span>${currency(exPamValue)}</span></div>`;
+      }
       return `
         <div class="pam-summary-row"><span>HPP</span><strong>${percent(hppRate)}</strong><span>${currency(hppValue)}</span></div>
         <div class="pam-summary-row"><span>PAM</span><strong class="${pamBeforeRate >= minPam ? "good" : "bad"}">${percent(pamBeforeRate)}</strong><span>${currency(pamBeforeValue)}</span></div>
         ${hasAdmin ? `<div class="pam-summary-row"><span>PAM After Admin</span><strong class="${pamAfterRate >= minPam ? "good" : "bad"}">${percent(pamAfterRate)}</strong><span>${currency(pamAfterValue)}</span></div>` : ""}
+        ${extraRow}
         <div class="pam-summary-row"><span>Minimal PAM</span><strong>${percent(minPam)}</strong><span>${(hasAdmin ? pamAfterRate : pamBeforeRate) >= minPam ? "Aman" : "Belum aman"}</span></div>
       `;
     }
 
-    function renderBudgetAfterCrm(settings, nextStart, nextEnd, recommendedCrmRevenue) {
-      const rowDetails = weeklyProposalRows.map(row => ({ row, calc: effectiveProposal(row, settings) }));
-      const totals = proposalTotals(rowDetails);
-      const targetCrm = parseMoney(els.weeklyTargetCrmInput.value) || recommendedCrmRevenue;
-      const totalRevenueAfterCrm = totals.targetRevenue + targetCrm;
-      const totalCacAfterCrm = percentRatio(totals.budget, totalRevenueAfterCrm);
-      const totalCacAfterAdminCrm = percentRatio(totals.budgetAdmin, totalRevenueAfterCrm);
-
-      els.nextWeekAfterCrmTitle.textContent = `Pengajuan Setelah CRM Periode ${compactPeriodLabel(nextStart, nextEnd)}`;
-      if (!els.weeklyTargetCrmInput.value) {
-        els.weeklyTargetCrmInput.placeholder = currency(recommendedCrmRevenue);
-      }
-
-      const bodyRows = rowDetails.map(item => `
-        <tr>
-          <td>${escapeHtml(item.row.advertiser || "-")}</td>
-          <td>${escapeHtml(item.row.platform || "-")}</td>
-          <td>${escapeHtml(item.row.product || "-")}</td>
-          <td>${currency(item.calc.budget)}</td>
-          <td>${currency(item.calc.targetRevenue)}</td>
-          <td>${item.calc.targetRevenue ? percent(item.calc.targetCac) : "-"}</td>
-          <td>${currency(item.calc.budget)}</td>
-          <td>${currency(item.calc.targetRevenue)}</td>
-          <td>${item.calc.targetRevenue ? percent(item.calc.targetCac) : "-"}</td>
-          <td>${currency(item.calc.adminCost)}</td>
-          <td>${Number(item.row.adminRate || 0)}%</td>
-          <td>${currency(item.calc.budgetAdmin)}</td>
-          <td>${item.calc.targetRevenue ? percent(percentRatio(item.calc.budgetAdmin, item.calc.targetRevenue)) : "-"}</td>
-        </tr>
-      `).join("");
-      els.budgetAfterCrmBody.innerHTML = `
-        ${bodyRows || `<tr><td colspan="13">Belum ada data pengajuan.</td></tr>`}
-        <tr>
-          <td>Target Omset CRM</td>
-          <td>CRM</td>
-          <td>-</td>
-          <td>${currency(0)}</td>
-          <td>${currency(targetCrm)}</td>
-          <td>-</td>
-          <td>${currency(0)}</td>
-          <td>${currency(targetCrm)}</td>
-          <td>-</td>
-          <td>${currency(0)}</td>
-          <td>-</td>
-          <td>${currency(0)}</td>
-          <td>-</td>
-        </tr>
-        <tr class="total-row">
-          <td>Total Setelah CRM</td>
-          <td>-</td>
-          <td>-</td>
-          <td>${currency(totals.budget)}</td>
-          <td>${currency(totalRevenueAfterCrm)}</td>
-          <td>${percent(totalCacAfterCrm)}</td>
-          <td>${currency(totals.budget)}</td>
-          <td>${currency(totalRevenueAfterCrm)}</td>
-          <td>${percent(totalCacAfterCrm)}</td>
-          <td>${currency(totals.adminCost)}</td>
-          <td>-</td>
-          <td>${currency(totals.budgetAdmin)}</td>
-          <td>${percent(totalCacAfterAdminCrm)}</td>
-        </tr>
-      `;
-      els.budgetAfterCrmPamBody.innerHTML = pamSummaryHtml({
-        hppRate: settings.hpp,
-        revenue: totalRevenueAfterCrm,
-        budget: totals.budget,
-        budgetAdmin: totals.budgetAdmin,
-        minPam: settings.minPam
-      });
-    }
 
     function renderWeeklyAfterCrm(reviewRows, totalBudget, totalRevenue, crmRevenue, settings) {
       const totalAdmin = reviewRows.reduce((total, row) => total + (row.adminCost || 0), 0);
@@ -7135,6 +7089,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         adminRate: proposalAdminDefault("Meta", settings),
         manualBudget: "",
         manualTargetCac: "",
+        crmRevenue: "",
         custom: true
       });
       renderWeeklyBudgetingPage();
@@ -7337,6 +7292,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
 
     function renderWeeklyBudgetingPage() {
       const [start, end] = getSelectedWeekRange();
+      const periodKeyNow = `${dateKey(start)}|${dateKey(end)}`;
+      if (periodKeyNow !== lastLoadedProposalPeriodKey) {
+        loadProposalForCurrentPeriod();
+        lastLoadedProposalPeriodKey = periodKeyNow;
+      }
       const [nextStart, nextEnd] = nextWeekRangeFrom(start);
       const label = compactPeriodLabel(start, end);
       const settings = currentWeeklySettings();
@@ -7346,7 +7306,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       const proposalSourceRows = reviewRows;
       const productRows = weeklyProductRowsInRange(start, end);
       const weeklyCrmRevenue = crmRevenueInRange(start, end);
-      const targetCrmRevenue = parseMoney(els.weeklyTargetCrmInput.value) || weeklyCrmRevenue;
+      const targetCrmRevenue = weeklyCrmRevenue;
       const [cStart, cEnd] = getSelectedWeekRange();
       const prevDeficit = getPreviousWeekDeficit(cStart, cEnd);
       const baseWeeklyTarget = (loadMonthlyTarget() || 0) / 4;
@@ -7457,7 +7417,6 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         </tr>
       `).join("") || `<tr><td colspan="7">Belum ada data produk pada periode ini.</td></tr>`;
       renderBudgetProposalRows(settings);
-      renderBudgetAfterCrm(settings, nextStart, nextEnd, weeklyCrmRevenue);
     }
 
     function renderAdminShopeeTable(start, end) {
@@ -9588,30 +9547,45 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         els.weeklyShopeeTaxInput,
         els.weeklyTiktokAdminInput
       ].forEach(input => input.addEventListener("input", renderWeeklyBudgetingPage));
-      els.weekPeriodSelect.addEventListener("change", renderWeeklyBudgetingPage);
-      els.weeklyTargetCrmInput.addEventListener("input", () => {
-        normalizePlainNumberInput(els.weeklyTargetCrmInput);
+      els.weekPeriodSelect.addEventListener("change", () => {
+        // renderWeeklyBudgetingPage() otomatis load data tersimpan utk periode yang baru dipilih
         renderWeeklyBudgetingPage();
       });
-      els.addBudgetProposalRow.addEventListener("click", addManualBudgetProposalRow);
+      els.addBudgetProposalRow.addEventListener("click", () => {
+        if (isCurrentProposalLocked()) { alert("Data periode ini terkunci. Klik Unlock / Edit dulu untuk menambah baris."); return; }
+        addManualBudgetProposalRow();
+      });
       els.resetBudgetProposalRows.addEventListener("click", () => {
+        if (isCurrentProposalLocked()) { alert("Data periode ini terkunci. Klik Unlock / Edit dulu untuk reset."); return; }
         weeklyProposalRows = [];
         weeklyProposalSeed = "";
+        const key = currentPeriodKey();
+        delete budgetingSavesByPeriod[key];
+        persistBudgetingSaves();
+        renderWeeklyBudgetingPage();
+      });
+      els.unlockProposalBtn.addEventListener("click", () => {
+        if (!isCurrentProposalLocked()) return;
+        if (!confirm("Buka kunci data budgeting & CRM periode ini supaya bisa diedit lagi?")) return;
+        unlockCurrentProposal();
         renderWeeklyBudgetingPage();
       });
       els.budgetRecommendationBody.addEventListener("input", event => {
+        if (isCurrentProposalLocked()) return;
         const input = event.target.closest("[data-proposal-field]");
         const row = event.target.closest("[data-proposal-id]");
         if (!input || !row) return;
         updateProposalRow(row.dataset.proposalId, input.dataset.proposalField, input.value);
       });
       els.budgetRecommendationBody.addEventListener("change", event => {
+        if (isCurrentProposalLocked()) return;
         const input = event.target.closest("[data-proposal-field]");
         const row = event.target.closest("[data-proposal-id]");
         if (!input || !row) return;
         updateProposalRow(row.dataset.proposalId, input.dataset.proposalField, input.value, true);
       });
       els.budgetRecommendationBody.addEventListener("click", event => {
+        if (isCurrentProposalLocked()) return;
         const button = event.target.closest("[data-delete-proposal]");
         const row = event.target.closest("[data-proposal-id]");
         if (!button || !row) return;
@@ -10304,50 +10278,110 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     // NEW FEATURES IMPLEMENTATION FOR DASHBOARD
     // ==========================================
 
-    const AUTO_SAVE_INTERVAL = 10000; // 10 seconds
-    const PROPOSAL_STORAGE_KEY = 'ngkr_budgeting_proposal';
-    let autoSaveTimer = null;
+    const PROPOSAL_STORAGE_KEY = 'ngkr_budgeting_proposal_by_period'; // { [periodKey]: { rows, locked, savedAt } }
     let myTrendChart = null;
+    let budgetingSavesByPeriod = {};
 
-    // Load and Setup Auto-save
-    function setupAutoSave() {
-        console.log('Setting up auto-save...');
-        
-        // Load saved proposal rows
-        const saved = localStorage.getItem(PROPOSAL_STORAGE_KEY);
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    weeklyProposalRows = parsed;
-                    console.log('Loaded', parsed.length, 'saved proposal rows');
-                    if (typeof renderWeeklyBudgetingPage === 'function') {
-                        renderWeeklyBudgetingPage();
-                    }
-                }
-            } catch (e) {
-                console.warn('Failed to load saved proposals:', e);
-            }
+    function loadBudgetingSavesFromStorage() {
+        try {
+            budgetingSavesByPeriod = JSON.parse(localStorage.getItem(PROPOSAL_STORAGE_KEY) || '{}');
+            if (!budgetingSavesByPeriod || typeof budgetingSavesByPeriod !== 'object') budgetingSavesByPeriod = {};
+        } catch (e) {
+            console.warn('Gagal load data budgeting tersimpan:', e);
+            budgetingSavesByPeriod = {};
         }
+    }
 
-        // Setup auto-save interval
-        if (autoSaveTimer) clearInterval(autoSaveTimer);
-        autoSaveTimer = setInterval(() => {
-            saveBudgetingData();
-        }, AUTO_SAVE_INTERVAL);
+    function persistBudgetingSaves() {
+        try {
+            localStorage.setItem(PROPOSAL_STORAGE_KEY, JSON.stringify(budgetingSavesByPeriod));
+        } catch (e) {
+            console.warn('Gagal menyimpan data budgeting:', e);
+        }
+    }
 
+    function currentPeriodKey() {
+        const [start, end] = getSelectedWeekRange();
+        return `${dateKey(start)}|${dateKey(end)}`;
+    }
+
+    function isCurrentProposalLocked() {
+        return weeklyProposalLockedPeriod === currentPeriodKey();
+    }
+
+    // Panggil tiap kali periode/minggu berganti: load draft/data tersimpan utk periode itu
+    function loadProposalForCurrentPeriod() {
+        const key = currentPeriodKey();
+        const saved = budgetingSavesByPeriod[key];
+        if (saved && Array.isArray(saved.rows) && saved.rows.length) {
+            weeklyProposalRows = saved.rows;
+            weeklyProposalSeed = `loaded:${key}`;
+            weeklyProposalLockedPeriod = saved.locked ? key : null;
+        } else {
+            weeklyProposalRows = [];
+            weeklyProposalSeed = "";
+            weeklyProposalLockedPeriod = null;
+        }
+        updateProposalLockUI();
+    }
+
+    // Simpan draft (tidak mengunci) - dipakai misalnya setelah bulk import
+    function persistDraftProposal() {
+        const key = currentPeriodKey();
+        const existing = budgetingSavesByPeriod[key];
+        budgetingSavesByPeriod[key] = {
+            rows: weeklyProposalRows,
+            locked: existing ? !!existing.locked : false,
+            savedAt: new Date().toISOString()
+        };
+        persistBudgetingSaves();
         updateLastSaveTime();
     }
 
-    function saveBudgetingData() {
-        try {
-            localStorage.setItem(PROPOSAL_STORAGE_KEY, JSON.stringify(weeklyProposalRows));
-            updateLastSaveTime();
-            return true;
-        } catch (e) {
-            console.warn('Auto-save failed:', e);
-            return false;
+    // Simpan & kunci data budgeting+CRM utk periode aktif (dipicu tombol "Save & Kunci Rekomendasi")
+    function saveAndLockCurrentProposal() {
+        const key = currentPeriodKey();
+        budgetingSavesByPeriod[key] = {
+            rows: weeklyProposalRows,
+            locked: true,
+            savedAt: new Date().toISOString()
+        };
+        persistBudgetingSaves();
+        weeklyProposalLockedPeriod = key;
+        updateLastSaveTime();
+        updateProposalLockUI();
+    }
+
+    // Buka kunci data periode aktif supaya bisa diedit lagi
+    function unlockCurrentProposal() {
+        const key = currentPeriodKey();
+        if (budgetingSavesByPeriod[key]) {
+            budgetingSavesByPeriod[key].locked = false;
+            persistBudgetingSaves();
         }
+        weeklyProposalLockedPeriod = null;
+        updateProposalLockUI();
+    }
+
+    // Update tampilan badge/tombol kunci sesuai status periode aktif
+    function updateProposalLockUI() {
+        const locked = isCurrentProposalLocked();
+        if (els.proposalLockBadge) {
+            els.proposalLockBadge.style.display = "inline-block";
+            if (locked) {
+                els.proposalLockBadge.textContent = "🔒 Data periode ini terkunci (tersimpan)";
+                els.proposalLockBadge.style.background = "#fee2e2";
+                els.proposalLockBadge.style.color = "#991b1b";
+            } else {
+                els.proposalLockBadge.textContent = "✏️ Mode edit — belum dikunci";
+                els.proposalLockBadge.style.background = "#dcfce7";
+                els.proposalLockBadge.style.color = "#166534";
+            }
+        }
+        if (els.unlockProposalBtn) els.unlockProposalBtn.style.display = locked ? "inline-block" : "none";
+        if (els.saveRecommendationBtn) els.saveRecommendationBtn.style.display = locked ? "none" : "inline-block";
+        if (els.addBudgetProposalRow) els.addBudgetProposalRow.disabled = locked;
+        if (els.resetBudgetProposalRows) els.resetBudgetProposalRows.disabled = locked;
     }
 
     function updateLastSaveTime() {
@@ -10355,7 +10389,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         if (timeEl) {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            timeEl.textContent = 'Terakhir: ' + timeStr;
+            timeEl.textContent = 'Terakhir disimpan: ' + timeStr;
         }
     }
 
@@ -10383,6 +10417,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         });
 
         btnParse.addEventListener('click', () => {
+            if (isCurrentProposalLocked()) {
+                alert('Data periode ini terkunci. Klik Unlock / Edit dulu sebelum import.');
+                return;
+            }
             const text = document.getElementById('bulkImportTextarea').value.trim();
             if (!text) {
                 alert('Masukkan data CSV terlebih dahulu');
@@ -10490,7 +10528,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             if (typeof renderWeeklyBudgetingPage === 'function') {
                 renderWeeklyBudgetingPage();
             }
-            saveBudgetingData();
+            persistDraftProposal();
         } else {
             document.getElementById('bulkImportPreview').innerHTML = `
                 <div style="color: #b91c1c; font-weight: bold; margin-top: 8px;">
@@ -10572,10 +10610,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
                     alert('Tidak ada data budgeting untuk disimpan');
                     return;
                 }
-                
-                if (confirm('Simpan semua rekomendasi budgeting sekarang? Data ini akan langsung disinkronkan ke dashboard.')) {
-                    saveBudgetingData();
-                    alert('Rekomendasi budgeting berhasil disimpan secara permanen!');
+
+                if (confirm('Simpan & kunci semua rekomendasi budgeting (termasuk baris CRM) untuk periode ini? Setelah dikunci, ganti filter/periode tidak akan mengubah data ini lagi sampai lu klik Unlock / Edit.')) {
+                    saveAndLockCurrentProposal();
+                    if (typeof renderWeeklyBudgetingPage === 'function') renderWeeklyBudgetingPage();
+                    alert('Rekomendasi budgeting & CRM berhasil disimpan dan dikunci!');
                 }
             });
         }
@@ -10932,90 +10971,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
 
 
-    function setupCrmTargetInput() {
-        const btnSave = document.getElementById('saveCrmTargetBtn');
-        const inputField = document.getElementById('saveCrmTargetInput');
-        
-        if (!btnSave || !inputField) return;
-        
-        // Load saved CRM target
-        const savedCrmTarget = loadCrmTargetByMonth();
-        if (savedCrmTarget > 0) {
-            inputField.value = formatCurrencyInput(savedCrmTarget);
-        }
-        
-        // Save button handler
-        btnSave.addEventListener('click', () => {
-            const inputValue = inputField.value.trim();
-            if (!inputValue) {
-                alert('Masukkan target omset CRM terlebih dahulu');
-                return;
-            }
-            
-            const numericValue = parseMoney(inputValue);
-            if (numericValue <= 0 || isNaN(numericValue)) {
-                alert('Target harus berupa angka positif');
-                return;
-            }
-            
-            if (saveCrmTargetByMonth(numericValue)) {
-                alert('Target CRM berhasil disimpan!');
-                if (typeof renderWeeklyBudgetingPage === 'function') {
-                    renderWeeklyBudgetingPage();
-                }
-            }
-        });
-        
-        // Enter key handler
-        inputField.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                btnSave.click();
-            }
-        });
-    }
-    
-    function setupExportBudgetingData() {
-        const btnExport = document.getElementById('exportBudgetingDataBtn');
-        if (!btnExport) return;
-        
-        btnExport.addEventListener('click', () => {
-            if (weeklyProposalRows.length === 0) {
-                alert('Tidak ada data budgeting untuk diexport');
-                return;
-            }
-            
-            try {
-                const data = weeklyProposalRows.map(row => {
-                    const budget = row.mode === 'manual' ? parseFloat(row.manualBudget) : (row.recommendationBudget || 0);
-                    const cac = row.mode === 'manual' ? parseFloat(row.manualTargetCac) : (row.recommendationTargetCac || 0);
-                    const revenue = cac > 0 ? (budget / (cac / 100)) : 0;
-                    return {
-                        'Nama ADV': row.advertiser,
-                        'Platform': row.platform,
-                        'Produk': row.product,
-                        'Budget': budget,
-                        'Target Revenue': revenue,
-                        'Target CAC (%)': cac
-                    };
-                });
-                
-                const worksheet = XLSX.utils.json_to_sheet(data);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, 'Budgeting Data');
-                XLSX.writeFile(workbook, 'Budgeting_Data_' + new Date().toISOString().split('T')[0] + '.xlsx');
-            } catch (err) {
-                console.error('Export failed', err);
-                alert('Gagal mengexport data');
-            }
-        });
-    }
-
-
     function setupAllNewFeatures() {
-        setupCrmTargetInput();
-        setupExportBudgetingData();
         console.log('setupAllNewFeatures started');
-        setupAutoSave();
+        loadBudgetingSavesFromStorage();
+        loadProposalForCurrentPeriod();
+        lastLoadedProposalPeriodKey = currentPeriodKey();
         setupBulkImport();
         setupExportFunctions();
         setupSaveRecommendation();

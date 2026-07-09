@@ -2064,20 +2064,6 @@
         </section>
 
         
-        <!-- Trend Analysis Chart -->
-        <section class="card panel">
-          <div class="panel-header">
-            <h2>Trend Analysis (4 Minggu Terakhir)</h2>
-            <span class="panel-note">Tren budget, revenue, dan performa mingguan</span>
-          </div>
-          <div style="padding: 16px;">
-            <canvas id="trendChart" style="width: 100%; height: 300px;"></canvas>
-          </div>
-          <div style="display: flex; gap: 8px; padding: 16px; border-top: 1px solid #eee;">
-            <button class="panel-action" id="updateTrendChart" type="button">Update Chart</button>
-            <button class="panel-action" id="exportChartData" type="button">Export Data Chart</button>
-          </div>
-        </section>
 
 <section class="card panel">
           <div class="panel-header">
@@ -10951,7 +10937,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         const displayElements = {
             'shopee': { target: 'shopeeTargetDisplay', actual: 'shopeeActualDisplay', fill: 'shopeeProgressFill', percent: 'shopeeProgressPercent' },
             'tiktok': { target: 'tiktokTargetDisplay', actual: 'tiktokActualDisplay', fill: 'tiktokProgressFill', percent: 'tiktokProgressPercent' },
-            'advertiser': { target: 'advTargetDisplay', actual: 'advActualDisplay', fill: 'advProgressFill', percent: 'advProgressPercent' },
+            'advertiser': { target: 'advertiserTargetDisplay', actual: 'advertiserActualDisplay', fill: 'advertiserProgressFill', percent: 'advertiserProgressPercent' },
             'cs': { target: 'csTargetDisplay', actual: 'csActualDisplay', fill: 'csProgressFill', percent: 'csProgressPercent' },
             'crm': { target: 'crmTargetDisplay', actual: 'crmActualDisplay', fill: 'crmProgressFill', percent: 'crmProgressPercent' }
         };
@@ -11099,7 +11085,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         const displayElements = {
             'shopee': { target: 'shopeeTargetDisplay', actual: 'shopeeActualDisplay', fill: 'shopeeProgressFill', percent: 'shopeeProgressPercent' },
             'tiktok': { target: 'tiktokTargetDisplay', actual: 'tiktokActualDisplay', fill: 'tiktokProgressFill', percent: 'tiktokProgressPercent' },
-            'advertiser': { target: 'advTargetDisplay', actual: 'advActualDisplay', fill: 'advProgressFill', percent: 'advProgressPercent' },
+            'advertiser': { target: 'advertiserTargetDisplay', actual: 'advertiserActualDisplay', fill: 'advertiserProgressFill', percent: 'advertiserProgressPercent' },
             'cs': { target: 'csTargetDisplay', actual: 'csActualDisplay', fill: 'csProgressFill', percent: 'csProgressPercent' },
             'crm': { target: 'crmTargetDisplay', actual: 'crmActualDisplay', fill: 'crmProgressFill', percent: 'crmProgressPercent' }
         };
@@ -11119,19 +11105,25 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
 
     function getBudgetingProposalsByChannel(channel) {
-        const saved = localStorage.getItem('ngkr_budgeting_proposal');
-        if (!saved) return [];
+        const key = currentPeriodKey();
+        const saved = budgetingSavesByPeriod[key];
+        const rows = (saved && Array.isArray(saved.rows) && saved.rows.length) ? saved.rows : weeklyProposalRows;
+        
+        if (!rows || !rows.length) return [];
 
         try {
-            const rows = JSON.parse(saved);
             const channelLower = (channel || '').toLowerCase();
 
             return rows.filter(row => {
                 const platform = (row.platform || '').toLowerCase();
                 if (channelLower === 'shopee') return platform.includes('shopee');
-                if (channelLower === 'tiktok') return platform.includes('tiktokshop');
+                if (channelLower === 'tiktok') return platform.includes('tiktokshop') || platform === 'tiktokshop';
                 if (channelLower === 'crm') return platform.includes('crm') || !platform.includes('shopee') && !platform.includes('tiktokshop') && !platform.includes('meta');
-                if (channelLower === 'advertiser' || channelLower === 'cs') {
+                if (channelLower === 'advertiser') {
+                    // Hanya ambil data dengan kolom kanal Meta saja
+                    return platform === 'meta' || platform.includes('meta');
+                }
+                if (channelLower === 'cs') {
                     return platform.includes('meta') || platform.includes('facebook') || platform.includes('instagram') || platform.includes('google') || (platform.includes('tiktok') && !platform.includes('tiktokshop'));
                 }
                 return false;
@@ -11408,9 +11400,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             }
             
             // Render budgeting proposal table if exists
-            const proposalContainer = document.getElementById(activePage + 'ProposalTable');
+            const proposalContainer = document.getElementById(activePage + 'ProposalTableBody');
             if (proposalContainer && typeof renderBudgetingProposalTable === 'function') {
-                renderBudgetingProposalTable(activePage, '#' + activePage + 'ProposalTable');
+                renderBudgetingProposalTable(activePage, '#' + activePage + 'ProposalTableBody');
             }
         }
     }

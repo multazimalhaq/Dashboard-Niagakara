@@ -10990,59 +10990,94 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
 
 
     
-    // ========== CLOUD SYNC CONFIGURATION (GOOGLE APPS SCRIPT) ==========
-    // Paste URL Web App hasil deploy Apps Script Anda di sini untuk mengaktifkan sinkronisasi cloud
-    const SYNC_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyqaCseV_6lu5-YwqOpOoKH1mVjyDMaiqSbvU7vEOiVewI3OF9BiZXTJyarxuZhb5Cg/exec"; 
-
-    async function syncLoadFromCloud() {
-        if (!SYNC_WEB_APP_URL) return;
-        try {
-            console.log("Memuat data sinkronisasi dari cloud...");
-            const response = await fetch(SYNC_WEB_APP_URL + "?action=loadAll");
-            if (!response.ok) throw new Error("HTTP error " + response.status);
-            const data = await response.json();
-            if (data) {
-                if (data.targets) {
-                    localStorage.setItem(MONTHLY_TARGETS_KEY, JSON.stringify(data.targets));
-                }
-                if (data.proposals) {
-                    localStorage.setItem(PROPOSAL_STORAGE_KEY, JSON.stringify(data.proposals));
-                }
-                console.log("Sinkronisasi cloud berhasil dimuat!");
-            }
-        } catch (e) {
-            console.warn("Gagal sinkronisasi cloud saat startup (menggunakan data lokal):", e);
-        }
-    }
-
-    async function syncSaveTargetsToCloud(targets) {
-        if (!SYNC_WEB_APP_URL) return;
-        try {
-            await fetch(SYNC_WEB_APP_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain" },
-                body: JSON.stringify({ action: "saveTargets", targets })
-            });
-            console.log("Target bulanan disinkronkan ke cloud!");
-        } catch (e) {
-            console.warn("Gagal sinkronisasi target ke cloud:", e);
-        }
-    }
-
-    async function syncSaveProposalsToCloud(proposals) {
-        if (!SYNC_WEB_APP_URL) return;
-        try {
-            await fetch(SYNC_WEB_APP_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain" },
-                body: JSON.stringify({ action: "saveProposals", proposals })
-            });
-            console.log("Proposal budgeting disinkronkan ke cloud!");
-        } catch (e) {
-            console.warn("Gagal sinkronisasi proposal ke cloud:", e);
-        }
-    }
-
+    // ========== CLOUD SYNC CONFIGURATION (GOOGLE APPS SCRIPT) ==========
+    // Paste URL Web App hasil deploy Apps Script Anda di sini untuk mengaktifkan sinkronisasi cloud
+    const SYNC_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyqaCseV_6lu5-YwqOpOoKH1mVjyDMaiqSbvU7vEOiVewI3OF9BiZXTJyarxuZhb5Cg/exec"; 
+
+    async function syncLoadFromCloud() {
+        if (!SYNC_WEB_APP_URL) return;
+        try {
+            console.log("Memuat data sinkronisasi dari cloud...");
+            const SYNC_SHEET_ID = "1VZgzzblh9iUmQyAitNuGcitUMSDgNYET_YVhW5ykYac";
+
+            // Load MonthlyTargets via Google Visualization API (JSONP)
+            try {
+                const targetRows = await loadGoogleSheet(SYNC_SHEET_ID, "MonthlyTargets", "select *");
+                if (targetRows && targetRows.length) {
+                    const targets = {};
+                    targetRows.forEach(row => {
+                        const key = row["MonthKey"] || row["A"] || "";
+                        const val = parseFloat(row["TargetValue"] || row["B"]) || 0;
+                        if (key && val) targets[key] = val;
+                    });
+                    if (Object.keys(targets).length) {
+                        localStorage.setItem(MONTHLY_TARGETS_KEY, JSON.stringify(targets));
+                    }
+                }
+            } catch (e) {
+                console.warn("Gagal load MonthlyTargets dari cloud:", e);
+            }
+
+            // Load WeeklyProposals via Google Visualization API (JSONP)
+            try {
+                const proposalRows = await loadGoogleSheet(SYNC_SHEET_ID, "WeeklyProposals", "select *");
+                if (proposalRows && proposalRows.length) {
+                    const proposals = {};
+                    proposalRows.forEach(row => {
+                        const key = row["PeriodKey"] || row["A"] || "";
+                        const rowsJsonStr = row["RowsJSON"] || row["B"] || "[]";
+                        const locked = String(row["Locked"] || row["C"] || "").toUpperCase() === "TRUE";
+                        const savedAt = row["LastUpdated"] || row["D"] || "";
+                        if (key) {
+                            let rows = [];
+                            try { rows = JSON.parse(rowsJsonStr); } catch (_) {}
+                            proposals[key] = { rows, locked, savedAt };
+                        }
+                    });
+                    if (Object.keys(proposals).length) {
+                        localStorage.setItem(PROPOSAL_STORAGE_KEY, JSON.stringify(proposals));
+                    }
+                }
+            } catch (e) {
+                console.warn("Gagal load WeeklyProposals dari cloud:", e);
+            }
+
+            console.log("Sinkronisasi cloud berhasil dimuat!");
+        } catch (e) {
+            console.warn("Gagal sinkronisasi cloud saat startup (menggunakan data lokal):", e);
+        }
+    }
+
+    async function syncSaveTargetsToCloud(targets) {
+        if (!SYNC_WEB_APP_URL) return;
+        try {
+            await fetch(SYNC_WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({ action: "saveTargets", targets })
+            });
+            console.log("Target bulanan disinkronkan ke cloud!");
+        } catch (e) {
+            console.warn("Gagal sinkronisasi target ke cloud:", e);
+        }
+    }
+
+    async function syncSaveProposalsToCloud(proposals) {
+        if (!SYNC_WEB_APP_URL) return;
+        try {
+            await fetch(SYNC_WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({ action: "saveProposals", proposals })
+            });
+            console.log("Proposal budgeting disinkronkan ke cloud!");
+        } catch (e) {
+            console.warn("Gagal sinkronisasi proposal ke cloud:", e);
+        }
+    }
+
     // ========== MULTI-MONTH TARGET HISTORY ==========
     const MONTHLY_TARGETS_KEY = 'ngkr_monthly_targets_history';
 

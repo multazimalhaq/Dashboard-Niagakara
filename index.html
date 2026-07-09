@@ -8370,8 +8370,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       const padBottom = 42;
       const width = rect.width - padLeft - padRight;
       const height = rect.height - padTop - padBottom;
-      const monthlyTarget = loadMonthlyTarget();
-      const target = monthlyTarget * 0.20; // 20% Pareto Share Soscom (Meta)
+      const [startRange] = getAdvertiserRange();
+      const daysInMonth = startRange ? new Date(startRange.getFullYear(), startRange.getMonth() + 1, 0).getDate() : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+      const monthlyTarget = loadMonthlyTargetByMonth();
+      const target = (monthlyTarget * 0.20) / daysInMonth; // 20% Pareto Share Soscom (Meta) harian
       const max = Math.max(1, target, ...rows.map(row => row.revenue));
       const step = rows.length > 1 ? width / (rows.length - 1) : width;
 
@@ -8887,10 +8889,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       renderTrackingSection("crm", crmRows);
       renderCrmDailyReport(dailyRows);
       if (typeof updateChannelTargetBanner === 'function') {
-        // If CRM target is set, use it; otherwise use Pareto share
-        const crmTarget = loadCrmTargetByMonth();
-        const targetToUse = crmTarget > 0 ? crmTarget : getChannelTarget(loadMonthlyTargetByMonth(), 'crm');
-        updateChannelTargetBanner('crm', targetToUse, totalGross);
+        updateChannelTargetBanner('crm', loadMonthlyTargetByMonth(), totalGross);
       }
       if (typeof renderBudgetingProposalTable === 'function') {
         renderBudgetingProposalTable('crm', '#crmProposalTableBody');
@@ -8910,8 +8909,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       const padLeft = 58, padRight = 22, padTop = 24, padBottom = 42;
       const width = rect.width - padLeft - padRight;
       const height = rect.height - padTop - padBottom;
-      const monthlyTarget = loadMonthlyTarget();
-      const target = monthlyTarget * 0.25; // 25% Pareto Share CRM
+      const [startRange] = getCrmRange();
+      const daysInMonth = startRange ? new Date(startRange.getFullYear(), startRange.getMonth() + 1, 0).getDate() : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+      const monthlyTarget = loadMonthlyTargetByMonth();
+      const target = (monthlyTarget * 0.25) / daysInMonth; // 25% Pareto Share CRM harian
       const max = Math.max(1, target, ...rows.map(row => row.crmRevenue));
       const step = rows.length > 1 ? width / (rows.length - 1) : width;
 
@@ -11118,7 +11119,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
                 const platform = (row.platform || '').toLowerCase();
                 if (channelLower === 'shopee') return platform.includes('shopee');
                 if (channelLower === 'tiktok') return platform.includes('tiktokshop') || platform === 'tiktokshop';
-                if (channelLower === 'crm') return platform.includes('crm') || !platform.includes('shopee') && !platform.includes('tiktokshop') && !platform.includes('meta');
+                if (channelLower === 'crm') return platform === 'crm' || platform.includes('crm');
                 if (channelLower === 'advertiser') {
                     // Hanya ambil data dengan kolom kanal Meta saja
                     return platform === 'meta' || platform.includes('meta');

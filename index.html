@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NIAGAKARA MITRA JUARA</title>
+  <link rel="icon" type="image/jpeg" href="logo-niagakara.jpg">
   <style>
     :root {
       --bg: #eaf3fb;
@@ -2078,6 +2079,9 @@
                   <th>Omset</th>
                   <th>Budget</th>
                   <th>CAC</th>
+                  <th>Omset CRM</th>
+                  <th>Omset Total</th>
+                  <th>CAC After CRM</th>
                   <th>Impresi</th>
                   <th>Lead Dashboard</th>
                   <th>Lead CS</th>
@@ -5234,7 +5238,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         const key = dateKey(row.date);
         const item = byDate.get(key) || {
           date: row.date, revenue: 0, budget: 0, impressions: 0, leadDashboard: 0,
-          leadCs: 0, closing: 0, quantity: 0
+          leadCs: 0, closing: 0, quantity: 0, crmRevenue: 0
         };
         item.revenue += row.revenue || 0;
         item.closing += row.closing || 0;
@@ -5247,7 +5251,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         const key = dateKey(date);
         const item = byDate.get(key) || {
           date, revenue: 0, budget: 0, impressions: 0, leadDashboard: 0,
-          leadCs: 0, closing: 0, quantity: 0
+          leadCs: 0, closing: 0, quantity: 0, crmRevenue: 0
         };
         item.budget += row.budget || 0;
         item.impressions += row.impressions || 0;
@@ -5264,14 +5268,26 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         const key = dateKey(date);
         const item = byDate.get(key) || {
           date, revenue: 0, budget: 0, impressions: 0, leadDashboard: 0,
-          leadCs: 0, closing: 0, quantity: 0
+          leadCs: 0, closing: 0, quantity: 0, crmRevenue: 0
         };
         item.leadCs += row.leadCs || 0;
         byDate.set(key, item);
       });
+      grossAdvertiserRows(crmSourceRows()).forEach(row => {
+        const date = row.date;
+        if (!date || date < startOfDay(start) || date > startOfDay(end)) return;
+        if (selectedProduct !== "all" && !sameProductValue(row.product, selectedProduct)) return;
+        const key = dateKey(date);
+        const item = byDate.get(key) || {
+          date, revenue: 0, budget: 0, impressions: 0, leadDashboard: 0,
+          leadCs: 0, closing: 0, quantity: 0, crmRevenue: 0
+        };
+        item.crmRevenue += row.revenue || 0;
+        byDate.set(key, item);
+      });
       return dateRangeSeries(start, end).map(date => byDate.get(dateKey(date)) || {
         date, revenue: 0, budget: 0, impressions: 0, leadDashboard: 0,
-        leadCs: 0, closing: 0, quantity: 0
+        leadCs: 0, closing: 0, quantity: 0, crmRevenue: 0
       });
     }
 
@@ -8452,6 +8468,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     function calculateDailyReportRow(row, previousRevenue) {
       const budget = row.budget || 0;
       const cac = percentRatio(budget, row.revenue);
+      const crmRevenue = row.crmRevenue || 0;
+      const totalRevenue = row.revenue + crmRevenue;
+      const cacAfterCrm = percentRatio(budget, totalRevenue);
       const closingRate = percentRatio(row.closing, row.leadCs);
       const upsell = row.closing > 0 ? row.quantity / row.closing : 0;
       const costLeadDashboard = row.leadDashboard > 0 ? budget / row.leadDashboard : 0;
@@ -8459,7 +8478,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       const pamValue = row.revenue - (row.revenue * 0.455) - budget;
       const pamPct = percentRatio(pamValue, row.revenue);
       const growth = previousRevenue > 0 ? ((row.revenue - previousRevenue) / previousRevenue) * 100 : null;
-      return { budget, cac, closingRate, upsell, costLeadDashboard, costLeadCs, pamValue, pamPct, growth };
+      return { budget, cac, crmRevenue, totalRevenue, cacAfterCrm, closingRate, upsell, costLeadDashboard, costLeadCs, pamValue, pamPct, growth };
     }
 
     function renderDailyReport(rows) {
@@ -8471,8 +8490,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         acc.leadCs += row.leadCs;
         acc.closing += row.closing;
         acc.quantity += row.quantity;
+        acc.crmRevenue += row.crmRevenue || 0;
         return acc;
-      }, { revenue: 0, budget: 0, impressions: 0, leadDashboard: 0, leadCs: 0, closing: 0, quantity: 0 });
+      }, { revenue: 0, budget: 0, impressions: 0, leadDashboard: 0, leadCs: 0, closing: 0, quantity: 0, crmRevenue: 0 });
       const totalCalc = calculateDailyReportRow(totals, 0);
       const totalRow = `
         <tr class="total-row">
@@ -8480,6 +8500,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           ${reportCell(currency(totals.revenue))}
           ${reportCell(currency(totals.budget))}
           ${reportCell(percent(totalCalc.cac))}
+          ${reportCell(currency(totalCalc.crmRevenue))}
+          ${reportCell(currency(totalCalc.totalRevenue))}
+          ${reportCell(percent(totalCalc.cacAfterCrm))}
           ${reportCell(totals.impressions.toLocaleString("id-ID"))}
           ${reportCell(totals.leadDashboard.toLocaleString("id-ID"))}
           ${reportCell(totals.leadCs.toLocaleString("id-ID"))}
@@ -8506,6 +8529,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             ${reportCell(currency(row.revenue))}
             ${reportCell(currency(calc.budget))}
             ${reportCell(percent(calc.cac))}
+            ${reportCell(currency(calc.crmRevenue))}
+            ${reportCell(currency(calc.totalRevenue))}
+            ${reportCell(percent(calc.cacAfterCrm))}
             ${reportCell(row.impressions.toLocaleString("id-ID"))}
             ${reportCell(row.leadDashboard.toLocaleString("id-ID"))}
             ${reportCell(row.leadCs.toLocaleString("id-ID"))}

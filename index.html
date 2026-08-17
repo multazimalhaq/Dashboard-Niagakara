@@ -591,6 +591,87 @@
     .status-return { background: #ffe4e6; color: #9f1239; }
     .status-lost { background: #fee2e2; color: #991b1b; }
 
+    .status-chip.kategori-chip { gap: 6px; }
+    .status-chip.kategori-chip::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      flex: none;
+    }
+    .status-clv-aktif { background: #dcfce7; color: #166534; }
+    .status-clv-followup { background: #fef3c7; color: #92400e; }
+    .status-clv-atrisk { background: #ffe4d5; color: #c2410c; }
+    .status-clv-dormant { background: #fee2e2; color: #991b1b; }
+    .status-clv-churn { background: #e5e7eb; color: #374151; }
+
+    .clv-legend-table td, .clv-legend-table th { font-size: 12.5px; }
+    .clv-legend-note { color: var(--muted); font-size: 12.5px; }
+    .clv-search-input { min-width: 220px; }
+
+    /* CLV table: lebar tetap (table-layout fixed) mengikuti <colgroup>, jadi
+       kolom gak melar/nyisain ruang kosong seperti .daily-table bawaan. */
+    .daily-table.clv-table {
+      min-width: 0;
+      width: 100%;
+      table-layout: fixed;
+    }
+    .clv-table th, .clv-table td {
+      padding: 8px 8px;
+      font-size: 12.5px;
+      vertical-align: top;
+      word-break: break-word;
+    }
+    .clv-table td.clv-ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .clv-table td.clv-clamp {
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .clv-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .clv-pagination button {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+      color: var(--ink);
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .clv-pagination button:hover:not(:disabled) {
+      border-color: #9fb0c3;
+    }
+    .clv-pagination button.active {
+      background: #0b3554;
+      border-color: #0b3554;
+      color: #ffffff;
+    }
+    .clv-pagination button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .clv-pagination span.clv-dots {
+      padding: 0 4px;
+      color: var(--muted);
+    }
+
     .status-progress {
       display: grid;
       gap: 6px;
@@ -3199,93 +3280,119 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         <div class="topbar">
           <div>
             <h1>Customer Management</h1>
-            <p class="subtitle">Dummy segmentasi customer, follow up, dan repeat order</p>
+            <p class="subtitle">Customer Lifetime Value — riwayat lengkap transaksi per customer (sumber: data Webot)</p>
           </div>
-          <div class="status-pill">Konsep awal</div>
+          <div class="status-pill" id="clvStatus">Menunggu data CLV...</div>
         </div>
 
-        <section class="filters" aria-label="Filter Customer Management">
+        <section class="filters" aria-label="Filter Customer Lifetime Value">
           <div class="date-row">
-            <label>Tanggal awal
-              <input type="date">
+            <label>Cari Customer
+              <input type="text" id="clvSearchInput" class="clv-search-input" placeholder="Nama atau nomor customer">
             </label>
-            <label>Tanggal akhir
-              <input type="date">
-            </label>
-            <label>Segmen
-              <select>
-                <option>Semua Segmen</option>
-                <option>New Customer</option>
-                <option>Repeat Customer</option>
-                <option>Winback</option>
+            <label>Nama CRM
+              <select id="clvCrmFilter">
+                <option value="all">Semua CRM</option>
               </select>
             </label>
-            <button class="apply-btn">Terapkan</button>
+            <label>Nama ADV
+              <select id="clvAdvFilter">
+                <option value="all">Semua ADV</option>
+              </select>
+            </label>
+            <label>Kategori
+              <select id="clvKategoriFilter">
+                <option value="all">Semua Kategori</option>
+                <option value="Aktif">Aktif</option>
+                <option value="Perlu Follow-up">Perlu Follow-up</option>
+                <option value="At Risk">At Risk</option>
+                <option value="Dormant">Dormant</option>
+                <option value="Lost/Churn">Lost/Churn</option>
+              </select>
+            </label>
+            <button class="apply-btn" id="clvApplyFilter">Terapkan</button>
+            <button class="apply-btn" id="clvRefreshData" type="button">Muat Ulang Data</button>
           </div>
         </section>
 
         <section class="kpi-grid">
-          <article class="card kpi"><div><span>Total Customer</span><strong>1.842</strong></div><small>Dummy customer unik</small></article>
-          <article class="card kpi"><div><span>Repeat Customer</span><strong>38%</strong></div><small>Estimasi rasio repeat</small></article>
-          <article class="card kpi"><div><span>Perlu Follow Up</span><strong>126</strong></div><small>Customer potensial dihubungi</small></article>
-          <article class="card kpi"><div><span>Winback</span><strong>Rp 18.900.000</strong></div><small>Dummy potensi repeat</small></article>
+          <article class="card kpi"><div><span>Total Customer</span><strong id="clvTotalCustomer">0</strong></div><small id="clvTotalCustomerNote">sesuai filter aktif</small></article>
+          <article class="card kpi"><div><span>Total Omset (Lifetime)</span><strong id="clvTotalOmset">Rp0</strong></div><small>akumulasi semua transaksi Webot</small></article>
+          <article class="card kpi"><div><span>Rata-rata Omset / Customer</span><strong id="clvAvgOmset">Rp0</strong></div><small>Total omset ÷ jumlah customer</small></article>
+          <article class="card kpi"><div><span>Perlu Perhatian</span><strong id="clvNeedAttention">0</strong></div><small>At Risk + Dormant + Lost/Churn</small></article>
         </section>
 
         <section class="card panel">
           <div class="panel-header">
-            <h2>Customer Pipeline</h2>
-            <span class="panel-note">dummy daftar prioritas follow up</span>
+            <h2>Customer Lifetime Value</h2>
+            <span class="panel-note" id="clvTableNote">urut berdasarkan omset tertinggi</span>
           </div>
           <div class="daily-table-wrap">
-            <table class="daily-table">
+            <table class="daily-table clv-table">
+              <colgroup>
+                <col style="width:2.8%">
+                <col style="width:8.5%">
+                <col style="width:9.4%">
+                <col style="width:7.5%">
+                <col style="width:5.7%">
+                <col style="width:5.7%">
+                <col style="width:4.7%">
+                <col style="width:3.8%">
+                <col style="width:12.3%">
+                <col style="width:6.6%">
+                <col style="width:6.6%">
+                <col style="width:7.5%">
+                <col style="width:3.8%">
+                <col style="width:7.5%">
+                <col style="width:7.6%">
+              </colgroup>
               <thead>
                 <tr>
-                  <th>Segmen</th>
-                  <th>Jumlah Customer</th>
+                  <th>No</th>
+                  <th>Nomor Customer</th>
+                  <th>Nama Customer</th>
                   <th>Omset</th>
-                  <th>AOV</th>
-                  <th>Last Order</th>
-                  <th>Prioritas</th>
-                  <th>Action</th>
+                  <th>First Transaksi</th>
+                  <th>Last Transaksi</th>
+                  <th>Total Transaksi</th>
+                  <th>QTY</th>
+                  <th>Nama Produk</th>
+                  <th>Nama CS (First Order)</th>
+                  <th>Nama CRM (Last Order)</th>
+                  <th>Nama ADV (First Transaksi)</th>
+                  <th>Hari Rentang</th>
+                  <th>Ongkir</th>
+                  <th>Kategori</th>
+                </tr>
+              </thead>
+              <tbody id="clvTableBody">
+                <tr><td colspan="15">Data CLV belum dimuat.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="clv-pagination" id="clvPagination"></div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
+            <h2>Panduan Kategori &amp; Tujuan Blasting</h2>
+            <span class="panel-note">kategori dihitung dari |Hari Rentang| sejak Last Transaksi</span>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table clv-legend-table">
+              <thead>
+                <tr>
+                  <th>Kategori</th>
+                  <th>Rentang Hari (abs value)</th>
+                  <th>Tujuan Blasting</th>
                 </tr>
               </thead>
               <tbody>
-                <tr class="total-row">
-                  <td>Total</td>
-                  <td>1.842</td>
-                  <td>Rp 253.000.000</td>
-                  <td>Rp 137.351</td>
-                  <td>-</td>
-                  <td>126 customer</td>
-                  <td>Review mingguan</td>
-                </tr>
-                <tr>
-                  <td>Repeat aktif</td>
-                  <td>512</td>
-                  <td>Rp 94.800.000</td>
-                  <td>Rp 185.156</td>
-                  <td>0-30 hari</td>
-                  <td class="positive-cell">Tinggi</td>
-                  <td>Upsell produk utama</td>
-                </tr>
-                <tr>
-                  <td>New customer</td>
-                  <td>1.104</td>
-                  <td>Rp 132.200.000</td>
-                  <td>Rp 119.746</td>
-                  <td>0-30 hari</td>
-                  <td>Sedang</td>
-                  <td>Edukasi repeat order</td>
-                </tr>
-                <tr>
-                  <td>Winback</td>
-                  <td>226</td>
-                  <td>Rp 26.000.000</td>
-                  <td>Rp 115.044</td>
-                  <td>31-90 hari</td>
-                  <td class="negative-cell">Urgent</td>
-                  <td>Promo follow up</td>
-                </tr>
+                <tr><td><span class="status-chip kategori-chip status-clv-aktif">Aktif</span></td><td>0-30 hari</td><td class="clv-legend-note">Cross-sell / upsell produk baru, program loyalti</td></tr>
+                <tr><td><span class="status-chip kategori-chip status-clv-followup">Perlu Follow-up</span></td><td>31-60 hari</td><td class="clv-legend-note">Reminder restock (apalagi produk yang konsumsinya rutin)</td></tr>
+                <tr><td><span class="status-chip kategori-chip status-clv-atrisk">At Risk</span></td><td>61-90 hari</td><td class="clv-legend-note">Promo diskon / voucher biar balik order</td></tr>
+                <tr><td><span class="status-chip kategori-chip status-clv-dormant">Dormant</span></td><td>91-180 hari</td><td class="clv-legend-note">Reaktivasi dengan penawaran lebih agresif</td></tr>
+                <tr><td><span class="status-chip kategori-chip status-clv-churn">Lost/Churn</span></td><td>&gt;180 hari</td><td class="clv-legend-note">Win-back campaign atau exclude dari blasting reguler (biar gak buang budget)</td></tr>
               </tbody>
             </table>
           </div>
@@ -3989,6 +4096,21 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       weeklyProductOptions: document.getElementById("weeklyProductOptions"),
       productPage: document.getElementById("product-page"),
       customerManagementPage: document.getElementById("customer-management-page"),
+      clvStatus: document.getElementById("clvStatus"),
+      clvSearchInput: document.getElementById("clvSearchInput"),
+      clvCrmFilter: document.getElementById("clvCrmFilter"),
+      clvAdvFilter: document.getElementById("clvAdvFilter"),
+      clvKategoriFilter: document.getElementById("clvKategoriFilter"),
+      clvApplyFilter: document.getElementById("clvApplyFilter"),
+      clvRefreshData: document.getElementById("clvRefreshData"),
+      clvTotalCustomer: document.getElementById("clvTotalCustomer"),
+      clvTotalCustomerNote: document.getElementById("clvTotalCustomerNote"),
+      clvTotalOmset: document.getElementById("clvTotalOmset"),
+      clvAvgOmset: document.getElementById("clvAvgOmset"),
+      clvNeedAttention: document.getElementById("clvNeedAttention"),
+      clvTableBody: document.getElementById("clvTableBody"),
+      clvTableNote: document.getElementById("clvTableNote"),
+      clvPagination: document.getElementById("clvPagination"),
       financePage: document.getElementById("finance-page"),
       adminMarketplacePage: document.getElementById("admin-marketplace-page"),
       adminMarketplaceStatus: document.getElementById("adminMarketplaceStatus"),
@@ -9296,6 +9418,295 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       });
     }
 
+    // ========== CUSTOMER LIFETIME VALUE (Customer Management) ==========
+    // Halaman ini butuh riwayat SELURUH transaksi Webot per customer (bukan cuma
+    // rentang tanggal yang lagi dipilih di dashboard utama), jadi datanya ditarik
+    // terpisah dari allRows: sekali fetch semua baris Webot tanpa filter tanggal,
+    // di-cache di memori (dan lewat loadGoogleSheetCached juga di-cache session),
+    // baru dihitung agregasi per customer di browser.
+    let clvWebotRows = null;
+    let clvLoading = false;
+    let clvRows = [];
+    let clvCurrentPage = 1;
+    const CLV_PAGE_SIZE = 10;
+
+    // Bikin daftar nomor halaman ala "1 2 3 ... 2216" (selalu tampilkan halaman
+    // pertama, terakhir, dan beberapa halaman di sekitar halaman aktif, sisanya "...").
+    function clvPaginationRange(current, total) {
+      const delta = 1;
+      const pages = [];
+      for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+          pages.push(i);
+        }
+      }
+      const withDots = [];
+      let prev = 0;
+      pages.forEach(page => {
+        if (prev) {
+          if (page - prev === 2) withDots.push(prev + 1);
+          else if (page - prev > 2) withDots.push("...");
+        }
+        withDots.push(page);
+        prev = page;
+      });
+      return withDots;
+    }
+
+    function clvKategoriFromHariRentang(hariRentang) {
+      const abs = Math.abs(hariRentang);
+      if (abs <= 30) return "Aktif";
+      if (abs <= 60) return "Perlu Follow-up";
+      if (abs <= 90) return "At Risk";
+      if (abs <= 180) return "Dormant";
+      return "Lost/Churn";
+    }
+
+    function clvKategoriClass(kategori) {
+      switch (kategori) {
+        case "Aktif": return "status-clv-aktif";
+        case "Perlu Follow-up": return "status-clv-followup";
+        case "At Risk": return "status-clv-atrisk";
+        case "Dormant": return "status-clv-dormant";
+        default: return "status-clv-churn";
+      }
+    }
+
+    function buildCustomerLifetimeValueRows(webotRows) {
+      // Urutkan dulu dari tanggal paling lama ke paling baru supaya baris pertama
+      // yang ketemu per customer otomatis jadi "First Transaksi", dan baris
+      // terakhir yang ketemu otomatis jadi "Last Transaksi".
+      const sorted = webotRows.slice().sort((a, b) => a.date - b.date);
+      const byCustomer = new Map();
+
+      sorted.forEach(row => {
+        const key = row.customerPhone || (row.customerName ? `nama:${normalizeCompare(row.customerName)}` : "");
+        if (!key) return;
+        let entry = byCustomer.get(key);
+        if (!entry) {
+          entry = {
+            phone: row.customerPhoneRaw || row.customerPhone || "-",
+            name: row.customerName || "Tanpa nama",
+            omset: 0,
+            totalQty: 0,
+            firstDate: row.date,
+            lastDate: row.date,
+            products: new Set(),
+            csFirst: row.cs,
+            crmLast: row.cs,
+            advFirst: row.advertiser,
+            ongkirList: [],
+            orderIdSet: new Set(),
+            rowsWithoutOrderId: 0
+          };
+          byCustomer.set(key, entry);
+        }
+        entry.omset += row.revenue || 0;
+        entry.totalQty += row.quantity || 0;
+        if (row.product) entry.products.add(row.product);
+        entry.ongkirList.push(row.returnCost || 0);
+        if (row.orderId) entry.orderIdSet.add(row.orderId);
+        else entry.rowsWithoutOrderId += 1;
+        entry.lastDate = row.date;
+        entry.crmLast = row.cs;
+      });
+
+      const today = startOfDay(new Date());
+      const result = [];
+      byCustomer.forEach(entry => {
+        const hariRentang = Math.round((startOfDay(entry.lastDate) - today) / 86400000);
+        result.push({
+          phone: entry.phone,
+          name: entry.name,
+          omset: entry.omset,
+          firstDate: entry.firstDate,
+          lastDate: entry.lastDate,
+          totalTransaksi: entry.orderIdSet.size + entry.rowsWithoutOrderId,
+          totalQty: entry.totalQty,
+          products: [...entry.products],
+          csFirst: entry.csFirst,
+          crmLast: entry.crmLast,
+          advFirst: entry.advFirst,
+          ongkirList: entry.ongkirList,
+          hariRentang,
+          kategori: clvKategoriFromHariRentang(hariRentang)
+        });
+      });
+
+      result.sort((a, b) => b.omset - a.omset);
+      return result;
+    }
+
+    async function ensureClvDataLoaded(forceRefresh = false) {
+      if (clvLoading) return;
+      if (clvWebotRows && !forceRefresh) return;
+      clvLoading = true;
+      els.clvStatus.textContent = "Memuat seluruh riwayat transaksi Webot...";
+      try {
+        const query = webotQuery(); // tanpa start/end = ambil semua baris, bukan cuma rentang dashboard
+        const rawRows = forceRefresh
+          ? await loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, query)
+          : await loadGoogleSheetCached(SHEETS.webot.id, SHEETS.webot.sheet, query);
+        clvWebotRows = normalizeWebot(rawRows);
+        clvRows = buildCustomerLifetimeValueRows(clvWebotRows);
+        populateClvFilters();
+        els.clvStatus.textContent = `${clvRows.length.toLocaleString("id-ID")} customer terbaca (data Webot lengkap)`;
+      } catch (error) {
+        console.warn("Gagal memuat data Customer Lifetime Value:", error);
+        els.clvStatus.textContent = `Gagal memuat data CLV: ${error.message}. Coba klik Muat Ulang Data.`;
+      } finally {
+        clvLoading = false;
+      }
+    }
+
+    function populateClvFilters() {
+      const crmNames = [...new Set(clvRows.map(row => row.crmLast).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      const advNames = [...new Set(clvRows.map(row => row.advFirst).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+
+      const currentCrm = els.clvCrmFilter.value || "all";
+      els.clvCrmFilter.innerHTML = `<option value="all">Semua CRM</option>` +
+        crmNames.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+      els.clvCrmFilter.value = crmNames.includes(currentCrm) ? currentCrm : "all";
+
+      const currentAdv = els.clvAdvFilter.value || "all";
+      els.clvAdvFilter.innerHTML = `<option value="all">Semua ADV</option>` +
+        advNames.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+      els.clvAdvFilter.value = advNames.includes(currentAdv) ? currentAdv : "all";
+    }
+
+    function filteredClvRows() {
+      const search = normalizeCompare(els.clvSearchInput.value || "");
+      const crmFilter = els.clvCrmFilter.value || "all";
+      const advFilter = els.clvAdvFilter.value || "all";
+      const kategoriFilter = els.clvKategoriFilter.value || "all";
+
+      return clvRows.filter(row => {
+        if (crmFilter !== "all" && row.crmLast !== crmFilter) return false;
+        if (advFilter !== "all" && row.advFirst !== advFilter) return false;
+        if (kategoriFilter !== "all" && row.kategori !== kategoriFilter) return false;
+        if (search) {
+          const haystack = normalizeCompare(`${row.name} ${row.phone}`);
+          if (!haystack.includes(search)) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderClvPagination(totalRows) {
+      if (!els.clvPagination) return;
+      const totalPages = Math.max(1, Math.ceil(totalRows / CLV_PAGE_SIZE));
+      if (clvCurrentPage > totalPages) clvCurrentPage = totalPages;
+      if (clvCurrentPage < 1) clvCurrentPage = 1;
+
+      if (totalPages <= 1) {
+        els.clvPagination.innerHTML = "";
+        return;
+      }
+
+      const pages = clvPaginationRange(clvCurrentPage, totalPages);
+      const pageButtons = pages.map(page => {
+        if (page === "...") return `<span class="clv-dots">...</span>`;
+        return `<button type="button" data-clv-page="${page}" class="${page === clvCurrentPage ? "active" : ""}">${page}</button>`;
+      }).join("");
+
+      els.clvPagination.innerHTML = `
+        <button type="button" data-clv-page="${clvCurrentPage - 1}" ${clvCurrentPage <= 1 ? "disabled" : ""}>‹ Prev</button>
+        ${pageButtons}
+        <button type="button" data-clv-page="${clvCurrentPage + 1}" ${clvCurrentPage >= totalPages ? "disabled" : ""}>Next ›</button>
+      `;
+    }
+
+    function renderCustomerLifetimeValuePage() {
+      if (!els.clvTableBody) return;
+      const rows = filteredClvRows();
+      const totalPages = Math.max(1, Math.ceil(rows.length / CLV_PAGE_SIZE));
+      if (clvCurrentPage > totalPages) clvCurrentPage = totalPages;
+      if (clvCurrentPage < 1) clvCurrentPage = 1;
+      const pageStart = (clvCurrentPage - 1) * CLV_PAGE_SIZE;
+      const pageRows = rows.slice(pageStart, pageStart + CLV_PAGE_SIZE);
+
+      if (!clvRows.length) {
+        els.clvTableBody.innerHTML = `<tr><td colspan="15">${clvLoading ? "Memuat data CLV..." : "Data CLV belum dimuat."}</td></tr>`;
+      } else if (!rows.length) {
+        els.clvTableBody.innerHTML = `<tr><td colspan="15">Tidak ada customer yang cocok dengan filter.</td></tr>`;
+      } else {
+        els.clvTableBody.innerHTML = pageRows.map((row, index) => `
+          <tr>
+            <td>${pageStart + index + 1}</td>
+            <td class="clv-ellipsis" title="${escapeHtml(row.phone)}">${escapeHtml(row.phone)}</td>
+            <td class="clv-ellipsis" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</td>
+            <td class="clv-ellipsis">${currency(row.omset)}</td>
+            <td class="clv-ellipsis">${dateKey(row.firstDate)}</td>
+            <td class="clv-ellipsis">${dateKey(row.lastDate)}</td>
+            <td class="clv-ellipsis">${row.totalTransaksi.toLocaleString("id-ID")}</td>
+            <td class="clv-ellipsis">${row.totalQty.toLocaleString("id-ID")}</td>
+            <td class="clv-clamp" title="${escapeHtml(row.products.join(", "))}">${escapeHtml(row.products.join(", "))}</td>
+            <td class="clv-ellipsis" title="${escapeHtml(row.csFirst)}">${escapeHtml(row.csFirst)}</td>
+            <td class="clv-ellipsis" title="${escapeHtml(row.crmLast)}">${escapeHtml(row.crmLast)}</td>
+            <td class="clv-ellipsis" title="${escapeHtml(row.advFirst)}">${escapeHtml(row.advFirst)}</td>
+            <td class="clv-ellipsis">${row.hariRentang}</td>
+            <td class="clv-clamp" title="${escapeHtml(row.ongkirList.map(value => Math.round(value).toLocaleString("id-ID")).join(", "))}">${escapeHtml(row.ongkirList.map(value => Math.round(value).toLocaleString("id-ID")).join(", "))}</td>
+            <td class="clv-ellipsis"><span class="status-chip kategori-chip ${clvKategoriClass(row.kategori)}">${escapeHtml(row.kategori)}</span></td>
+          </tr>
+        `).join("");
+      }
+
+      renderClvPagination(rows.length);
+
+      const totalOmset = rows.reduce((sum, row) => sum + row.omset, 0);
+      const needAttention = rows.filter(row => row.kategori === "At Risk" || row.kategori === "Dormant" || row.kategori === "Lost/Churn").length;
+      els.clvTotalCustomer.textContent = rows.length.toLocaleString("id-ID");
+      els.clvTotalCustomerNote.textContent = rows.length === clvRows.length ? "semua customer" : `dari ${clvRows.length.toLocaleString("id-ID")} total customer`;
+      els.clvTotalOmset.textContent = currency(totalOmset);
+      els.clvAvgOmset.textContent = currency(rows.length ? totalOmset / rows.length : 0);
+      els.clvNeedAttention.textContent = needAttention.toLocaleString("id-ID");
+
+      if (els.clvTableNote) {
+        if (!rows.length) {
+          els.clvTableNote.textContent = "urut berdasarkan omset tertinggi";
+        } else {
+          const shownStart = pageStart + 1;
+          const shownEnd = Math.min(rows.length, pageStart + pageRows.length);
+          els.clvTableNote.textContent = `Menampilkan ${shownStart.toLocaleString("id-ID")}-${shownEnd.toLocaleString("id-ID")} dari ${rows.length.toLocaleString("id-ID")} customer (urut omset tertinggi)`;
+        }
+      }
+    }
+
+    function renderClvFromFilterChange() {
+      clvCurrentPage = 1;
+      renderCustomerLifetimeValuePage();
+    }
+
+    async function openCustomerLifetimeValuePage() {
+      renderCustomerLifetimeValuePage();
+      await ensureClvDataLoaded();
+      renderClvFromFilterChange();
+    }
+
+    function setupCustomerLifetimeValueFilters() {
+      els.clvApplyFilter.addEventListener("click", renderClvFromFilterChange);
+      els.clvKategoriFilter.addEventListener("change", renderClvFromFilterChange);
+      els.clvCrmFilter.addEventListener("change", renderClvFromFilterChange);
+      els.clvAdvFilter.addEventListener("change", renderClvFromFilterChange);
+      els.clvSearchInput.addEventListener("keydown", event => {
+        if (event.key === "Enter") renderClvFromFilterChange();
+      });
+      els.clvRefreshData.addEventListener("click", async () => {
+        await ensureClvDataLoaded(true);
+        renderClvFromFilterChange();
+      });
+      els.clvPagination.addEventListener("click", event => {
+        const button = event.target.closest("button[data-clv-page]");
+        if (!button || button.disabled) return;
+        const page = parseInt(button.dataset.clvPage, 10);
+        if (!Number.isFinite(page)) return;
+        clvCurrentPage = page;
+        renderCustomerLifetimeValuePage();
+      });
+    }
+
     function setupNavigation() {
       els.appShell.classList.add("sidebar-collapsed");
       els.sidebarToggle.addEventListener("click", () => {
@@ -9370,6 +9781,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           }
           if (page === "customer-management") {
             els.customerManagementPage.classList.remove("hidden");
+            openCustomerLifetimeValuePage();
             return;
           }
           if (page === "finance") {
@@ -11517,6 +11929,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       setupChartHover();
       setupCrmStackTooltip();
       setupTargetManagement(); // Setup target management
+      setupCustomerLifetimeValueFilters();
       setupAllNewFeatures();
       updateInputs(...rangePreset("thisMonth"));
       updateAdvertiserInputs(...rangePreset("thisMonth"));

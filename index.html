@@ -11058,6 +11058,26 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     // Paste URL Web App hasil deploy Apps Script Anda di sini untuk mengaktifkan sinkronisasi cloud
     const SYNC_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyqaCseV_6lu5-YwqOpOoKH1mVjyDMaiqSbvU7vEOiVewI3OF9BiZXTJyarxuZhb5Cg/exec"; 
 
+    // Google Sheets suka otomatis mengubah teks "2026-08" jadi cell bertipe Date.
+    // Kalau itu terjadi, nilai mentah (row.c[i].v) yang kebaca balik oleh gviz jadi
+    // string serialized "Date(2026,7,1)", bukan "2026-08" lagi — akibatnya key target
+    // bulanan gak match pas dicocokkan dan target kelihatan kosong buat user lain.
+    // Fungsi ini menormalkan kembali ke format "YYYY-MM" apa pun bentuk mentahnya.
+    function normalizeMonthKeyFromSheet(rawValue, formattedValue) {
+        const formatted = typeof formattedValue === "string" ? formattedValue.trim() : "";
+        if (/^\d{4}-\d{2}$/.test(formatted)) return formatted;
+
+        const raw = typeof rawValue === "string" ? rawValue.trim() : "";
+        const dateMatch = raw.match(/^Date\((\d{4}),\s*(\d{1,2})(?:,\s*\d{1,2})?\)$/);
+        if (dateMatch) {
+            const year = dateMatch[1];
+            const month = String(Number(dateMatch[2]) + 1).padStart(2, "0"); // bulan JS Date 0-indexed
+            return `${year}-${month}`;
+        }
+        if (/^\d{4}-\d{2}$/.test(raw)) return raw;
+        return raw || formatted;
+    }
+
     async function syncLoadFromCloud() {
         if (!SYNC_WEB_APP_URL) return;
         try {
@@ -11070,7 +11090,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
                 if (targetRows && targetRows.length) {
                     const targets = {};
                     targetRows.forEach(row => {
-                        const key = row["MonthKey"] || row["A"] || "";
+                        const rawKey = row["MonthKey"] || row["A"] || "";
+                        const formattedKey = row["__formatted_col_1"] || "";
+                        const key = normalizeMonthKeyFromSheet(rawKey, formattedKey);
                         const val = parseFloat(row["TargetValue"] || row["B"]) || 0;
                         if (key && val) targets[key] = val;
                     });

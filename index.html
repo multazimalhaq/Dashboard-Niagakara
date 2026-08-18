@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NIAGAKARA MITRA JUARA</title>
-  <link rel="icon" type="image/jpeg" href="logo-niagakara.jpg">
+  <link rel="icon" type="image/jpeg" href="https://cdn.phototourl.com/member/2026-08-18-34756943-176f-45a8-8a61-3de896b78097.jpg">
   <style>
     :root {
       --bg: #eaf3fb;
@@ -606,6 +606,38 @@
     .status-clv-dormant { background: #fee2e2; color: #991b1b; }
     .status-clv-churn { background: #e5e7eb; color: #374151; }
 
+    /* Badge Keterangan CAC+HPP di tabel Produk Utama */
+    .keterangan-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-weight: 800;
+      white-space: normal;
+    }
+    .keterangan-chip::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      flex: none;
+    }
+    .keterangan-danger { background: #fce7f3; color: #9f1239; }
+    .keterangan-warning { background: #ffe4d5; color: #c2410c; }
+    .keterangan-caution { background: #fef3c7; color: #92400e; }
+    .keterangan-safe { background: #dcfce7; color: #166534; }
+
+    .produk-utama-table td:nth-child(2),
+    .produk-utama-table td:nth-child(3),
+    .produk-utama-table td:nth-child(4),
+    .produk-utama-table td:nth-child(5),
+    .produk-utama-table td:nth-child(6) {
+      text-align: right;
+    }
+
     .clv-legend-table td, .clv-legend-table th { font-size: 12.5px; }
     .clv-legend-note { color: var(--muted); font-size: 12.5px; }
     .clv-search-input { min-width: 220px; }
@@ -628,8 +660,14 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    /* Line-clamp HARUS ditaruh di elemen pembungkus di dalam <td>, bukan di <td>
+       itu sendiri — kalau langsung di <td>, display:-webkit-box bikin cell itu
+       lepas dari perataan tinggi baris tabel normal, jadi garis pemisah antar
+       baris keliatan gak sejajar/kepotong dibanding kolom sebelahnya. */
     .clv-table td.clv-clamp {
       white-space: normal;
+    }
+    .clv-table .clv-clamp-inner {
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
@@ -1752,7 +1790,7 @@
     <aside class="sidebar">
       <div class="sidebar-top">
         <div class="brand">
-          <img src="logo-niagakara.jpg" alt="Logo Niagakara">
+          <img src="https://cdn.phototourl.com/member/2026-08-18-34756943-176f-45a8-8a61-3de896b78097.jpg" alt="Logo Niagakara">
           <div>
             <strong>NIAGAKARA MITRA JUARA</strong>
             <span>Report Sales Niagakara</span>
@@ -3274,6 +3312,45 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             </table>
           </div>
         </section>
+
+        <!-- Produk Utama: monitor harian CAC + HPP per produk yang dibudget tim Advertiser -->
+        <section class="card panel">
+          <div class="panel-header">
+            <h2>Produk Utama</h2>
+            <span class="panel-note" id="produkUtamaNote">bulan berjalan</span>
+          </div>
+          <div class="filters" aria-label="Filter Produk Utama" style="margin-bottom:14px">
+            <div class="date-row">
+              <label>Bulan
+                <input type="month" id="produkUtamaMonth">
+              </label>
+              <label>Produk Utama
+                <select id="produkUtamaFilter">
+                  <option value="all">Pilih Produk Utama</option>
+                </select>
+              </label>
+              <button class="apply-btn" id="produkUtamaApplyBtn">Terapkan</button>
+            </div>
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table produk-utama-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Budget</th>
+                  <th>Omset</th>
+                  <th>CAC</th>
+                  <th>HPP</th>
+                  <th>CAC+HPP</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody id="produkUtamaBody">
+                <tr><td colspan="7">Pilih produk utama dulu di filter di atas.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
       </section>
 
       <section id="customer-management-page" class="hidden">
@@ -4150,6 +4227,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       productTableBody: document.getElementById("productTableBody"),
       productWeeklyNote: document.getElementById("productWeeklyNote"),
       productTableNote: document.getElementById("productTableNote"),
+      produkUtamaMonth: document.getElementById("produkUtamaMonth"),
+      produkUtamaFilter: document.getElementById("produkUtamaFilter"),
+      produkUtamaApplyBtn: document.getElementById("produkUtamaApplyBtn"),
+      produkUtamaBody: document.getElementById("produkUtamaBody"),
+      produkUtamaNote: document.getElementById("produkUtamaNote"),
       // Target Cards Elements
       monthlyTargetInput: document.getElementById("monthlyTargetInput"),
       saveMonthlyTarget: document.getElementById("saveMonthlyTarget"),
@@ -9491,11 +9573,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             totalQty: 0,
             firstDate: row.date,
             lastDate: row.date,
-            products: new Set(),
+            products: new Map(), // key dinormalisasi (trim + lowercase) -> nama asli buat ditampilkan, biar "Vitameal" & "vitameal " gak keitung dobel
             csFirst: row.cs,
             crmLast: row.cs,
             advFirst: row.advertiser,
-            ongkirList: [],
+            ongkirSet: new Set(), // Set biar nominal ongkir yang sama persis gak keulang di kolom Ongkir
             orderIdSet: new Set(),
             rowsWithoutOrderId: 0
           };
@@ -9503,8 +9585,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         }
         entry.omset += row.revenue || 0;
         entry.totalQty += row.quantity || 0;
-        if (row.product) entry.products.add(row.product);
-        entry.ongkirList.push(row.returnCost || 0);
+        if (row.product) {
+          const productKey = normalizeCompare(row.product);
+          if (!entry.products.has(productKey)) entry.products.set(productKey, row.product);
+        }
+        entry.ongkirSet.add(Math.round(row.returnCost || 0));
         if (row.orderId) entry.orderIdSet.add(row.orderId);
         else entry.rowsWithoutOrderId += 1;
         entry.lastDate = row.date;
@@ -9523,11 +9608,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           lastDate: entry.lastDate,
           totalTransaksi: entry.orderIdSet.size + entry.rowsWithoutOrderId,
           totalQty: entry.totalQty,
-          products: [...entry.products],
+          products: [...entry.products.values()],
           csFirst: entry.csFirst,
           crmLast: entry.crmLast,
           advFirst: entry.advFirst,
-          ongkirList: entry.ongkirList,
+          ongkirList: [...entry.ongkirSet],
           hariRentang,
           kategori: clvKategoriFromHariRentang(hariRentang)
         });
@@ -9642,12 +9727,12 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             <td class="clv-ellipsis">${dateKey(row.lastDate)}</td>
             <td class="clv-ellipsis">${row.totalTransaksi.toLocaleString("id-ID")}</td>
             <td class="clv-ellipsis">${row.totalQty.toLocaleString("id-ID")}</td>
-            <td class="clv-clamp" title="${escapeHtml(row.products.join(", "))}">${escapeHtml(row.products.join(", "))}</td>
+            <td class="clv-clamp" title="${escapeHtml(row.products.join(", "))}"><div class="clv-clamp-inner">${escapeHtml(row.products.join(", "))}</div></td>
             <td class="clv-ellipsis" title="${escapeHtml(row.csFirst)}">${escapeHtml(row.csFirst)}</td>
             <td class="clv-ellipsis" title="${escapeHtml(row.crmLast)}">${escapeHtml(row.crmLast)}</td>
             <td class="clv-ellipsis" title="${escapeHtml(row.advFirst)}">${escapeHtml(row.advFirst)}</td>
             <td class="clv-ellipsis">${row.hariRentang}</td>
-            <td class="clv-clamp" title="${escapeHtml(row.ongkirList.map(value => Math.round(value).toLocaleString("id-ID")).join(", "))}">${escapeHtml(row.ongkirList.map(value => Math.round(value).toLocaleString("id-ID")).join(", "))}</td>
+            <td class="clv-clamp" title="${escapeHtml(row.ongkirList.map(value => Math.round(value).toLocaleString("id-ID")).join(", "))}"><div class="clv-clamp-inner">${escapeHtml(row.ongkirList.map(value => Math.round(value).toLocaleString("id-ID")).join(", "))}</div></td>
             <td class="clv-ellipsis"><span class="status-chip kategori-chip ${clvKategoriClass(row.kategori)}">${escapeHtml(row.kategori)}</span></td>
           </tr>
         `).join("");
@@ -10232,6 +10317,153 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return rows.filter(row => productNormName(row.product) === selectedProduct);
     }
 
+    // ========== PRODUK UTAMA (monitor CAC + HPP harian, di halaman Product) ==========
+    // "Produk Utama" = produk yang sudah diisi budget oleh tim Advertiser (sheet
+    // Result/Budget Iklan + input manual), BUKAN daftar MAIN_PRODUCTS yang dipakai
+    // di bagian lain aplikasi. Omset dihitung dari data Webot saja (tanpa marketplace).
+    const PRODUK_UTAMA_HPP_PERCENT = 47;
+
+    function populateProdukUtamaFilter() {
+      if (!els.produkUtamaFilter) return;
+      const currentValue = els.produkUtamaFilter.value || "all";
+      const names = [...new Set(combinedBudgetInputs().map(item => item.product).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      els.produkUtamaFilter.innerHTML = `<option value="all">Pilih Produk Utama</option>` +
+        names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+      els.produkUtamaFilter.value = names.includes(currentValue) ? currentValue : "all";
+    }
+
+    // Ambang batas CAC + HPP (hasil konfirmasi): >=100% / 95-99.9% / 90-94.9% / <90%,
+    // masing-masing pita gak tumpang tindih.
+    function produkUtamaKeteranganInfo(total) {
+      if (total >= 100) return { className: "keterangan-danger", text: "Turunkan budget dan naikan omset CRM" };
+      if (total >= 95) return { className: "keterangan-warning", text: "Tahan budget atau naikan omset" };
+      if (total >= 90) return { className: "keterangan-caution", text: "Perhatikan budget dan omset CRM" };
+      return { className: "keterangan-safe", text: "Aman untuk naikin budget" };
+    }
+
+    // budget=0 & omset=0 -> CAC dianggap 0% (gak ada apa-apa). budget>0 & omset=0 ->
+    // CAC dianggap tak terhingga (null) supaya kena pita >=100% tanpa perlu bagi 0.
+    function produkUtamaCalc(budget, omset) {
+      const cac = omset > 0 ? (budget / omset) * 100 : (budget > 0 ? null : 0);
+      const total = cac === null ? 100 + PRODUK_UTAMA_HPP_PERCENT : cac + PRODUK_UTAMA_HPP_PERCENT;
+      return { cac, total, info: produkUtamaKeteranganInfo(total) };
+    }
+
+    function defaultProdukUtamaMonthValue() {
+      const now = new Date();
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
+    }
+
+    // Baca <input type="month">, balikin [awal bulan, akhir baris yang ditampilkan].
+    // Kalau bulan yang dipilih adalah bulan berjalan, akhir baris dipotong sampai
+    // hari ini aja (bukan sampai akhir bulan) biar gak nampilin baris kosong buat
+    // tanggal yang belum kejadian.
+    function produkUtamaRangeFromMonthInput() {
+      const raw = (els.produkUtamaMonth && els.produkUtamaMonth.value) || defaultProdukUtamaMonthValue();
+      const [yearStr, monthStr] = raw.split("-");
+      const year = parseInt(yearStr, 10);
+      const month = parseInt(monthStr, 10) - 1;
+      const monthStart = startOfDay(new Date(year, month, 1));
+      const monthEnd = startOfDay(new Date(year, month + 1, 0));
+      const today = startOfDay(new Date());
+      const rangeEnd = monthEnd < today ? monthEnd : today;
+      return [monthStart, rangeEnd];
+    }
+
+    async function renderProdukUtamaTable() {
+      if (!els.produkUtamaBody) return;
+      populateProdukUtamaFilter();
+      if (els.produkUtamaMonth && !els.produkUtamaMonth.value) {
+        els.produkUtamaMonth.value = defaultProdukUtamaMonthValue();
+      }
+      const selectedProduct = els.produkUtamaFilter.value || "all";
+
+      if (selectedProduct === "all") {
+        els.produkUtamaBody.innerHTML = `<tr><td colspan="7">Pilih produk utama dulu di filter di atas.</td></tr>`;
+        if (els.produkUtamaNote) els.produkUtamaNote.textContent = "bulan berjalan";
+        return;
+      }
+
+      const [rangeStart, rangeEnd] = produkUtamaRangeFromMonthInput();
+
+      if (rangeEnd < rangeStart) {
+        els.produkUtamaBody.innerHTML = `<tr><td colspan="7">Belum ada data untuk bulan ini.</td></tr>`;
+        if (els.produkUtamaNote) els.produkUtamaNote.textContent = `${selectedProduct} — belum ada data`;
+        return;
+      }
+
+      await ensureCoreDataForRange(rangeStart, rangeEnd);
+
+      const budgetByDate = new Map();
+      combinedBudgetInputs().forEach(item => {
+        if (!sameProductValue(item.product, selectedProduct)) return;
+        const date = parseDateValue(item.date);
+        if (!date || date < rangeStart || date > rangeEnd) return;
+        const key = dateKey(date);
+        budgetByDate.set(key, (budgetByDate.get(key) || 0) + (item.budget || 0));
+      });
+
+      const omsetByDate = new Map();
+      allRows.forEach(row => {
+        if (row.source !== "Webot") return;
+        if (!row.date || row.date < rangeStart || row.date > rangeEnd) return;
+        if (!sameProductValue(row.product, selectedProduct)) return;
+        const key = dateKey(row.date);
+        omsetByDate.set(key, (omsetByDate.get(key) || 0) + (row.revenue || 0));
+      });
+
+      let totalBudget = 0;
+      let totalOmset = 0;
+      const rowsHtml = [];
+      for (let cursor = rangeStart; cursor <= rangeEnd; cursor = addDays(cursor, 1)) {
+        const key = dateKey(cursor);
+        const budget = budgetByDate.get(key) || 0;
+        const omset = omsetByDate.get(key) || 0;
+        totalBudget += budget;
+        totalOmset += omset;
+        const { cac, info } = produkUtamaCalc(budget, omset);
+        rowsHtml.push(`
+          <tr>
+            ${reportCell(longIndonesianDate(cursor), isHolidayDate(cursor) ? "holiday-cell" : "")}
+            <td>${currency(budget)}</td>
+            <td>${currency(omset)}</td>
+            <td>${cac === null ? "-" : percent(cac)}</td>
+            <td>${PRODUK_UTAMA_HPP_PERCENT}%</td>
+            <td>${percent(cac === null ? 100 + PRODUK_UTAMA_HPP_PERCENT : cac + PRODUK_UTAMA_HPP_PERCENT)}</td>
+            <td><span class="status-chip keterangan-chip ${info.className}">${escapeHtml(info.text)}</span></td>
+          </tr>
+        `);
+      }
+
+      const totalCalc = produkUtamaCalc(totalBudget, totalOmset);
+      const totalRowHtml = `
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td>${currency(totalBudget)}</td>
+          <td>${currency(totalOmset)}</td>
+          <td>${totalCalc.cac === null ? "-" : percent(totalCalc.cac)}</td>
+          <td>${PRODUK_UTAMA_HPP_PERCENT}%</td>
+          <td>${percent(totalCalc.total)}</td>
+          <td><span class="status-chip keterangan-chip ${totalCalc.info.className}">${escapeHtml(totalCalc.info.text)}</span></td>
+        </tr>
+      `;
+
+      els.produkUtamaBody.innerHTML = totalRowHtml + (rowsHtml.join("") || `<tr><td colspan="7">Belum ada data untuk bulan ini.</td></tr>`);
+      if (els.produkUtamaNote) {
+        els.produkUtamaNote.textContent = `${dateKey(rangeStart)} s.d. ${dateKey(rangeEnd)} — ${selectedProduct}`;
+      }
+    }
+
+    function setupProdukUtamaFilter() {
+      if (!els.produkUtamaApplyBtn) return;
+      populateProdukUtamaFilter();
+      if (els.produkUtamaMonth) els.produkUtamaMonth.value = defaultProdukUtamaMonthValue();
+      els.produkUtamaApplyBtn.addEventListener("click", renderProdukUtamaTable);
+      els.produkUtamaFilter.addEventListener("change", renderProdukUtamaTable);
+      if (els.produkUtamaMonth) els.produkUtamaMonth.addEventListener("change", renderProdukUtamaTable);
+    }
+
     function renderProductPage() {
       if (!els.productStartDate || !els.productEndDate) return;
 
@@ -10475,6 +10707,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
 
       els.productTableNote.textContent = `${sortedProducts.length} produk — bulan ini vs bulan lalu`;
       els.productStatus.textContent = `${thisRows.length.toLocaleString("id-ID")} transaksi bulan ini`;
+
+      renderProdukUtamaTable();
     }
 
     function setupProductPage() {
@@ -11926,6 +12160,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       setupNavigation();
       setupFilters();
       setupProductPage();
+      setupProdukUtamaFilter();
       setupChartHover();
       setupCrmStackTooltip();
       setupTargetManagement(); // Setup target management

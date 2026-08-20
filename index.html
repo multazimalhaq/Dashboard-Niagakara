@@ -456,6 +456,54 @@
       gap: 14px;
     }
 
+    /* Varian grid 5 kolom: dipakai di Tiktokshop & Shopee buat nampung kartu HPP dan CAC+HPP */
+    .advertiser-main-grid-10 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    /* Kartu jadi lebih sempit di grid 5 kolom, jadi angka & badge growth di kartu
+       Proyeksi perlu bisa turun baris (bukan patah huruf) dan fontnya sedikit lebih kecil */
+    .advertiser-main-grid-10 .advertiser-metric strong {
+      font-size: clamp(16px, 1.4vw, 22px);
+    }
+    .advertiser-main-grid-10 .projection-value {
+      flex-wrap: wrap;
+      row-gap: 4px;
+    }
+
+    /* Banner notifikasi Cek Margin (CAC + HPP), selebar card, nempel di atas grid */
+    .margin-alert {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+    }
+    .margin-alert .icon {
+      font-size: 22px;
+      line-height: 1;
+      flex: none;
+    }
+    .margin-alert .text strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: .01em;
+      color: inherit;
+    }
+    .margin-alert .text small {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      opacity: .85;
+      margin-top: 2px;
+      color: inherit;
+    }
+    .margin-alert.keterangan-danger  { background: #e11d48; color: #fff; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 6px 18px rgba(225,29,72,.35); }
+    .margin-alert.keterangan-caution { background: #f59e0b; color: #3a2405; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 6px 18px rgba(245,158,11,.30); }
+    .margin-alert.keterangan-safe    { background: #16a34a; color: #fff; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 6px 18px rgba(22,163,74,.30); }
+
     #advertiser-page > .card,
     #cs-page > .card,
     #crm-page > .card,
@@ -470,6 +518,11 @@
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: var(--radius);
       background: rgba(255,255,255,0.06);
+    }
+
+    .advertiser-metric.highlight {
+      border-color: rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.10);
     }
 
     .advertiser-metric span {
@@ -1730,7 +1783,8 @@
       .kpi-grid, .content-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-      .advertiser-main-grid {
+      .advertiser-main-grid,
+      .advertiser-main-grid-10 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .rank-grid {
@@ -1763,7 +1817,8 @@
       .kpi-grid, .content-grid {
         grid-template-columns: 1fr;
       }
-      .advertiser-main-grid {
+      .advertiser-main-grid,
+      .advertiser-main-grid-10 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .panel-header {
@@ -1779,7 +1834,8 @@
     }
 
     @media (max-width: 520px) {
-      .advertiser-main-grid {
+      .advertiser-main-grid,
+      .advertiser-main-grid-10 {
         grid-template-columns: 1fr;
       }
     }
@@ -2768,10 +2824,19 @@
 
 
         <section class="card panel shopee-main-card">
-          <div class="advertiser-main-grid">
+          <div id="shopeeMarginAlert" class="margin-alert keterangan-safe">
+            <span id="shopeeMarginAlertIcon" class="icon">✅</span>
+            <div class="text">
+              <strong id="shopeeMarginAlertTitle">Aman Bisa Digas!</strong>
+              <small id="shopeeMarginAlertSubtext">CAC 0.0% + HPP 47.0% = 47.0% — masih ada ruang buat naikin budget</small>
+            </div>
+          </div>
+          <div class="advertiser-main-grid advertiser-main-grid-10">
             <div class="advertiser-metric"><span>Gross Omset</span><strong id="shopeeGross">Rp0</strong></div>
             <div class="advertiser-metric"><span>Budget Iklan + Admin</span><strong id="shopeeBudgetAdmin">Rp0</strong></div>
-            <div class="advertiser-metric"><span>CAC</span><strong id="shopeeCac">0%</strong></div>
+            <div class="advertiser-metric highlight"><span>CAC</span><strong id="shopeeCac">0%</strong></div>
+            <div class="advertiser-metric highlight"><span>HPP</span><strong id="shopeeHpp">0%</strong></div>
+            <div class="advertiser-metric highlight"><span>CAC + HPP</span><strong id="shopeeCacHppTotal">0%</strong></div>
             <div class="advertiser-metric"><span>ROAS</span><strong id="shopeeRoas">0.00x</strong></div>
             <div class="advertiser-metric"><span>Proyeksi</span><strong id="shopeeProjection">Rp0</strong></div>
             <div class="advertiser-metric"><span>Return</span><strong id="shopeeReturn">Rp0 (0%)</strong></div>
@@ -2942,10 +3007,19 @@
 
 
         <section class="card panel tiktok-main-card">
-          <div class="advertiser-main-grid">
+          <div id="tiktokMarginAlert" class="margin-alert keterangan-safe">
+            <span id="tiktokMarginAlertIcon" class="icon">✅</span>
+            <div class="text">
+              <strong id="tiktokMarginAlertTitle">Aman Bisa Digas!</strong>
+              <small id="tiktokMarginAlertSubtext">CAC 0.0% + HPP 47.0% = 47.0% — masih ada ruang buat naikin budget</small>
+            </div>
+          </div>
+          <div class="advertiser-main-grid advertiser-main-grid-10">
             <div class="advertiser-metric"><span>Gross Omset</span><strong id="tiktokGross">Rp0</strong></div>
             <div class="advertiser-metric"><span>Budget Iklan + Admin</span><strong id="tiktokBudgetAdmin">Rp0</strong></div>
-            <div class="advertiser-metric"><span>CAC</span><strong id="tiktokCac">0%</strong></div>
+            <div class="advertiser-metric highlight"><span>CAC</span><strong id="tiktokCac">0%</strong></div>
+            <div class="advertiser-metric highlight"><span>HPP</span><strong id="tiktokHpp">0%</strong></div>
+            <div class="advertiser-metric highlight"><span>CAC + HPP</span><strong id="tiktokCacHppTotal">0%</strong></div>
             <div class="advertiser-metric"><span>ROAS</span><strong id="tiktokRoas">0.00x</strong></div>
             <div class="advertiser-metric"><span>Proyeksi</span><strong id="tiktokProjection">Rp0</strong></div>
             <div class="advertiser-metric"><span>Return</span><strong id="tiktokReturn">Rp0 (0%)</strong></div>
@@ -4087,6 +4161,12 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       shopeeGross: document.getElementById("shopeeGross"),
       shopeeBudgetAdmin: document.getElementById("shopeeBudgetAdmin"),
       shopeeCac: document.getElementById("shopeeCac"),
+      shopeeHpp: document.getElementById("shopeeHpp"),
+      shopeeCacHppTotal: document.getElementById("shopeeCacHppTotal"),
+      shopeeMarginAlert: document.getElementById("shopeeMarginAlert"),
+      shopeeMarginAlertIcon: document.getElementById("shopeeMarginAlertIcon"),
+      shopeeMarginAlertTitle: document.getElementById("shopeeMarginAlertTitle"),
+      shopeeMarginAlertSubtext: document.getElementById("shopeeMarginAlertSubtext"),
       shopeeRoas: document.getElementById("shopeeRoas"),
       shopeeProjection: document.getElementById("shopeeProjection"),
       shopeeReturn: document.getElementById("shopeeReturn"),
@@ -4109,6 +4189,12 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       tiktokGross: document.getElementById("tiktokGross"),
       tiktokBudgetAdmin: document.getElementById("tiktokBudgetAdmin"),
       tiktokCac: document.getElementById("tiktokCac"),
+      tiktokHpp: document.getElementById("tiktokHpp"),
+      tiktokCacHppTotal: document.getElementById("tiktokCacHppTotal"),
+      tiktokMarginAlert: document.getElementById("tiktokMarginAlert"),
+      tiktokMarginAlertIcon: document.getElementById("tiktokMarginAlertIcon"),
+      tiktokMarginAlertTitle: document.getElementById("tiktokMarginAlertTitle"),
+      tiktokMarginAlertSubtext: document.getElementById("tiktokMarginAlertSubtext"),
       tiktokRoas: document.getElementById("tiktokRoas"),
       tiktokProjection: document.getElementById("tiktokProjection"),
       tiktokReturn: document.getElementById("tiktokReturn"),
@@ -6312,6 +6398,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       els.shopeeBudgetAdmin.textContent = currency(totalBudgetAdmin);
       els.shopeeCac.textContent = percent(cac);
       els.shopeeRoas.textContent = roas(roasValue);
+      renderMarginAlert("shopee", cac);
       setProjectionMetric(els.shopeeProjection, projection, previousProjection);
       els.shopeeReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
       els.shopeeReturnCost.textContent = currency(returnCost);
@@ -8145,6 +8232,28 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       });
     }
 
+    // Banner "Cek Margin (CAC + HPP)" di halaman Performa Tiktokshop & Shopee: HPP
+    // dianggap tetap 47%, dijumlah sama CAC berjalan buat kasih notifikasi cepat.
+    const MARKETPLACE_HPP_PERCENT = 47;
+
+    function marginAlertInfo(total) {
+      if (total >= 100) return { className: "keterangan-danger", icon: "🚨", title: "Boncos Cuy!", advice: "turunkan budget dan naikin omset sekarang" };
+      if (total >= 90) return { className: "keterangan-caution", icon: "⚠️", title: "Tipis Banget!", advice: "tahan budget atau kejar omset tambahan" };
+      return { className: "keterangan-safe", icon: "✅", title: "Aman Bisa Digas!", advice: "masih ada ruang buat naikin budget" };
+    }
+
+    function renderMarginAlert(prefix, cac) {
+      const total = cac + MARKETPLACE_HPP_PERCENT;
+      const info = marginAlertInfo(total);
+      els[`${prefix}Hpp`].textContent = percent(MARKETPLACE_HPP_PERCENT);
+      els[`${prefix}CacHppTotal`].textContent = percent(total);
+      els[`${prefix}MarginAlert`].className = `margin-alert ${info.className}`;
+      els[`${prefix}MarginAlertIcon`].textContent = info.icon;
+      els[`${prefix}MarginAlertTitle`].textContent = info.title;
+      els[`${prefix}MarginAlertSubtext`].textContent =
+        `CAC ${percent(cac)} + HPP ${percent(MARKETPLACE_HPP_PERCENT)} = ${percent(total)} — ${info.advice}`;
+    }
+
     function renderTiktokReport() {
       const [start, end] = getTiktokRange();
       if (!start || !end) return;
@@ -8172,6 +8281,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       els.tiktokBudgetAdmin.textContent = currency(totalBudgetAdmin);
       els.tiktokCac.textContent = percent(cac);
       els.tiktokRoas.textContent = roas(roasValue);
+      renderMarginAlert("tiktok", cac);
       setProjectionMetric(els.tiktokProjection, projection, previousProjection);
       els.tiktokReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
       els.tiktokReturnCost.textContent = currency(returnCost);

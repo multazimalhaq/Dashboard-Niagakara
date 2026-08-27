@@ -4711,16 +4711,16 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     function normalizeAdminTiktokRows(rows) {
       return rows.map((row, index) => {
         const date = parseDateValue(getField(row, ["Tanggal", "Date", "A", "Column 1"]));
-        const store = cleanLabel(getField(row, ["Toko", "Toko Tiktokshop", "Toko TikTokshop", "Nama Toko", "Store", "B", "Column 2"]), "");
-        const revenue = parseMoney(getField(row, ["Revenue", "Omset", "Subtotal", "C", "Column 3"]));
-        const platformFee = parseMoney(getField(row, ["Platform Fee", "Biaya Platform", "D", "Column 4"]));
-        const shippingCost = parseMoney(getField(row, ["Shipping Cost", "Ongkir", "Biaya Ongkir", "E", "Column 5"]));
-        const affiliateCommision = parseMoney(getField(row, ["Affiliate Commision", "Affiliate Commission", "Komisi Affiliate", "F", "Column 6"]));
-        const affiliateStoreAds = parseMoney(getField(row, ["Komisi Iklan Toko afiliasi", "Komisi Iklan Toko Afiliasi", "Iklan Toko Afiliasi", "G", "Column 7"]));
-        const dynamicCommision = parseMoney(getField(row, ["Dynamic Commision", "Dynamic Commission", "H", "Column 8"]));
-        const exclusiveAccessFee = parseMoney(getField(row, ["Biaya akses keuntungan eksklusif", "Biaya Akses Keuntungan Eksklusif", "Exclusive Benefit Fee", "I", "Column 9"]));
-        const cashbackFee = parseMoney(getField(row, ["Bonus Cashback Service Fee", "Cashback Service Fee", "J", "Column 10"]));
-        const orderProcessingFee = parseMoney(getField(row, ["Order Processing Fee", "Processing Fee", "K", "Column 11"]));
+        const store = cleanLabel(getField(row, ["Toko", "Toko Tiktokshop", "Toko TikTokshop", "Nama Toko", "Store", "C", "Column 3"]), "");
+        const revenue = parseMoney(getField(row, ["Revenue", "Omset", "Subtotal", "D", "Column 4"]));
+        const platformFee = parseMoney(getField(row, ["Platform Fee", "Biaya Platform", "E", "Column 5"]));
+        const shippingCost = parseMoney(getField(row, ["Shipping Cost", "Ongkir", "Biaya Ongkir", "F", "Column 6"]));
+        const affiliateCommision = parseMoney(getField(row, ["Affiliate Commision", "Affiliate Commission", "Komisi Affiliate", "G", "Column 7"]));
+        const affiliateStoreAds = parseMoney(getField(row, ["Komisi Iklan Toko afiliasi", "Komisi Iklan Toko Afiliasi", "Iklan Toko Afiliasi", "H", "Column 8"]));
+        const dynamicCommision = parseMoney(getField(row, ["Dynamic Comission", "Dynamic Commision", "Dynamic Commission", "I", "Column 9"]));
+        const exclusiveAccessFee = parseMoney(getField(row, ["Biaya akses keuntungan eksklusif", "Biaya Akses Keuntungan Eksklusif", "Exclusive Benefit Fee", "J", "Column 10"]));
+        const cashbackFee = parseMoney(getField(row, ["Bonus Cashback Service Fee", "Cashback Service Fee", "K", "Column 11"]));
+        const orderProcessingFee = parseMoney(getField(row, ["Order Processing Fee", "Processing Fee", "L", "Column 12"]));
         const totalBiayaAdmin = [
           platformFee,
           shippingCost,

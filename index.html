@@ -5020,6 +5020,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return String(status || "").toLowerCase().includes("return");
     }
 
+    function isCancelledStatus(status) {
+      return String(status || "").toLowerCase().includes("cancel");
+    }
+
     function statusGroup(status) {
       const value = String(status || "Lainnya").toLowerCase();
       if (value.includes("success") || value.includes("complete") || value.includes("delivered")) return "Success";
@@ -7984,7 +7988,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return tiktokSourceRows().filter(row =>
         row.date >= startOfDay(start) &&
         row.date <= startOfDay(end) &&
-        (selectedStore === "all" || row.store === selectedStore)
+        (selectedStore === "all" || row.store === selectedStore) &&
+        !isCancelledStatus(row.status)
       );
     }
 

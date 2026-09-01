@@ -5088,21 +5088,44 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
 
     function mergeSheetAndLocalInputs(sheetRows, localRows, keyGetter) {
+      // keyGetter(item) must return { idKey, contentKey }:
+      //   - idKey: a stable id-based key, only when the item carries a REAL,
+      //     already-synced id (e.g. read back from the sheet's "Input ID"
+      //     column, or a locally-submitted id). null when there's no real id.
+      //   - contentKey: always present, built from the row's actual field
+      //     values. This is the fallback match used whenever an id-based
+      //     match isn't possible yet (e.g. a freshly-submitted local row
+      //     whose sheet echo hasn't caught up with the same id yet, because
+      //     the sheet hasn't been re-read, or the Apps Script backend
+      //     hasn't been redeployed to write the id back).
+      //
+      // A row counts as "already present" if EITHER key matches something
+      // already seen. Relying on idKey alone breaks the moment one side has
+      // resolved its id and the other hasn't caught up yet, which is exactly
+      // what caused rows to be double-counted after Edit/Delete support was
+      // added (local rows became id-keyed immediately on submit, while their
+      // sheet echo stayed content-keyed until the id round-tripped).
       const result = [];
-      const sheetKeys = new Set();
-      const localKeys = new Set();
+      const idKeys = new Set();
+      const contentKeys = new Set();
+
+      const isDuplicate = (idKey, contentKey) => (idKey && idKeys.has(idKey)) || contentKeys.has(contentKey);
+      const remember = (idKey, contentKey) => {
+        if (idKey) idKeys.add(idKey);
+        contentKeys.add(contentKey);
+      };
 
       sheetRows.forEach(item => {
-        const key = keyGetter(item);
-        if (sheetKeys.has(key)) return;
-        sheetKeys.add(key);
+        const { idKey, contentKey } = keyGetter(item);
+        if (isDuplicate(idKey, contentKey)) return;
+        remember(idKey, contentKey);
         result.push({ ...item, source: item.source || "sheet" });
       });
 
       localRows.forEach(item => {
-        const key = keyGetter(item);
-        if (sheetKeys.has(key) || localKeys.has(key)) return;
-        localKeys.add(key);
+        const { idKey, contentKey } = keyGetter(item);
+        if (isDuplicate(idKey, contentKey)) return;
+        remember(idKey, contentKey);
         result.push({ ...item, source: "local" });
       });
 
@@ -5385,8 +5408,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
 
     function advertiserBudgetInputKey(item) {
-      if (item.editable && item.id) return `id:${item.id}`;
-      return [
+      const contentKey = [
         inputDateKey(item.date),
         normalizeCompare(item.platform),
         normalizeCompare(item.advertiser),
@@ -5395,6 +5417,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         item.impressions || 0,
         item.leadDashboard || 0
       ].join("|");
+      const idKey = item.editable && item.id ? `id:${item.id}` : null;
+      return { idKey, contentKey };
     }
 
     function combinedBudgetInputs() {
@@ -5714,20 +5738,21 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       });
     }
 
+    function csReportInputKey(item) {
+      const contentKey = [
+        item.date,
+        normalizeCompare(item.cs),
+        normalizeCompare(item.advertiser),
+        normalizeCompare(item.platform),
+        normalizeCompare(item.product),
+        item.leadCs || 0
+      ].join("|");
+      const idKey = item.editable && item.id ? `id:${item.id}` : null;
+      return { idKey, contentKey };
+    }
+
     function combinedCsReportInputs() {
-      const map = new Map();
-      [...externalCsReportInputs, ...csReportInputs].forEach(item => {
-        const key = item.editable && item.id ? `id:${item.id}` : [
-          item.date,
-          normalizeCompare(item.cs),
-          normalizeCompare(item.advertiser),
-          normalizeCompare(item.platform),
-          normalizeCompare(item.product),
-          item.leadCs || 0
-        ].join("|");
-        if (!map.has(key)) map.set(key, item);
-      });
-      return [...map.values()];
+      return mergeSheetAndLocalInputs(externalCsReportInputs, csReportInputs, csReportInputKey);
     }
 
     function populateCsReportInputOptions() {
@@ -6111,8 +6136,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
 
     function shopeeBudgetInputKey(item) {
-      if (item.editable && item.id) return `id:${item.id}`;
-      return [
+      const contentKey = [
         inputDateKey(item.date),
         normalizeCompare(item.advertiser),
         normalizeCompare(item.store),
@@ -6120,6 +6144,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         item.storeRevenue || 0,
         totalShopeeBudget(item)
       ].join("|");
+      const idKey = item.editable && item.id ? `id:${item.id}` : null;
+      return { idKey, contentKey };
     }
 
     function combinedShopeeBudgetInputs() {
@@ -8062,8 +8088,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
 
     function tiktokBudgetInputKey(item) {
-      if (item.editable && item.id) return `id:${item.id}`;
-      return [
+      const contentKey = [
         inputDateKey(item.date),
         normalizeCompare(item.advertiser),
         normalizeCompare(item.store),
@@ -8072,6 +8097,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         item.impressions || 0,
         item.leadDashboard || 0
       ].join("|");
+      const idKey = item.editable && item.id ? `id:${item.id}` : null;
+      return { idKey, contentKey };
     }
 
     function combinedTiktokBudgetInputs() {

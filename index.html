@@ -850,6 +850,55 @@
       color: #25f4ee !important;
     }
 
+    /* Estimasi PAM (Tiktokshop): tabel harian ringkas HPP/CAC/Admin/Affiliate.
+       Cuma nampilin ~7 baris (header + total + 7 tanggal) sebelum scroll —
+       header & baris rata-rata/total tetap dibekukan (sticky, warisan dari
+       .daily-table), dan min-width di-nolin (kayak .clv-table) karena kolomnya
+       cuma 6 dan gak perlu maksa lebar 1520px seperti tabel daily lainnya. */
+    .daily-table.pam-table {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .daily-table-wrap.pam-table-wrap {
+      max-height: 472px;
+    }
+
+    .pam-locked {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .pam-locked .pam-lock-icon {
+      font-size: 10px;
+      opacity: .65;
+    }
+
+    .total-row .pam-locked {
+      color: #25f4ee;
+      opacity: .9;
+    }
+
+    .pam-cac-input {
+      width: 84px;
+      height: 32px;
+      border: 1px solid #9fb0c3;
+      border-radius: 6px;
+      padding: 0 8px;
+      font: inherit;
+      font-weight: 700;
+      color: var(--ink);
+      background: #fff9e6;
+    }
+
+    .pam-cac-input::placeholder {
+      color: #b7c2d0;
+      font-weight: 400;
+    }
+
     .daily-table.advertiser-daily-table .total-row td,
     .daily-table.advertiser-daily-table .total-row td:first-child,
     .daily-table.transaction-table .total-row td,
@@ -3030,6 +3079,32 @@
 
         <section class="card panel">
           <div class="panel-header">
+            <div>
+              <h2 class="tiktok-panel-title">Estimasi PAM</h2>
+              <span class="panel-note" style="text-align:left; display:block; margin-top:2px;">CAC diisi manual per tanggal, tersimpan ke Google Sheet (sinkron ke semua device/user) &mdash; 7 baris terakhir yang terlihat, scroll untuk tanggal sebelumnya</span>
+            </div>
+            <button class="panel-action" id="openTiktokPamSettings" type="button">&#9881; Atur HPP / Admin / Affiliate</button>
+          </div>
+          <div class="daily-table-wrap pam-table-wrap">
+            <table class="daily-table tiktok-daily-table pam-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>HPP</th>
+                  <th>CAC</th>
+                  <th>Admin</th>
+                  <th>Affiliate</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="tiktokPamBody"></tbody>
+            </table>
+          </div>
+          <div class="panel-note" id="tiktokPamStatus" style="margin-top:8px; text-align:left;"></div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-header">
             <h2 class="tiktok-panel-title">Status Pesanan</h2>
             <span class="panel-note">berdasarkan order Tiktokshop</span>
           </div>
@@ -3771,6 +3846,24 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       </div>
     </div>
   </div>
+  <div class="modal-backdrop hidden" id="tiktokPamSettingsModal">
+    <div class="modal">
+      <h2>Atur HPP / Admin / Affiliate</h2>
+      <label>HPP (%)
+        <input id="tiktokPamHppInput" type="number" min="0" max="100" step="0.1" placeholder="Contoh: 47">
+      </label>
+      <label>Admin (%)
+        <input id="tiktokPamAdminInput" type="number" min="0" max="100" step="0.1" placeholder="Contoh: 15">
+      </label>
+      <label>Affiliate (%)
+        <input id="tiktokPamAffiliateInput" type="number" min="0" max="100" step="0.1" placeholder="Contoh: 8">
+      </label>
+      <div class="modal-actions">
+        <button id="closeTiktokPamSettings">Batal</button>
+        <button class="primary" id="saveTiktokPamSettings">Simpan</button>
+      </div>
+    </div>
+  </div>
   <div class="modal-backdrop hidden" id="budgetingInputModal">
     <form class="modal" id="budgetingInputForm">
       <h2>Input Budgeting</h2>
@@ -4214,6 +4307,15 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       tiktokImpressionsInput: document.getElementById("tiktokImpressionsInput"),
       tiktokLeadDashboardInput: document.getElementById("tiktokLeadDashboardInput"),
       tiktokBudgetInputBody: document.getElementById("tiktokBudgetInputBody"),
+      tiktokPamBody: document.getElementById("tiktokPamBody"),
+      tiktokPamStatus: document.getElementById("tiktokPamStatus"),
+      openTiktokPamSettings: document.getElementById("openTiktokPamSettings"),
+      tiktokPamSettingsModal: document.getElementById("tiktokPamSettingsModal"),
+      tiktokPamHppInput: document.getElementById("tiktokPamHppInput"),
+      tiktokPamAdminInput: document.getElementById("tiktokPamAdminInput"),
+      tiktokPamAffiliateInput: document.getElementById("tiktokPamAffiliateInput"),
+      closeTiktokPamSettings: document.getElementById("closeTiktokPamSettings"),
+      saveTiktokPamSettings: document.getElementById("saveTiktokPamSettings"),
       crmStackTooltip: document.getElementById("crmStackTooltip"),
       crTargetModal: document.getElementById("crTargetModal"),
       crTargetInput: document.getElementById("crTargetInput"),
@@ -4371,6 +4473,22 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     const CS_REPORT_STORAGE_KEY = "niagakaraCsReportInputs";
     const SHOPEE_BUDGET_STORAGE_KEY = "niagakaraShopeeBudgetInputs";
     const TIKTOK_BUDGET_STORAGE_KEY = "niagakaraTiktokBudgetInputs";
+
+    // ========== ESTIMASI PAM (TIKTOKSHOP) ==========
+    // Spreadsheet + Apps Script Web App KHUSUS fitur ini — terpisah dari
+    // SYNC_WEB_APP_URL yang dipakai MonthlyTargets/WeeklyProposals. Isi 2
+    // konstanta di bawah setelah spreadsheet & Apps Script-nya di-deploy
+    // (lihat file Code.gs yang dikirim terpisah beserta panduan setup-nya).
+    const TIKTOK_PAM_SHEET_ID = "1-k5dgjNbuezaYqcSpcK2p84M_sQjYd_TQBP5QNs2SUQ"; // ID spreadsheet "Estimasi PAM Tiktokshop" (dari URL sheet-nya)
+    const TIKTOK_PAM_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzVyatC50FAb3mJxC2CdKaxi1gc1uwMF_m76ctIjzyW7KqcsIz4vpao1HmeB3c0UFXa/exec"; // URL Web App hasil deploy Code.gs punya spreadsheet di atas
+    const TIKTOK_PAM_CAC_SHEET_NAME = "PamCacDaily";
+    const TIKTOK_PAM_SETTINGS_SHEET_NAME = "PamSettings";
+    const TIKTOK_PAM_CAC_STORAGE_KEY = "niagakaraTiktokPamCacByDate";
+    const TIKTOK_PAM_SETTINGS_STORAGE_KEY = "niagakaraTiktokPamSettings";
+    const TIKTOK_PAM_DEFAULT_SETTINGS = { hpp: 47, admin: 15, affiliate: 8 };
+    let tiktokPamCacByDate = {};
+    let tiktokPamSettings = { ...TIKTOK_PAM_DEFAULT_SETTINGS };
+
     const SHOPEE_BUDGET_PRODUCTS = [
       "Vitameal", "Waji", "Eyebost", "Eyebost Pro", "Vitasma", "Vitummy", "Bruv"
     ];
@@ -8390,6 +8508,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       renderMarketplaceStatusTable(rows, els.tiktokStatusBody);
       renderTiktokDailyReport(dailyRows);
       renderTiktokBudgetInputs();
+      if (typeof renderTiktokPamTable === 'function') {
+        renderTiktokPamTable();
+      }
       if (typeof updateChannelTargetBanner === 'function') {
         updateChannelTargetBanner('tiktok', loadMonthlyTargetByMonth(), gross);
       }
@@ -12031,6 +12152,238 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         }
     }
 
+    // ========== ESTIMASI PAM (TIKTOKSHOP) — cloud sync ke spreadsheet KHUSUS ==========
+    // Beda spreadsheet/Web App dari SYNC_WEB_APP_URL di atas — lihat TIKTOK_PAM_SHEET_ID
+    // & TIKTOK_PAM_WEB_APP_URL. Baca via Google Visualization API (publik, read-only),
+    // simpan lewat fetch POST no-cors ke Apps Script (Code.gs terpisah), sama persis
+    // pola syncLoadFromCloud/syncSaveXToCloud di atas.
+
+    function loadTiktokPamFromStorage() {
+        try {
+            const rawCac = localStorage.getItem(TIKTOK_PAM_CAC_STORAGE_KEY);
+            tiktokPamCacByDate = rawCac ? JSON.parse(rawCac) : {};
+        } catch (e) {
+            tiktokPamCacByDate = {};
+        }
+        try {
+            const rawSettings = localStorage.getItem(TIKTOK_PAM_SETTINGS_STORAGE_KEY);
+            const parsed = rawSettings ? JSON.parse(rawSettings) : {};
+            tiktokPamSettings = { ...TIKTOK_PAM_DEFAULT_SETTINGS, ...parsed };
+        } catch (e) {
+            tiktokPamSettings = { ...TIKTOK_PAM_DEFAULT_SETTINGS };
+        }
+    }
+
+    function saveTiktokPamCacToStorage() {
+        localStorage.setItem(TIKTOK_PAM_CAC_STORAGE_KEY, JSON.stringify(tiktokPamCacByDate));
+    }
+
+    function saveTiktokPamSettingsToStorage() {
+        localStorage.setItem(TIKTOK_PAM_SETTINGS_STORAGE_KEY, JSON.stringify(tiktokPamSettings));
+    }
+
+    async function syncLoadTiktokPamFromCloud() {
+        if (!TIKTOK_PAM_SHEET_ID) return;
+        try {
+            const cacRows = await loadGoogleSheet(TIKTOK_PAM_SHEET_ID, TIKTOK_PAM_CAC_SHEET_NAME, "select *");
+            if (cacRows && cacRows.length) {
+                const byDate = {};
+                cacRows.forEach(row => {
+                    const key = String(row["DateKey"] || row["A"] || "").trim();
+                    const val = parseFloat(row["CacPercent"] ?? row["B"]);
+                    if (key && Number.isFinite(val)) byDate[key] = val;
+                });
+                if (Object.keys(byDate).length) {
+                    tiktokPamCacByDate = byDate;
+                    saveTiktokPamCacToStorage();
+                }
+            }
+        } catch (e) {
+            console.warn("Gagal load CAC Estimasi PAM Tiktokshop dari cloud (pakai cache lokal):", e);
+        }
+        try {
+            const settingsRows = await loadGoogleSheet(TIKTOK_PAM_SHEET_ID, TIKTOK_PAM_SETTINGS_SHEET_NAME, "select *");
+            if (settingsRows && settingsRows.length) {
+                const row = settingsRows[0];
+                const hpp = parseFloat(row["Hpp"] ?? row["A"]);
+                const admin = parseFloat(row["Admin"] ?? row["B"]);
+                const affiliate = parseFloat(row["Affiliate"] ?? row["C"]);
+                const next = { ...tiktokPamSettings };
+                if (Number.isFinite(hpp)) next.hpp = hpp;
+                if (Number.isFinite(admin)) next.admin = admin;
+                if (Number.isFinite(affiliate)) next.affiliate = affiliate;
+                tiktokPamSettings = next;
+                saveTiktokPamSettingsToStorage();
+            }
+        } catch (e) {
+            console.warn("Gagal load setting Estimasi PAM Tiktokshop dari cloud (pakai cache lokal):", e);
+        }
+    }
+
+    function saveTiktokPamCacToCloud(dateKey, value) {
+        if (!TIKTOK_PAM_WEB_APP_URL) return;
+        fetch(TIKTOK_PAM_WEB_APP_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ action: "saveCac", dateKey, cacPercent: value === undefined ? "" : value })
+        }).catch(e => console.warn("Gagal simpan CAC Estimasi PAM Tiktokshop ke cloud:", e));
+    }
+
+    function saveTiktokPamSettingsToCloud(settings) {
+        if (!TIKTOK_PAM_WEB_APP_URL) return;
+        fetch(TIKTOK_PAM_WEB_APP_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ action: "saveSettings", ...settings })
+        }).catch(e => console.warn("Gagal simpan setting Estimasi PAM Tiktokshop ke cloud:", e));
+    }
+
+    // Ambang batas sama persis dengan produkUtamaKeteranganInfo (Total = HPP + CAC + Admin + Affiliate)
+    function tiktokPamTotalInfo(total) {
+        if (total >= 100) return { className: "keterangan-danger", text: "Turunkan budget" };
+        if (total >= 95) return { className: "keterangan-warning", text: "Tahan budget" };
+        if (total >= 90) return { className: "keterangan-caution", text: "Waspada" };
+        return { className: "keterangan-safe", text: "Aman" };
+    }
+
+    function pamLockedCell(value) {
+        return `<span class="pam-locked"><span class="pam-lock-icon">&#128274;</span>${percent(value)}</span>`;
+    }
+
+    function pamTotalChip(total) {
+        if (total === null) return `<span class="status-chip keterangan-chip keterangan-safe">&mdash;</span>`;
+        const info = tiktokPamTotalInfo(total);
+        return `<span class="status-chip keterangan-chip ${info.className}" title="${escapeHtml(info.text)}">${percent(total)}</span>`;
+    }
+
+    function renderTiktokPamTable() {
+        if (!els.tiktokPamBody) return;
+        const [start, end] = getTiktokRange();
+        if (!start || !end) {
+            els.tiktokPamBody.innerHTML = "";
+            return;
+        }
+
+        const settings = tiktokPamSettings;
+        const baseTotal = settings.hpp + settings.admin + settings.affiliate;
+        const dates = dateRangeSeries(start, end).slice().reverse(); // tanggal terbaru di atas
+
+        let cacSum = 0;
+        let cacCount = 0;
+
+        const rowsHtml = dates.map(date => {
+            const key = dateKey(date);
+            const cacValue = tiktokPamCacByDate[key];
+            const hasCac = typeof cacValue === "number" && Number.isFinite(cacValue);
+            if (hasCac) {
+                cacSum += cacValue;
+                cacCount += 1;
+            }
+            const total = hasCac ? baseTotal + cacValue : null;
+            return `
+              <tr>
+                ${reportCell(longIndonesianDate(date), isHolidayDate(date) ? "holiday-cell" : "")}
+                <td>${pamLockedCell(settings.hpp)}</td>
+                <td><input type="text" inputmode="decimal" class="pam-cac-input" data-pam-date="${key}" value="${hasCac ? cacValue : ""}" placeholder="0.0"></td>
+                <td>${pamLockedCell(settings.admin)}</td>
+                <td>${pamLockedCell(settings.affiliate)}</td>
+                <td>${pamTotalChip(total)}</td>
+              </tr>
+            `;
+        }).join("");
+
+        const avgCac = cacCount > 0 ? cacSum / cacCount : null;
+        const avgTotal = avgCac === null ? null : baseTotal + avgCac;
+        const totalRowHtml = `
+          <tr class="total-row">
+            <td>RATA-RATA / TOTAL</td>
+            <td>${pamLockedCell(settings.hpp)}</td>
+            <td>${avgCac === null ? "&mdash;" : percent(avgCac)}</td>
+            <td>${pamLockedCell(settings.admin)}</td>
+            <td>${pamLockedCell(settings.affiliate)}</td>
+            <td>${pamTotalChip(avgTotal)}</td>
+          </tr>
+        `;
+
+        els.tiktokPamBody.innerHTML = totalRowHtml + rowsHtml;
+        if (els.tiktokPamStatus) {
+            els.tiktokPamStatus.textContent = TIKTOK_PAM_SHEET_ID
+                ? "CAC & setting tersimpan ke Google Sheet — device/user lain lihat angka terbaru setelah reload halaman."
+                : "Mode lokal: spreadsheet Estimasi PAM belum disambungkan, CAC & setting baru tersimpan di browser ini.";
+        }
+    }
+
+    function setupTiktokPamFeature() {
+        if (!els.tiktokPamBody) return;
+
+        els.tiktokPamBody.addEventListener("input", event => {
+            const input = event.target.closest(".pam-cac-input");
+            if (!input) return;
+            const cleaned = input.value.replace(/[^\d.,]/g, "");
+            if (input.value !== cleaned) input.value = cleaned;
+        });
+
+        els.tiktokPamBody.addEventListener("keydown", event => {
+            if (event.key === "Enter" && event.target.classList.contains("pam-cac-input")) {
+                event.preventDefault();
+                event.target.blur();
+            }
+        });
+
+        // "blur" gak nge-bubble, jadi delegasi lewat "focusout" (yang nge-bubble)
+        els.tiktokPamBody.addEventListener("focusout", event => {
+            const input = event.target.closest(".pam-cac-input");
+            if (!input) return;
+            const key = input.dataset.pamDate;
+            const raw = String(input.value || "").replace(",", ".").trim();
+            let storedValue;
+            if (raw === "") {
+                delete tiktokPamCacByDate[key];
+                storedValue = "";
+            } else {
+                const parsed = parseFloat(raw);
+                if (!Number.isFinite(parsed)) return;
+                tiktokPamCacByDate[key] = parsed;
+                storedValue = parsed;
+            }
+            saveTiktokPamCacToStorage();
+            saveTiktokPamCacToCloud(key, storedValue);
+            renderTiktokPamTable();
+        });
+
+        if (els.openTiktokPamSettings) {
+            els.openTiktokPamSettings.addEventListener("click", () => {
+                els.tiktokPamHppInput.value = tiktokPamSettings.hpp;
+                els.tiktokPamAdminInput.value = tiktokPamSettings.admin;
+                els.tiktokPamAffiliateInput.value = tiktokPamSettings.affiliate;
+                els.tiktokPamSettingsModal.classList.remove("hidden");
+            });
+            els.closeTiktokPamSettings.addEventListener("click", () => {
+                els.tiktokPamSettingsModal.classList.add("hidden");
+            });
+            els.tiktokPamSettingsModal.addEventListener("click", event => {
+                if (event.target === els.tiktokPamSettingsModal) els.tiktokPamSettingsModal.classList.add("hidden");
+            });
+            els.saveTiktokPamSettings.addEventListener("click", () => {
+                const hpp = parseFloat(els.tiktokPamHppInput.value);
+                const admin = parseFloat(els.tiktokPamAdminInput.value);
+                const affiliate = parseFloat(els.tiktokPamAffiliateInput.value);
+                const next = {
+                    hpp: Number.isFinite(hpp) ? hpp : tiktokPamSettings.hpp,
+                    admin: Number.isFinite(admin) ? admin : tiktokPamSettings.admin,
+                    affiliate: Number.isFinite(affiliate) ? affiliate : tiktokPamSettings.affiliate
+                };
+                tiktokPamSettings = next;
+                saveTiktokPamSettingsToStorage();
+                saveTiktokPamSettingsToCloud(next);
+                els.tiktokPamSettingsModal.classList.add("hidden");
+                renderTiktokPamTable();
+            });
+        }
+    }
+
     // ========== MULTI-MONTH TARGET HISTORY ==========
     const MONTHLY_TARGETS_KEY = 'ngkr_monthly_targets_history';
 
@@ -12371,9 +12724,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
 
     async function init() {
+      loadTiktokPamFromStorage();
       if (typeof syncLoadFromCloud === 'function') {
         await syncLoadFromCloud();
       }
+      await syncLoadTiktokPamFromCloud();
       loadBudgetingInputs();
       loadCsReportInputs();
       loadShopeeBudgetInputs();
@@ -12386,6 +12741,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       setupCrmStackTooltip();
       setupTargetManagement(); // Setup target management
       setupCustomerLifetimeValueFilters();
+      setupTiktokPamFeature();
       setupAllNewFeatures();
       updateInputs(...rangePreset("thisMonth"));
       updateAdvertiserInputs(...rangePreset("thisMonth"));

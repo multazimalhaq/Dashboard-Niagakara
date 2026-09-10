@@ -227,6 +227,52 @@
       white-space: nowrap;
     }
 
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .refresh-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .15s ease, transform .1s ease, opacity .15s ease;
+    }
+
+    .refresh-btn:hover { background: #f1f5fb; }
+    .refresh-btn:active { transform: scale(0.97); }
+
+    .refresh-btn.is-loading {
+      opacity: .65;
+      cursor: default;
+    }
+
+    .refresh-btn .refresh-icon {
+      display: inline-block;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .refresh-btn.is-loading .refresh-icon {
+      animation: refresh-btn-spin .8s linear infinite;
+    }
+
+    @keyframes refresh-btn-spin {
+      to { transform: rotate(360deg); }
+    }
+
     .filters {
       background: rgba(255,255,255,0.90);
       border: 1px solid var(--line);
@@ -1925,7 +1971,10 @@
             <h1>Overview Performa Niagakara Mitra Juara</h1>
             <p class="subtitle">Ringkasan performa bisnis</p>
           </div>
-          <div class="status-pill" id="sourceStatus">Memuat data real Google Sheets...</div>
+          <div class="topbar-actions">
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="dashboard" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
+            <div class="status-pill" id="sourceStatus">Memuat data real Google Sheets...</div>
+          </div>
         </div>
 
         <section class="filters" aria-label="Filter dashboard">
@@ -2186,7 +2235,10 @@
             <h1>Performa Advertiser Soscom</h1>
             <p class="subtitle">Ringkasan performa advertiser dari kanal Soscom</p>
           </div>
-          <div class="status-pill" id="advertiserStatus">Menunggu data advertiser...</div>
+          <div class="topbar-actions">
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="advertiser" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
+            <div class="status-pill" id="advertiserStatus">Menunggu data advertiser...</div>
+          </div>
         </div>
 
         <section class="filters" aria-label="Filter advertiser soscom">
@@ -2378,7 +2430,10 @@
             <h1>Performa Customer Service Soscom</h1>
             <p class="subtitle">Ringkasan performa CS dari kanal Soscom</p>
           </div>
-          <div class="status-pill" id="csStatus">Menunggu data CS...</div>
+          <div class="topbar-actions">
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="cs" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
+            <div class="status-pill" id="csStatus">Menunggu data CS...</div>
+          </div>
         </div>
 
         <section class="filters" aria-label="Filter customer service">
@@ -2595,7 +2650,10 @@
             <h1>Performa Customer Relationship Management</h1>
             <p class="subtitle">Ringkasan performa CRM dan retensi pelanggan</p>
           </div>
-          <div class="status-pill" id="crmStatus">Menunggu data CRM...</div>
+          <div class="topbar-actions">
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="crm" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
+            <div class="status-pill" id="crmStatus">Menunggu data CRM...</div>
+          </div>
         </div>
 
         <section class="filters" aria-label="Filter CRM">
@@ -2797,7 +2855,10 @@
             <h1>Performa Shopee</h1>
             <p class="subtitle">Ringkasan performa marketplace Shopee</p>
           </div>
-          <div class="status-pill" id="shopeeStatus">Menunggu data Shopee...</div>
+          <div class="topbar-actions">
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="shopee" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
+            <div class="status-pill" id="shopeeStatus">Menunggu data Shopee...</div>
+          </div>
         </div>
 
         <section class="filters" aria-label="Filter Shopee">
@@ -2980,7 +3041,10 @@
             <h1>Performa Tiktokshop</h1>
             <p class="subtitle">Ringkasan performa marketplace Tiktokshop</p>
           </div>
-          <div class="status-pill" id="tiktokStatus">Menunggu data Tiktokshop...</div>
+          <div class="topbar-actions">
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="tiktok" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
+            <div class="status-pill" id="tiktokStatus">Menunggu data Tiktokshop...</div>
+          </div>
         </div>
 
         <section class="filters" aria-label="Filter Tiktokshop">
@@ -3195,6 +3259,7 @@
             <select id="weekPeriodSelect" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 14px; min-width: 200px;">
               <option value="">Memuat...</option>
             </select>
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="weekly-budgeting" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
             <div class="status-pill" id="weeklyAdvertiserStatus">Menunggu data...</div>
           </div>
         </div>
@@ -3394,7 +3459,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             <h1>Product</h1>
             <p class="subtitle">Omset per minggu dan kontribusi per channel</p>
           </div>
-          <span class="status-pill" id="productStatus">—</span>
+          <div class="topbar-actions">
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="product" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
+            <span class="status-pill" id="productStatus">—</span>
+          </div>
         </div>
 
         <section class="filters" aria-label="Filter Product">
@@ -3708,7 +3776,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             <h1>Admin Marketplace</h1>
             <p class="subtitle">Input dan kontrol biaya admin marketplace</p>
           </div>
-          <div class="status-pill" id="adminMarketplaceStatus">Menunggu data Marketplace...</div>
+          <div class="topbar-actions">
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="admin-marketplace" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
+            <div class="status-pill" id="adminMarketplaceStatus">Menunggu data Marketplace...</div>
+          </div>
         </div>
 
         <section class="filters" aria-label="Filter Admin Marketplace">
@@ -11194,6 +11265,53 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       }
     }
 
+    // Force-refresh (dipakai tombol "Refresh Data" per menu): sengaja TIDAK lewat
+    // isRangeCovered()/loadGoogleSheetCached() supaya benar-benar narik ulang dari
+    // Google Sheets, bukan dari cache 10 menit atau cache "rentang udah kebaca".
+    // Meniru pola ensureClvDataLoaded(true) yang sudah ada. Cakupan rentang yang
+    // ditarik ulang mengikuti logika ensureCoreDataForRange (union periode ini +
+    // periode sebelumnya) supaya cakupan data yang sudah termuat tidak menyusut.
+    async function forceRefreshCoreDataForRange(start, end) {
+      if (!start || !end) return;
+      const [prevStart] = [previousRange(start, end)[0]];
+      const fetchStart = prevStart < (loadedRangeStart || start) ? prevStart : start;
+      const fetchEnd = end > (loadedRangeEnd || end) ? end : end;
+      const webotQ = webotQuery(fetchStart, fetchEnd);
+      const marketplaceQ = marketplaceQuery(fetchStart, fetchEnd);
+      const [webotResult, marketplaceResult] = await Promise.allSettled([
+        loadGoogleSheet(SHEETS.webot.id, SHEETS.webot.sheet, webotQ),
+        loadGoogleSheet(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQ),
+      ]);
+      const webotRows = settledRows(webotResult);
+      const marketplaceRows = settledRows(marketplaceResult);
+      // Perbarui juga cache sesi supaya pemuatan lain yang masih pakai
+      // loadGoogleSheetCached (mis. navigasi ke menu lain) ikut lihat data segar ini.
+      if (webotResult.status === "fulfilled") saveToCache(SHEETS.webot.id, SHEETS.webot.sheet, webotQ, webotRows);
+      if (marketplaceResult.status === "fulfilled") saveToCache(SHEETS.marketplace.id, SHEETS.marketplace.sheet, marketplaceQ, marketplaceRows);
+      await applyCoreRowsAsync(webotRows, marketplaceRows, fetchStart, fetchEnd);
+      applyLatestFallbacks();
+      const failedNotes = [];
+      if (webotResult.status === "rejected") failedNotes.push("Webot gagal ditarik ulang");
+      if (marketplaceResult.status === "rejected") failedNotes.push("Marketplace gagal ditarik ulang");
+      return failedNotes;
+    }
+
+    // Sama seperti supportingSheetPromises(), tapi lewat loadGoogleSheet langsung
+    // (tanpa cache) — dipakai tombol Refresh Data supaya data input pendukung
+    // (Result Soscom/Budget Iklan/Result MP Shopee/Tiktokshop/Result CS/Laporan
+    // CS/Admin Shopee & Tiktokshop) ikut ditarik ulang, bukan cuma data inti.
+    async function forceRefreshSupportingData() {
+      const specs = [
+        SHEETS.advertiserResult, SHEETS.advertiserBudget, SHEETS.shopeeResultMp, SHEETS.tiktokResult,
+        SHEETS.csResult, SHEETS.csReport, SHEETS.adminShopeeSummary, SHEETS.adminTiktokSummary
+      ];
+      const results = await Promise.allSettled(specs.map(spec => loadGoogleSheet(spec.id, spec.sheet, "select *")));
+      results.forEach((result, index) => {
+        if (result.status === "fulfilled") saveToCache(specs[index].id, specs[index].sheet, "select *", result.value);
+      });
+      return applySupportingRows(results);
+    }
+
     function supportingSheetPromises() {
       return [
         loadGoogleSheetCached(SHEETS.advertiserResult.id, SHEETS.advertiserResult.sheet, "select *"),
@@ -12182,25 +12300,33 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         localStorage.setItem(TIKTOK_PAM_SETTINGS_STORAGE_KEY, JSON.stringify(tiktokPamSettings));
     }
 
+    // Status baca-cloud terakhir, dipakai renderTiktokPamTable() buat kasih tau
+    // user kalau angka yang tampil mungkin belum sinkron (bukan cuma "mode lokal").
+    let tiktokPamCloudReadOk = null; // null = belum pernah dicoba, true/false = hasil percobaan terakhir
+
     async function syncLoadTiktokPamFromCloud() {
         if (!TIKTOK_PAM_SHEET_ID) return;
+        let cacOk = false;
         try {
             const cacRows = await loadGoogleSheet(TIKTOK_PAM_SHEET_ID, TIKTOK_PAM_CAC_SHEET_NAME, "select *");
-            if (cacRows && cacRows.length) {
-                const byDate = {};
-                cacRows.forEach(row => {
-                    const key = String(row["DateKey"] || row["A"] || "").trim();
-                    const val = parseFloat(row["CacPercent"] ?? row["B"]);
-                    if (key && Number.isFinite(val)) byDate[key] = val;
-                });
-                if (Object.keys(byDate).length) {
-                    tiktokPamCacByDate = byDate;
-                    saveTiktokPamCacToStorage();
-                }
-            }
+            const byDate = {};
+            (cacRows || []).forEach(row => {
+                const key = String(row["DateKey"] || row["A"] || "").trim();
+                const val = parseFloat(row["CacPercent"] ?? row["B"]);
+                if (key && Number.isFinite(val)) byDate[key] = val;
+            });
+            // MERGE, bukan replace penuh: cloud adalah sumber kebenaran bersama antar
+            // device/user, tapi kalau hasil baca gviz kebetulan kosong/parsial (misal
+            // konsistensi Google Sheets yang belum langsung ke-refresh di sisi mereka),
+            // data yang sudah kebaca sebelumnya di device ini tetap dipertahankan,
+            // bukan malah dihapus/ditimpa kosong.
+            tiktokPamCacByDate = { ...tiktokPamCacByDate, ...byDate };
+            saveTiktokPamCacToStorage();
+            cacOk = true;
         } catch (e) {
-            console.warn("Gagal load CAC Estimasi PAM Tiktokshop dari cloud (pakai cache lokal):", e);
+            console.warn("Gagal load CAC Estimasi PAM Tiktokshop dari cloud (pakai cache lokal) — cek apakah spreadsheet-nya sudah di-share 'Anyone with the link - Viewer':", e);
         }
+        let settingsOk = false;
         try {
             const settingsRows = await loadGoogleSheet(TIKTOK_PAM_SHEET_ID, TIKTOK_PAM_SETTINGS_SHEET_NAME, "select *");
             if (settingsRows && settingsRows.length) {
@@ -12215,9 +12341,12 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
                 tiktokPamSettings = next;
                 saveTiktokPamSettingsToStorage();
             }
+            settingsOk = true;
         } catch (e) {
             console.warn("Gagal load setting Estimasi PAM Tiktokshop dari cloud (pakai cache lokal):", e);
         }
+        tiktokPamCloudReadOk = cacOk && settingsOk;
+        return tiktokPamCloudReadOk;
     }
 
     function saveTiktokPamCacToCloud(dateKey, value) {
@@ -12309,9 +12438,13 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
 
         els.tiktokPamBody.innerHTML = totalRowHtml + rowsHtml;
         if (els.tiktokPamStatus) {
-            els.tiktokPamStatus.textContent = TIKTOK_PAM_SHEET_ID
-                ? "CAC & setting tersimpan ke Google Sheet — device/user lain lihat angka terbaru setelah reload halaman."
-                : "Mode lokal: spreadsheet Estimasi PAM belum disambungkan, CAC & setting baru tersimpan di browser ini.";
+            if (!TIKTOK_PAM_SHEET_ID) {
+                els.tiktokPamStatus.textContent = "Mode lokal: spreadsheet Estimasi PAM belum disambungkan, CAC & setting baru tersimpan di browser ini.";
+            } else if (tiktokPamCloudReadOk === false) {
+                els.tiktokPamStatus.textContent = "Belum berhasil membaca data cloud (cek koneksi, atau pastikan spreadsheet Estimasi PAM di-share \"Anyone with the link – Viewer\") — angka di bawah masih dari cache browser ini.";
+            } else {
+                els.tiktokPamStatus.textContent = "CAC & setting tersimpan ke Google Sheet — klik \"Refresh Data\" di atas untuk menarik input terbaru dari user/device lain kapan saja.";
+            }
         }
     }
 
@@ -12382,6 +12515,94 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
                 renderTiktokPamTable();
             });
         }
+    }
+
+    // ========== TOMBOL "REFRESH DATA" DI SETIAP MENU ==========
+    // Supaya user bisa narik ulang data (bypass cache 10 menit & cache rentang
+    // yang sudah kebaca) tanpa harus reload seluruh halaman (F5). Setiap menu
+    // narik ulang data inti (Webot+Marketplace) utk rentang tanggal aktifnya
+    // sendiri, plus data pendukung terkait, lalu render ulang halaman itu saja.
+    const PAGE_REFRESH_HANDLERS = {
+      dashboard: async () => {
+        await forceRefreshCoreDataForRange(...getSelectedRange());
+        render();
+      },
+      advertiser: async () => {
+        await forceRefreshCoreDataForRange(...getAdvertiserRange());
+        await forceRefreshSupportingData();
+        renderAdvertiserReport();
+      },
+      cs: async () => {
+        await forceRefreshCoreDataForRange(...getCsRange());
+        await forceRefreshSupportingData();
+        renderCsReport();
+      },
+      crm: async () => {
+        await forceRefreshCoreDataForRange(...getCrmRange());
+        renderCrmReport();
+      },
+      shopee: async () => {
+        await forceRefreshCoreDataForRange(...getShopeeRange());
+        await forceRefreshSupportingData();
+        renderShopeeReport();
+      },
+      tiktok: async () => {
+        await forceRefreshCoreDataForRange(...getTiktokRange());
+        await forceRefreshSupportingData();
+        await syncLoadTiktokPamFromCloud(); // narik ulang CAC/setting Estimasi PAM dari user/device lain
+        renderTiktokReport(); // renderTiktokReport() sudah otomatis panggil renderTiktokPamTable()
+      },
+      "weekly-budgeting": async () => {
+        await forceRefreshCoreDataForRange(...getSelectedWeekRange());
+        await forceRefreshSupportingData();
+        if (typeof syncLoadFromCloud === "function") await syncLoadFromCloud();
+        renderWeeklyBudgetingPage();
+      },
+      product: async () => {
+        await forceRefreshCoreDataForRange(...getProductRange());
+        renderProductPage();
+      },
+      "admin-marketplace": async () => {
+        await forceRefreshCoreDataForRange(...getAdminMarketplaceRange());
+        await forceRefreshSupportingData();
+        renderAdminMarketplacePage();
+      }
+    };
+
+    const PAGE_REFRESH_STATUS_ELS = {
+      dashboard: () => els.sourceStatus,
+      advertiser: () => els.advertiserStatus,
+      cs: () => els.csStatus,
+      crm: () => els.crmStatus,
+      shopee: () => els.shopeeStatus,
+      tiktok: () => els.tiktokStatus,
+      "weekly-budgeting": () => els.weeklyAdvertiserStatus,
+      product: () => els.productStatus,
+      "admin-marketplace": () => els.adminMarketplaceStatus
+    };
+
+    function setupRefreshButtons() {
+      document.querySelectorAll(".page-refresh-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const pageKey = btn.dataset.refreshPage;
+          const handler = PAGE_REFRESH_HANDLERS[pageKey];
+          if (!handler || btn.classList.contains("is-loading")) return;
+          const statusElGetter = PAGE_REFRESH_STATUS_ELS[pageKey];
+          const statusEl = statusElGetter ? statusElGetter() : null;
+          btn.classList.add("is-loading");
+          btn.disabled = true;
+          if (statusEl) statusEl.textContent = "Memuat ulang data...";
+          try {
+            await handler();
+          } catch (error) {
+            console.warn(`Gagal refresh data menu "${pageKey}":`, error);
+            if (statusEl) statusEl.textContent = `Gagal refresh data: ${error.message}`;
+          } finally {
+            btn.classList.remove("is-loading");
+            btn.disabled = false;
+          }
+        });
+      });
     }
 
     // ========== MULTI-MONTH TARGET HISTORY ==========
@@ -12742,6 +12963,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       setupTargetManagement(); // Setup target management
       setupCustomerLifetimeValueFilters();
       setupTiktokPamFeature();
+      setupRefreshButtons();
       setupAllNewFeatures();
       updateInputs(...rangePreset("thisMonth"));
       updateAdvertiserInputs(...rangePreset("thisMonth"));

@@ -653,6 +653,29 @@
       font-weight: 400;
     }
 
+    .panel-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .panel-action.pam-save-btn {
+      background: #14532d;
+    }
+
+    .panel-action.pam-cancel-btn {
+      background: transparent;
+      color: #0b3551;
+      border: 1px solid var(--line);
+    }
+
+    .panel-action.is-loading {
+      opacity: .65;
+      cursor: default;
+    }
+
     #openCsReportInput {
       background: #14532d;
       font-weight: 400;
@@ -942,6 +965,16 @@
 
     .pam-cac-input::placeholder {
       color: #b7c2d0;
+      font-weight: 400;
+    }
+
+    .pam-cac-view {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .pam-cac-empty {
+      color: var(--muted);
       font-weight: 400;
     }
 
@@ -3147,7 +3180,12 @@
               <h2 class="tiktok-panel-title">Estimasi PAM</h2>
               <span class="panel-note" style="text-align:left; display:block; margin-top:2px;">CAC diisi manual per tanggal, tersimpan ke Google Sheet (sinkron ke semua device/user) &mdash; 7 baris terakhir yang terlihat, scroll untuk tanggal sebelumnya</span>
             </div>
-            <button class="panel-action" id="openTiktokPamSettings" type="button">&#9881; Atur HPP / Admin / Affiliate</button>
+            <div class="panel-header-actions">
+              <button class="panel-action" id="editTiktokPamCac" type="button">&#9999;&#65039; Edit CAC</button>
+              <button class="panel-action pam-save-btn hidden" id="saveTiktokPamCac" type="button">&#128190; Simpan CAC</button>
+              <button class="panel-action pam-cancel-btn hidden" id="cancelTiktokPamCac" type="button">&#10005; Batal</button>
+              <button class="panel-action" id="openTiktokPamSettings" type="button">&#9881; Atur HPP / Admin / Affiliate</button>
+            </div>
           </div>
           <div class="daily-table-wrap pam-table-wrap">
             <table class="daily-table tiktok-daily-table pam-table">
@@ -4380,6 +4418,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       tiktokBudgetInputBody: document.getElementById("tiktokBudgetInputBody"),
       tiktokPamBody: document.getElementById("tiktokPamBody"),
       tiktokPamStatus: document.getElementById("tiktokPamStatus"),
+      editTiktokPamCac: document.getElementById("editTiktokPamCac"),
+      saveTiktokPamCac: document.getElementById("saveTiktokPamCac"),
+      cancelTiktokPamCac: document.getElementById("cancelTiktokPamCac"),
       openTiktokPamSettings: document.getElementById("openTiktokPamSettings"),
       tiktokPamSettingsModal: document.getElementById("tiktokPamSettingsModal"),
       tiktokPamHppInput: document.getElementById("tiktokPamHppInput"),
@@ -4559,6 +4600,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     const TIKTOK_PAM_DEFAULT_SETTINGS = { hpp: 47, admin: 15, affiliate: 8 };
     let tiktokPamCacByDate = {};
     let tiktokPamSettings = { ...TIKTOK_PAM_DEFAULT_SETTINGS };
+    // false = kolom CAC tampil sebagai teks (klik "Edit CAC" dulu buat ubah);
+    // true = kolom CAC jadi <input> yang bisa diedit, sampai "Simpan CAC"/"Batal" diklik.
+    let tiktokPamEditMode = false;
 
     const SHOPEE_BUDGET_PRODUCTS = [
       "Vitameal", "Waji", "Eyebost", "Eyebost Pro", "Vitasma", "Vitummy", "Bruv"
@@ -12349,24 +12393,60 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         return tiktokPamCloudReadOk;
     }
 
+    // Dulu simpan CAC/setting pakai fetch({mode:"no-cors"}) — itu "fire-and-forget",
+    // dashboard gak bisa tahu apakah simpan-nya BENERAN berhasil di sisi server atau
+    // enggak (opaque response, gak bisa dibaca). Sekarang dipindah ke pola JSONP yang
+    // sama seperti loadGoogleSheet() (request via <script src>, respons beneran
+    // kebaca lewat callback) — jadi tombol "Simpan CAC" bisa kasih tau user dengan
+    // pasti: berhasil, atau gagal (dan kalau gagal, kenapa). Ini BUTUH Code.gs yang
+    // sudah di-update (doGet nerima ?action=saveCac/saveSettings) — lihat
+    // PANDUAN-SETUP-PAM-TIKTOK.md. Kalau Code.gs di spreadsheet belum di-update,
+    // panggilan ini otomatis gagal dengan pesan yang jelas (bukan diam-diam).
+    function callTiktokPamCloudJsonp(params) {
+        return new Promise((resolve, reject) => {
+            if (!TIKTOK_PAM_WEB_APP_URL) { resolve({ status: "skip" }); return; }
+            const callback = `pamCloudCallback_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+            const script = document.createElement("script");
+            const timeout = window.setTimeout(() => {
+                cleanup();
+                reject(new Error("Simpan ke Google Sheet terlalu lama merespons (cek koneksi / apakah Code.gs sudah di-deploy versi terbaru)"));
+            }, 20000);
+
+            function cleanup() {
+                window.clearTimeout(timeout);
+                delete window[callback];
+                script.remove();
+            }
+
+            window[callback] = (payload) => {
+                cleanup();
+                if (!payload || payload.status === "error") {
+                    reject(new Error((payload && payload.message) || "Gagal menyimpan ke Google Sheet"));
+                    return;
+                }
+                resolve(payload);
+            };
+
+            const query = Object.entries({ ...params, callback })
+                .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v === undefined || v === null ? "" : v)}`)
+                .join("&");
+            script.src = `${TIKTOK_PAM_WEB_APP_URL}?${query}`;
+            script.onerror = () => {
+                cleanup();
+                reject(new Error("Koneksi ke Google Sheet gagal (cek URL Web App / akses internet)"));
+            };
+            document.head.appendChild(script);
+        });
+    }
+
     function saveTiktokPamCacToCloud(dateKey, value) {
-        if (!TIKTOK_PAM_WEB_APP_URL) return;
-        fetch(TIKTOK_PAM_WEB_APP_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ action: "saveCac", dateKey, cacPercent: value === undefined ? "" : value })
-        }).catch(e => console.warn("Gagal simpan CAC Estimasi PAM Tiktokshop ke cloud:", e));
+        if (!TIKTOK_PAM_WEB_APP_URL) return Promise.resolve({ status: "skip" });
+        return callTiktokPamCloudJsonp({ action: "saveCac", dateKey, cacPercent: value === undefined ? "" : value });
     }
 
     function saveTiktokPamSettingsToCloud(settings) {
-        if (!TIKTOK_PAM_WEB_APP_URL) return;
-        fetch(TIKTOK_PAM_WEB_APP_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ action: "saveSettings", ...settings })
-        }).catch(e => console.warn("Gagal simpan setting Estimasi PAM Tiktokshop ke cloud:", e));
+        if (!TIKTOK_PAM_WEB_APP_URL) return Promise.resolve({ status: "skip" });
+        return callTiktokPamCloudJsonp({ action: "saveSettings", ...settings });
     }
 
     // Ambang batas sama persis dengan produkUtamaKeteranganInfo (Total = HPP + CAC + Admin + Affiliate)
@@ -12385,6 +12465,22 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         if (total === null) return `<span class="status-chip keterangan-chip keterangan-safe">&mdash;</span>`;
         const info = tiktokPamTotalInfo(total);
         return `<span class="status-chip keterangan-chip ${info.className}" title="${escapeHtml(info.text)}">${percent(total)}</span>`;
+    }
+
+    function pamCacCell(key, hasCac, cacValue) {
+        if (tiktokPamEditMode) {
+            return `<input type="text" inputmode="decimal" class="pam-cac-input" data-pam-date="${key}" value="${hasCac ? cacValue : ""}" placeholder="0.0">`;
+        }
+        return hasCac
+            ? `<span class="pam-cac-view">${percent(cacValue)}</span>`
+            : `<span class="pam-cac-empty">&mdash;</span>`;
+    }
+
+    // Tampilkan/sembunyikan tombol "Edit CAC" / "Simpan CAC" / "Batal" sesuai mode aktif.
+    function syncTiktokPamActionButtons() {
+        if (els.editTiktokPamCac) els.editTiktokPamCac.classList.toggle("hidden", tiktokPamEditMode);
+        if (els.saveTiktokPamCac) els.saveTiktokPamCac.classList.toggle("hidden", !tiktokPamEditMode);
+        if (els.cancelTiktokPamCac) els.cancelTiktokPamCac.classList.toggle("hidden", !tiktokPamEditMode);
     }
 
     function renderTiktokPamTable() {
@@ -12415,7 +12511,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
               <tr>
                 ${reportCell(longIndonesianDate(date), isHolidayDate(date) ? "holiday-cell" : "")}
                 <td>${pamLockedCell(settings.hpp)}</td>
-                <td><input type="text" inputmode="decimal" class="pam-cac-input" data-pam-date="${key}" value="${hasCac ? cacValue : ""}" placeholder="0.0"></td>
+                <td>${pamCacCell(key, hasCac, cacValue)}</td>
                 <td>${pamLockedCell(settings.admin)}</td>
                 <td>${pamLockedCell(settings.affiliate)}</td>
                 <td>${pamTotalChip(total)}</td>
@@ -12437,13 +12533,83 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         `;
 
         els.tiktokPamBody.innerHTML = totalRowHtml + rowsHtml;
+        syncTiktokPamActionButtons();
         if (els.tiktokPamStatus) {
             if (!TIKTOK_PAM_SHEET_ID) {
                 els.tiktokPamStatus.textContent = "Mode lokal: spreadsheet Estimasi PAM belum disambungkan, CAC & setting baru tersimpan di browser ini.";
             } else if (tiktokPamCloudReadOk === false) {
                 els.tiktokPamStatus.textContent = "Belum berhasil membaca data cloud (cek koneksi, atau pastikan spreadsheet Estimasi PAM di-share \"Anyone with the link – Viewer\") — angka di bawah masih dari cache browser ini.";
+            } else if (tiktokPamEditMode) {
+                els.tiktokPamStatus.textContent = "Mode edit — ubah CAC di kolom lalu klik \"Simpan CAC\", atau \"Batal\" untuk membatalkan.";
             } else {
                 els.tiktokPamStatus.textContent = "CAC & setting tersimpan ke Google Sheet — klik \"Refresh Data\" di atas untuk menarik input terbaru dari user/device lain kapan saja.";
+            }
+        }
+    }
+
+    // Dipanggil pas klik "Simpan CAC": kumpulin semua input CAC yang sedang tampil,
+    // bandingkan dengan data yang tersimpan, lalu kirim SATU per SATU tanggal yang
+    // berubah ke Google Sheet (lewat JSONP, jadi hasilnya beneran kebaca — bukan
+    // fire-and-forget) dan kasih tau user persis berapa yang berhasil/gagal.
+    async function handleSaveTiktokPamCac() {
+        if (!els.tiktokPamBody || !els.saveTiktokPamCac || els.saveTiktokPamCac.classList.contains("is-loading")) return;
+
+        const inputs = Array.from(els.tiktokPamBody.querySelectorAll(".pam-cac-input"));
+        const changes = [];
+        inputs.forEach(input => {
+            const key = input.dataset.pamDate;
+            if (!key) return;
+            const raw = String(input.value || "").replace(",", ".").trim();
+            const existing = tiktokPamCacByDate[key];
+            const existingHas = typeof existing === "number" && Number.isFinite(existing);
+            if (raw === "") {
+                if (existingHas) changes.push({ key, value: undefined, storedValue: "" });
+                return;
+            }
+            const parsed = parseFloat(raw);
+            if (!Number.isFinite(parsed)) return; // isian gak valid, abaikan aja
+            if (!existingHas || existing !== parsed) {
+                changes.push({ key, value: parsed, storedValue: parsed });
+            }
+        });
+
+        if (!changes.length) {
+            tiktokPamEditMode = false;
+            renderTiktokPamTable();
+            return;
+        }
+
+        els.saveTiktokPamCac.classList.add("is-loading");
+        els.saveTiktokPamCac.disabled = true;
+        if (els.tiktokPamStatus) els.tiktokPamStatus.textContent = `Menyimpan ${changes.length} data CAC ke Google Sheet...`;
+
+        // Optimistic update: local cache & tampilan langsung berubah duluan,
+        // biar user gak nunggu network buat lihat hasil edit-nya sendiri.
+        changes.forEach(({ key, value }) => {
+            if (value === undefined) delete tiktokPamCacByDate[key];
+            else tiktokPamCacByDate[key] = value;
+        });
+        saveTiktokPamCacToStorage();
+
+        const results = await Promise.allSettled(
+            changes.map(({ key, storedValue }) => saveTiktokPamCacToCloud(key, storedValue))
+        );
+        const failed = changes.filter((_, index) => results[index].status === "rejected");
+        failed.forEach((change, index) => {
+            const result = results[changes.indexOf(change)];
+            console.warn(`Gagal simpan CAC tanggal ${change.key} ke Google Sheet:`, result && result.reason);
+        });
+
+        els.saveTiktokPamCac.classList.remove("is-loading");
+        els.saveTiktokPamCac.disabled = false;
+        tiktokPamEditMode = false;
+        renderTiktokPamTable();
+
+        if (els.tiktokPamStatus) {
+            if (failed.length) {
+                els.tiktokPamStatus.textContent = `${changes.length - failed.length} dari ${changes.length} data CAC tersimpan ke Google Sheet, ${failed.length} GAGAL (cek koneksi / pastikan Code.gs sudah versi terbaru) — klik "Edit CAC" lagi buat coba simpan ulang.`;
+            } else {
+                els.tiktokPamStatus.textContent = `${changes.length} data CAC berhasil tersimpan ke Google Sheet — user/device lain akan lihat setelah klik "Refresh Data".`;
             }
         }
     }
@@ -12465,26 +12631,25 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             }
         });
 
-        // "blur" gak nge-bubble, jadi delegasi lewat "focusout" (yang nge-bubble)
-        els.tiktokPamBody.addEventListener("focusout", event => {
-            const input = event.target.closest(".pam-cac-input");
-            if (!input) return;
-            const key = input.dataset.pamDate;
-            const raw = String(input.value || "").replace(",", ".").trim();
-            let storedValue;
-            if (raw === "") {
-                delete tiktokPamCacByDate[key];
-                storedValue = "";
-            } else {
-                const parsed = parseFloat(raw);
-                if (!Number.isFinite(parsed)) return;
-                tiktokPamCacByDate[key] = parsed;
-                storedValue = parsed;
-            }
-            saveTiktokPamCacToStorage();
-            saveTiktokPamCacToCloud(key, storedValue);
-            renderTiktokPamTable();
-        });
+        // CAC TIDAK lagi tersimpan otomatis pas blur/klik-di-luar — sekarang harus
+        // eksplisit lewat tombol "Simpan CAC" (lihat handleSaveTiktokPamCac()), supaya
+        // user tahu pasti kapan datanya benar-benar terkirim ke Google Sheet, dan bisa
+        // ubah banyak tanggal sekaligus sebelum dikirim satu per satu.
+        if (els.editTiktokPamCac) {
+            els.editTiktokPamCac.addEventListener("click", () => {
+                tiktokPamEditMode = true;
+                renderTiktokPamTable();
+            });
+        }
+        if (els.cancelTiktokPamCac) {
+            els.cancelTiktokPamCac.addEventListener("click", () => {
+                tiktokPamEditMode = false;
+                renderTiktokPamTable();
+            });
+        }
+        if (els.saveTiktokPamCac) {
+            els.saveTiktokPamCac.addEventListener("click", handleSaveTiktokPamCac);
+        }
 
         if (els.openTiktokPamSettings) {
             els.openTiktokPamSettings.addEventListener("click", () => {
@@ -12499,7 +12664,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             els.tiktokPamSettingsModal.addEventListener("click", event => {
                 if (event.target === els.tiktokPamSettingsModal) els.tiktokPamSettingsModal.classList.add("hidden");
             });
-            els.saveTiktokPamSettings.addEventListener("click", () => {
+            els.saveTiktokPamSettings.addEventListener("click", async () => {
                 const hpp = parseFloat(els.tiktokPamHppInput.value);
                 const admin = parseFloat(els.tiktokPamAdminInput.value);
                 const affiliate = parseFloat(els.tiktokPamAffiliateInput.value);
@@ -12510,9 +12675,16 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
                 };
                 tiktokPamSettings = next;
                 saveTiktokPamSettingsToStorage();
-                saveTiktokPamSettingsToCloud(next);
                 els.tiktokPamSettingsModal.classList.add("hidden");
                 renderTiktokPamTable();
+                if (els.tiktokPamStatus) els.tiktokPamStatus.textContent = "Menyimpan setting HPP/Admin/Affiliate ke Google Sheet...";
+                try {
+                    await saveTiktokPamSettingsToCloud(next);
+                    if (els.tiktokPamStatus) els.tiktokPamStatus.textContent = "Setting HPP/Admin/Affiliate tersimpan ke Google Sheet — user/device lain akan lihat setelah klik \"Refresh Data\".";
+                } catch (error) {
+                    console.warn("Gagal simpan setting Estimasi PAM Tiktokshop ke cloud:", error);
+                    if (els.tiktokPamStatus) els.tiktokPamStatus.textContent = `Gagal simpan setting ke Google Sheet: ${error.message}`;
+                }
             });
         }
     }

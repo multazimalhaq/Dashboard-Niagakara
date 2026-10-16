@@ -558,6 +558,32 @@
       margin-bottom: 18px;
     }
 
+    /* Kolom Type Transaksi di tabel Data Transaksi (menu Advertiser) */
+    .daily-table td.type-cell-new { color: #0f766e; font-weight: 800; }
+    .daily-table td.type-cell-repeat { color: #6d28d9; font-weight: 800; }
+
+    /* Judul kelompok kartu di menu Advertiser: Only Meta vs After CRM */
+    .advertiser-group-title {
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin: 0 0 10px;
+    }
+    .advertiser-group-title small {
+      color: #b9d7e8;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      margin-left: 8px;
+    }
+    .advertiser-group-title-after {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.14);
+    }
+
     .advertiser-metric {
       min-height: 104px;
       padding: 16px;
@@ -2312,13 +2338,23 @@
               <span style="font-size: 13px; color: var(--muted); font-weight: 500;">Target Bulanan (Soscom 20%) - Pareto Share:</span>
               <strong id="advertiserTargetDisplay" style="font-size: 18px; color: var(--ink); margin-left: 8px;">Rp0</strong>
             </div>
-            <div style="display: flex; align-items: center; gap: 12px; flex: 2;">
-              <span style="font-size: 13px; color: var(--muted);">Pencapaian:</span>
-              <strong id="advertiserActualDisplay" style="font-size: 14px;">Rp0</strong>
-              <div style="flex-grow: 1; background: var(--soft); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
-                <div id="advertiserProgressFill" style="background: var(--teal); width: 0%; height: 100%; transition: width 0.3s;"></div>
+            <div style="display: flex; flex-direction: column; gap: 10px; flex: 2;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 13px; color: var(--muted); min-width: 150px;">Pencapaian Only Meta:</span>
+                <strong id="advertiserActualDisplay" style="font-size: 14px; min-width: 110px;">Rp0</strong>
+                <div style="flex-grow: 1; background: var(--soft); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
+                  <div id="advertiserProgressFill" style="background: var(--teal); width: 0%; height: 100%; transition: width 0.3s;"></div>
+                </div>
+                <span id="advertiserProgressPercent" style="font-size: 13px; font-weight: bold; color: var(--teal); min-width: 45px;">0%</span>
               </div>
-              <span id="advertiserProgressPercent" style="font-size: 13px; font-weight: bold; color: var(--teal); min-width: 45px;">0%</span>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 13px; color: var(--muted); min-width: 150px;">Pencapaian After CRM:</span>
+                <strong id="advertiserActualAfterDisplay" style="font-size: 14px; min-width: 110px;">Rp0</strong>
+                <div style="flex-grow: 1; background: var(--soft); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
+                  <div id="advertiserProgressAfterFill" style="background: var(--blue); width: 0%; height: 100%; transition: width 0.3s;"></div>
+                </div>
+                <span id="advertiserProgressAfterPercent" style="font-size: 13px; font-weight: bold; color: var(--blue); min-width: 45px;">0%</span>
+              </div>
             </div>
           </div>
         </section>
@@ -2352,14 +2388,25 @@
 
 
         <section class="card panel advertiser-main-card">
+          <div class="advertiser-group-title">Only Meta <small>Type transaksi NEW CUSTOMER</small></div>
           <div class="advertiser-main-grid">
-            <div class="advertiser-metric"><span>Gross Omset</span><strong id="advGross">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Gross Omset Only Meta</span><strong id="advGross">Rp0</strong></div>
             <div class="advertiser-metric"><span>Budget Iklan</span><strong id="advBudget">Rp0</strong></div>
-            <div class="advertiser-metric"><span>CAC</span><strong id="advCac">0%</strong></div>
-            <div class="advertiser-metric"><span>Proyeksi</span><strong id="advProjection">Rp0</strong></div>
-            <div class="advertiser-metric"><span>Return</span><strong id="advReturn">Rp0 (0%)</strong></div>
-            <div class="advertiser-metric"><span>Beban Return</span><strong id="advReturnCost">Rp0</strong></div>
-            <div class="advertiser-metric"><span>Nett Omset</span><strong id="advNett">Rp0</strong></div>
+            <div class="advertiser-metric"><span>CAC Only Meta</span><strong id="advCac">0%</strong></div>
+            <div class="advertiser-metric"><span>Proyeksi Only Meta</span><strong id="advProjection">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Return Only Meta</span><strong id="advReturn">Rp0 (0%)</strong></div>
+            <div class="advertiser-metric"><span>Beban Return Only Meta</span><strong id="advReturnCost">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Nett Omset Only Meta</span><strong id="advNett">Rp0</strong></div>
+          </div>
+          <div class="advertiser-group-title advertiser-group-title-after">After CRM <small>NEW CUSTOMER + REPEAT CUSTOMER</small></div>
+          <div class="advertiser-main-grid">
+            <div class="advertiser-metric"><span>Gross Omset CRM</span><strong id="advGrossCrm">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Gross Omset After CRM</span><strong id="advGrossAfter">Rp0</strong></div>
+            <div class="advertiser-metric"><span>CAC After CRM</span><strong id="advCacAfter">0%</strong></div>
+            <div class="advertiser-metric"><span>Proyeksi After CRM</span><strong id="advProjectionAfter">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Return After CRM</span><strong id="advReturnAfter">Rp0 (0%)</strong></div>
+            <div class="advertiser-metric"><span>Beban Return After CRM</span><strong id="advReturnCostAfter">Rp0</strong></div>
+            <div class="advertiser-metric"><span>Nett Omset After CRM</span><strong id="advNettAfter">Rp0</strong></div>
           </div>
         </section>
 
@@ -2385,11 +2432,11 @@
               <thead>
                 <tr>
                   <th>Tanggal</th>
-                  <th>Omset</th>
+                  <th>Omset Only Meta</th>
                   <th>Budget</th>
-                  <th>CAC</th>
+                  <th>CAC Only Meta</th>
                   <th>Omset CRM</th>
-                  <th>Omset Total</th>
+                  <th>Omset After CRM</th>
                   <th>CAC After CRM</th>
                   <th>Impresi</th>
                   <th>Lead Dashboard</th>
@@ -2400,7 +2447,8 @@
                   <th>Upsell</th>
                   <th>Cost Lead Dashboard</th>
                   <th>Cost Lead CS</th>
-                  <th>PAM (%)</th>
+                  <th>PAM Only Meta (%)</th>
+                  <th>PAM After CRM (%)</th>
                   <th>Growth</th>
                 </tr>
               </thead>
@@ -2412,7 +2460,7 @@
         <section class="card panel">
           <div class="panel-header">
             <h2>Data Transaksi</h2>
-            <span class="panel-note">berdasarkan filter advertiser dan produk</span>
+            <span class="panel-note">berdasarkan filter advertiser dan produk &mdash; NEW CUSTOMER + REPEAT CUSTOMER (After CRM)</span>
           </div>
           <div class="daily-table-wrap">
             <table class="daily-table transaction-table">
@@ -2421,6 +2469,7 @@
                   <th>Tanggal</th>
                   <th>Nomor Customer</th>
                   <th>Nama Customer</th>
+                  <th>Type Transaksi</th>
                   <th>Nama Produk</th>
                   <th>Quantity</th>
                   <th>Omset</th>
@@ -4302,6 +4351,16 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       advReturn: document.getElementById("advReturn"),
       advReturnCost: document.getElementById("advReturnCost"),
       advNett: document.getElementById("advNett"),
+      advGrossCrm: document.getElementById("advGrossCrm"),
+      advGrossAfter: document.getElementById("advGrossAfter"),
+      advCacAfter: document.getElementById("advCacAfter"),
+      advProjectionAfter: document.getElementById("advProjectionAfter"),
+      advReturnAfter: document.getElementById("advReturnAfter"),
+      advReturnCostAfter: document.getElementById("advReturnCostAfter"),
+      advNettAfter: document.getElementById("advNettAfter"),
+      advertiserActualAfterDisplay: document.getElementById("advertiserActualAfterDisplay"),
+      advertiserProgressAfterFill: document.getElementById("advertiserProgressAfterFill"),
+      advertiserProgressAfterPercent: document.getElementById("advertiserProgressAfterPercent"),
       advChartPeriod: document.getElementById("advChartPeriod"),
       dailyReportBody: document.getElementById("dailyReportBody"),
       advTransactionBody: document.getElementById("advTransactionBody"),
@@ -5597,15 +5656,91 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       );
     }
 
+    // ===== Basis omset menu Advertiser: Only Meta (New Customer) vs CRM (Repeat Customer) =====
+    // Type transaksi dibaca dari kolom K Webot lewat normalizeCustomerType() => "New" / "Repeat".
+    // Baris dengan type kosong / selain keduanya tidak masuk Only Meta maupun CRM.
+    function isNewCustomerRow(row) {
+      return row.type === "New";
+    }
+
+    function isRepeatCustomerRow(row) {
+      return row.type === "Repeat";
+    }
+
+    function customerTypeLabel(row) {
+      if (isNewCustomerRow(row)) return "NEW CUSTOMER";
+      if (isRepeatCustomerRow(row)) return "REPEAT CUSTOMER";
+      return "-";
+    }
+
+    // Only Meta: aturan advertiser lama (kanal Soscom, tanpa adv niagakara_crm / adv niagakara) + type New Customer
+    function advertiserMetaRowsInRange(start, end) {
+      return grossAdvertiserRows(advertiserRowsInRange(start, end).filter(isNewCustomerRow));
+    }
+
+    // CRM: kanal Soscom, SEMUA advertiser (termasuk adv niagakara_crm dll, tidak ada pengecualian) + type Repeat Customer
+    function advertiserCrmSourceRows() {
+      return allRows.filter(row =>
+        row.source === "Webot" &&
+        normalizeCompare(row.channel) === "soscom" &&
+        row.advertiser &&
+        isRepeatCustomerRow(row)
+      );
+    }
+
+    // Filter tanggal + dropdown Advertiser + dropdown Produk berlaku sama seperti Only Meta
+    function advertiserCrmRowsInRange(start, end) {
+      const selectedAdvertiser = els.advertiserSelect.value;
+      const selectedProduct = els.advProductSelect.value;
+      return grossAdvertiserRows(advertiserCrmSourceRows().filter(row =>
+        row.date >= startOfDay(start) &&
+        row.date <= startOfDay(end) &&
+        (selectedAdvertiser === "all" || row.advertiser === selectedAdvertiser) &&
+        (selectedProduct === "all" || row.product === selectedProduct)
+      ));
+    }
+
+    // Sumber dropdown Advertiser & Produk di menu Advertiser: gabungan baris Only Meta + CRM
+    function advertiserFilterSourceRows() {
+      return advertiserSourceRows().concat(advertiserCrmSourceRows());
+    }
+
+    // Sama seperti activeAdvertiserNames() (aktif pekan lalu, fallback semua), tapi memasukkan advertiser CRM
+    function advertiserFilterNames() {
+      const source = advertiserFilterSourceRows();
+      const [start, end] = previousWeekRange();
+      const active = [...new Set(source
+        .filter(row => row.date >= start && row.date <= end)
+        .map(row => row.advertiser))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+      if (active.length) return active;
+      return [...new Set(source.map(row => row.advertiser))]
+        .sort((a, b) => a.localeCompare(b, "id-ID"));
+    }
+
+    function advertiserSummary(rows) {
+      const gross = sumRows(rows);
+      const returnRows = rows.filter(row => isReturnStatus(row.status));
+      const returnRevenue = sumRows(returnRows);
+      const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
+      return {
+        gross,
+        returnRevenue,
+        returnCost,
+        returnRate: percentRatio(returnRevenue, gross),
+        nett: gross - returnRevenue - returnCost
+      };
+    }
+
     function populateAdvertiserFilter() {
       const currentValue = els.advertiserSelect.value || "all";
       const currentProduct = els.advProductSelect.value || "all";
-      const names = activeAdvertiserNames();
+      const names = advertiserFilterNames();
       els.advertiserSelect.innerHTML = `<option value="all">Semua Advertiser</option>` +
         names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
       els.advertiserSelect.value = names.includes(currentValue) ? currentValue : "all";
 
-      const products = mainProductNames(advertiserSourceRows());
+      const products = mainProductNames(advertiserFilterSourceRows());
       els.advProductSelect.innerHTML = `<option value="all">Semua Produk</option>` +
         products.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
       els.advProductSelect.value = products.includes(currentProduct) ? currentProduct : "all";
@@ -5837,6 +5972,8 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return series;
     }
 
+    // rows = baris Only Meta (New Customer). Omset, Closing, Quantity dihitung dari baris ini;
+    // crmRevenue diisi dari baris Repeat Customer (lihat advertiserCrmRowsInRange).
     function buildAdvertiserDailyRows(rows, start, end) {
       const validRows = grossAdvertiserRows(rows);
       const byDate = new Map();
@@ -5879,10 +6016,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         item.leadCs += row.leadCs || 0;
         byDate.set(key, item);
       });
-      grossAdvertiserRows(crmSourceRows()).forEach(row => {
+      // Omset CRM = type Repeat Customer (kanal Soscom, semua advertiser), ikut filter tanggal/advertiser/produk
+      advertiserCrmRowsInRange(start, end).forEach(row => {
         const date = row.date;
-        if (!date || date < startOfDay(start) || date > startOfDay(end)) return;
-        if (selectedProduct !== "all" && !sameProductValue(row.product, selectedProduct)) return;
+        if (!date) return;
         const key = dateKey(date);
         const item = byDate.get(key) || {
           date, revenue: 0, budget: 0, impressions: 0, leadDashboard: 0,
@@ -9018,40 +9155,71 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return String(Math.round(value));
     }
 
+    // Bar progress kedua di banner target Advertiser: pencapaian After CRM (Only Meta + CRM)
+    // terhadap target yang sama dengan bar Only Meta (Soscom 20% Pareto Share).
+    function updateAdvertiserAfterCrmTargetBanner(monthlyTarget, revenue) {
+      if (!monthlyTarget || monthlyTarget <= 0) {
+        monthlyTarget = loadMonthlyTargetByMonth() || 0;
+      }
+      const target = getChannelTarget(monthlyTarget, 'advertiser');
+      if (target <= 0) return;
+      const pct = revenue > 0 ? Math.round((revenue / target) * 100) : 0;
+      if (els.advertiserActualAfterDisplay) els.advertiserActualAfterDisplay.textContent = currency(revenue);
+      if (els.advertiserProgressAfterFill) els.advertiserProgressAfterFill.style.width = Math.min(100, pct) + '%';
+      if (els.advertiserProgressAfterPercent) els.advertiserProgressAfterPercent.textContent = pct + '%';
+    }
+
     function renderAdvertiserReport() {
       const [start, end] = getAdvertiserRange();
       if (!start || !end) return;
-      const rows = advertiserRowsInRange(start, end);
-      const grossRows = grossAdvertiserRows(rows);
-      const gross = sumRows(grossRows);
-      const budget = advertiserBudgetRowsInRange(start, end).reduce((total, row) => total + (row.budget || 0), 0);
-      const returnRows = grossRows.filter(row => isReturnStatus(row.status));
-      const returnRevenue = sumRows(returnRows);
-      const returnRate = percentRatio(returnRevenue, gross);
-      const returnCost = returnRows.reduce((total, row) => total + (row.returnCost || 0), 0);
-      const nett = gross - returnRevenue - returnCost;
-      const projection = advertiserProjection(rows, start, end);
       const [prevStart, prevEnd] = previousRange(start, end);
-      const previousProjection = advertiserProjection(advertiserRowsInRange(prevStart, prevEnd), prevStart, prevEnd);
 
-      els.advGross.textContent = currency(gross);
+      // Only Meta = type NEW CUSTOMER; CRM = type REPEAT CUSTOMER; After CRM = keduanya
+      const metaRows = advertiserMetaRowsInRange(start, end);
+      const crmRows = advertiserCrmRowsInRange(start, end);
+      const afterRows = metaRows.concat(crmRows);
+      const prevMetaRows = advertiserMetaRowsInRange(prevStart, prevEnd);
+      const prevAfterRows = prevMetaRows.concat(advertiserCrmRowsInRange(prevStart, prevEnd));
+
+      const budget = advertiserBudgetRowsInRange(start, end).reduce((total, row) => total + (row.budget || 0), 0);
+      const meta = advertiserSummary(metaRows);
+      const after = advertiserSummary(afterRows);
+      const crmGross = sumRows(crmRows);
+      const projectionMeta = advertiserProjection(metaRows, start, end);
+      const previousProjectionMeta = advertiserProjection(prevMetaRows, prevStart, prevEnd);
+      const projectionAfter = advertiserProjection(afterRows, start, end);
+      const previousProjectionAfter = advertiserProjection(prevAfterRows, prevStart, prevEnd);
+
+      // Kelompok Only Meta
+      els.advGross.textContent = currency(meta.gross);
       els.advBudget.textContent = currency(budget);
-      els.advCac.textContent = percent(percentRatio(budget, gross));
-      setProjectionMetric(els.advProjection, projection, previousProjection);
-      els.advReturn.textContent = `${currency(returnRevenue)} (${percent(returnRate)})`;
-      els.advReturnCost.textContent = currency(returnCost);
-      els.advNett.textContent = currency(nett);
-      els.advChartPeriod.textContent = `${start.toLocaleDateString("id-ID")} - ${end.toLocaleDateString("id-ID")}`;
-      els.advertiserStatus.textContent = `${grossRows.length.toLocaleString("id-ID")} baris Soscom terbaca`;
+      els.advCac.textContent = percent(percentRatio(budget, meta.gross));
+      setProjectionMetric(els.advProjection, projectionMeta, previousProjectionMeta);
+      els.advReturn.textContent = `${currency(meta.returnRevenue)} (${percent(meta.returnRate)})`;
+      els.advReturnCost.textContent = currency(meta.returnCost);
+      els.advNett.textContent = currency(meta.nett);
 
-      const dailyRows = buildAdvertiserDailyRows(rows, start, end);
+      // Kelompok After CRM
+      els.advGrossCrm.textContent = currency(crmGross);
+      els.advGrossAfter.textContent = currency(after.gross);
+      els.advCacAfter.textContent = percent(percentRatio(budget, after.gross));
+      setProjectionMetric(els.advProjectionAfter, projectionAfter, previousProjectionAfter);
+      els.advReturnAfter.textContent = `${currency(after.returnRevenue)} (${percent(after.returnRate)})`;
+      els.advReturnCostAfter.textContent = currency(after.returnCost);
+      els.advNettAfter.textContent = currency(after.nett);
+
+      els.advChartPeriod.textContent = `${start.toLocaleDateString("id-ID")} - ${end.toLocaleDateString("id-ID")}`;
+      els.advertiserStatus.textContent = `${metaRows.length.toLocaleString("id-ID")} baris Only Meta + ${crmRows.length.toLocaleString("id-ID")} baris CRM terbaca`;
+
+      const dailyRows = buildAdvertiserDailyRows(metaRows, start, end);
       drawAdvertiserChart(dailyRows);
       renderDailyReport(dailyRows);
-      renderAdvertiserTransactions(grossRows);
+      renderAdvertiserTransactions(afterRows);
       renderAdvertiserBudgetingInputs();
       if (typeof updateChannelTargetBanner === 'function') {
-        updateChannelTargetBanner('advertiser', loadMonthlyTargetByMonth(), gross);
+        updateChannelTargetBanner('advertiser', loadMonthlyTargetByMonth(), meta.gross);
       }
+      updateAdvertiserAfterCrmTargetBanner(loadMonthlyTargetByMonth(), after.gross);
       if (typeof renderBudgetingProposalTable === 'function') {
         renderBudgetingProposalTable('advertiser', '#advertiserProposalTableBody');
       }
@@ -9069,7 +9237,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
 
       const padLeft = 58;
       const padRight = 22;
-      const padTop = 24;
+      const padTop = 34;
       const padBottom = 42;
       const width = rect.width - padLeft - padRight;
       const height = rect.height - padTop - padBottom;
@@ -9077,7 +9245,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       const daysInMonth = startRange ? new Date(startRange.getFullYear(), startRange.getMonth() + 1, 0).getDate() : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
       const monthlyTarget = loadMonthlyTargetByMonth();
       const target = (monthlyTarget * 0.20) / daysInMonth; // 20% Pareto Share Soscom (Meta) harian
-      const max = Math.max(1, target, ...rows.map(row => row.revenue));
+      // Dua garis: Only Meta (row.revenue) dan After CRM (row.revenue + row.crmRevenue)
+      const afterRevenueOf = row => (row.revenue || 0) + (row.crmRevenue || 0);
+      const max = Math.max(1, target, ...rows.map(row => row.revenue), ...rows.map(afterRevenueOf));
       const step = rows.length > 1 ? width / (rows.length - 1) : width;
 
       ctx.strokeStyle = "#dde4ee";
@@ -9098,7 +9268,33 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         y: padTop + height - (row.revenue / max) * height,
         row
       }));
+      const afterPoints = rows.map((row, index) => ({
+        x: padLeft + index * step,
+        y: padTop + height - (afterRevenueOf(row) / max) * height
+      }));
       const targetY = padTop + height - (target / max) * height;
+
+      // Legenda garis
+      const legendItems = [
+        { label: "Only Meta", color: "#082b45", dashed: false },
+        { label: "After CRM", color: "#2563eb", dashed: false },
+        { label: "Target harian", color: "#dc2626", dashed: true }
+      ];
+      ctx.font = "12px Inter, Arial";
+      let legendX = padLeft;
+      legendItems.forEach(item => {
+        ctx.beginPath();
+        ctx.moveTo(legendX, 12);
+        ctx.lineTo(legendX + 22, 12);
+        ctx.strokeStyle = item.color;
+        ctx.lineWidth = item.dashed ? 2 : 3;
+        ctx.setLineDash(item.dashed ? [6, 5] : []);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "#697586";
+        ctx.fillText(item.label, legendX + 28, 16);
+        legendX += 28 + ctx.measureText(item.label).width + 20;
+      });
 
       ctx.beginPath();
       ctx.moveTo(padLeft, targetY);
@@ -9110,6 +9306,13 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       ctx.setLineDash([]);
 
       if (points.length) {
+        // Garis After CRM (digambar dulu supaya garis Only Meta tetap di atas)
+        ctx.beginPath();
+        afterPoints.forEach((point, index) => index === 0 ? ctx.moveTo(point.x, point.y) : ctx.lineTo(point.x, point.y));
+        ctx.strokeStyle = "#2563eb";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
         ctx.beginPath();
         points.forEach((point, index) => index === 0 ? ctx.moveTo(point.x, point.y) : ctx.lineTo(point.x, point.y));
         ctx.strokeStyle = "#082b45";
@@ -9136,6 +9339,22 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           ctx.arc(active.x, active.y, 3, 0, Math.PI * 2);
           ctx.fillStyle = "#082b45";
           ctx.fill();
+
+          // Titik hover untuk garis After CRM
+          const activeAfter = afterPoints[hoveredAdvertiserPoint];
+          if (activeAfter) {
+            ctx.beginPath();
+            ctx.arc(activeAfter.x, activeAfter.y, 7, 0, Math.PI * 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#2563eb";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(activeAfter.x, activeAfter.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = "#2563eb";
+            ctx.fill();
+          }
         }
 
         const labelEvery = Math.max(1, Math.ceil(points.length / 8));
@@ -9152,6 +9371,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return `<td class="${className}">${value}</td>`;
     }
 
+    // Asumsi biaya untuk hitung PAM: 45,5% dari omset Only Meta, 47% dari omset After CRM
+    const PAM_COST_RATE_ONLY_META = 0.455;
+    const PAM_COST_RATE_AFTER_CRM = 0.47;
+
     function calculateDailyReportRow(row, previousRevenue) {
       const budget = row.budget || 0;
       const cac = percentRatio(budget, row.revenue);
@@ -9162,10 +9385,12 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       const upsell = row.closing > 0 ? row.quantity / row.closing : 0;
       const costLeadDashboard = row.leadDashboard > 0 ? budget / row.leadDashboard : 0;
       const costLeadCs = row.leadCs > 0 ? budget / row.leadCs : 0;
-      const pamValue = row.revenue - (row.revenue * 0.455) - budget;
+      const pamValue = row.revenue - (row.revenue * PAM_COST_RATE_ONLY_META) - budget;
       const pamPct = percentRatio(pamValue, row.revenue);
+      const pamAfterValue = totalRevenue - (totalRevenue * PAM_COST_RATE_AFTER_CRM) - budget;
+      const pamAfterPct = percentRatio(pamAfterValue, totalRevenue);
       const growth = previousRevenue > 0 ? ((row.revenue - previousRevenue) / previousRevenue) * 100 : null;
-      return { budget, cac, crmRevenue, totalRevenue, cacAfterCrm, closingRate, upsell, costLeadDashboard, costLeadCs, pamValue, pamPct, growth };
+      return { budget, cac, crmRevenue, totalRevenue, cacAfterCrm, closingRate, upsell, costLeadDashboard, costLeadCs, pamValue, pamPct, pamAfterValue, pamAfterPct, growth };
     }
 
     function renderDailyReport(rows) {
@@ -9200,6 +9425,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           ${reportCell(currency(totalCalc.costLeadDashboard))}
           ${reportCell(currency(totalCalc.costLeadCs))}
           ${reportCell(percent(totalCalc.pamPct), totalCalc.pamValue >= 0 ? "positive-cell" : "negative-cell")}
+          ${reportCell(percent(totalCalc.pamAfterPct), totalCalc.pamAfterValue >= 0 ? "positive-cell" : "negative-cell")}
           ${reportCell("-")}
         </tr>
       `;
@@ -9229,6 +9455,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
             ${reportCell(currency(calc.costLeadDashboard))}
             ${reportCell(currency(calc.costLeadCs))}
             ${reportCell(percent(calc.pamPct), calc.pamValue >= 0 ? "positive-cell" : "negative-cell")}
+            ${reportCell(percent(calc.pamAfterPct), calc.pamAfterValue >= 0 ? "positive-cell" : "negative-cell")}
             ${reportCell(growthText, growthClass)}
           </tr>
         `;
@@ -9244,6 +9471,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           ${reportCell(`${countUniqueOrders(sorted).toLocaleString("id-ID")} transaksi`)}
           ${reportCell("-")}
           ${reportCell("-")}
+          ${reportCell("-")}
           ${reportCell(sorted.reduce((total, row) => total + (row.quantity || 0), 0).toLocaleString("id-ID"))}
           ${reportCell(currency(sumRows(sorted)))}
           ${reportCell("-")}
@@ -9254,6 +9482,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           ${reportCell(longIndonesianDate(row.date), isHolidayDate(row.date) ? "holiday-cell" : "")}
           ${reportCell(escapeHtml(displayCustomerPhone(row)))}
           ${reportCell(escapeHtml(row.customerName || "-"))}
+          ${reportCell(escapeHtml(customerTypeLabel(row)), isRepeatCustomerRow(row) ? "type-cell-repeat" : "type-cell-new")}
           ${reportCell(escapeHtml(row.product || "-"))}
           ${reportCell((row.quantity || 0).toLocaleString("id-ID"))}
           ${reportCell(currency(row.revenue))}
@@ -9927,7 +10156,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         if (nearest >= 0 && distance < 28) {
           hoveredAdvertiserPoint = nearest;
           const point = points[nearest].row;
-          els.tooltip.innerHTML = `${longIndonesianDate(point.date)}<strong>${currency(point.revenue)}</strong>`;
+          els.tooltip.innerHTML = `${longIndonesianDate(point.date)}<strong>Only Meta: ${currency(point.revenue)}</strong><strong style="color:#2563eb">After CRM: ${currency((point.revenue || 0) + (point.crmRevenue || 0))}</strong>`;
           els.tooltip.style.left = `${event.clientX}px`;
           els.tooltip.style.top = `${event.clientY}px`;
           els.tooltip.style.opacity = "1";

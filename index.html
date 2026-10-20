@@ -1993,7 +1993,49 @@
         grid-template-columns: 1fr;
       }
     }
-  </style>
+      /* ===== Menu Return ===== */
+    .rt-all { --rt: #c9a27c; }
+    .rt-soscom { --rt: #4f8df5; }
+    .rt-shopee { --rt: #f26a21; }
+    .rt-tiktok { --rt: #9a9a9a; }
+    .rt-crm { --rt: #8b7fe8; }
+    .rt-title { font-size: 18px; text-align: center; margin: 26px 0 12px; letter-spacing: .02em; }
+    .rt-subtitle { font-size: 12px; font-weight: 700; color: var(--muted); margin: 14px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
+    .rt-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 8px; }
+    .rt-sub-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .rt-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+    .rt-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; background: var(--rt); color: #fff; font-weight: 700; font-size: 13px; }
+    .rt-card-head small { font-weight: 600; font-size: 11px; opacity: .95; }
+    .rt-card-body { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 14px 12px; }
+    .rt-card-body strong { font-size: 24px; }
+    .rt-card-body span { font-size: 13px; font-weight: 700; color: var(--muted); }
+    .rt-card-note { padding: 0 12px 10px; font-size: 11px; color: var(--muted); }
+    .rt-grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-items: start; }
+    .rt-box { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    .rt-box-title { padding: 7px 10px; background: var(--rt); color: #fff; font-size: 12px; font-weight: 700; }
+    .rt-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; padding: 6px 10px; font-size: 12px; border-top: 1px solid var(--line); }
+    .rt-row:nth-child(even) { background: color-mix(in srgb, var(--rt) 9%, #fff); }
+    .rt-row.rt-head-row { font-weight: 700; background: color-mix(in srgb, var(--rt) 22%, #fff); border-top: 0; }
+    .rt-row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rt-row span:nth-child(2), .rt-row span:nth-child(3) { text-align: right; white-space: nowrap; }
+    .rt-empty { padding: 10px; font-size: 12px; color: var(--muted); }
+    .rt-search { margin: 0 0 10px; }
+    .rt-search input { width: 100%; max-width: 360px; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--radius); font: inherit; font-size: 13px; }
+    .rt-detail-table { min-width: 0 !important; width: 100%; }
+    .rt-detail-table td, .rt-detail-table th { white-space: nowrap; padding-left: 10px; padding-right: 10px; }
+    .rt-tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .rt-tag-new { background: #dbeafe; color: #1e40af; }
+    .rt-tag-repeat { background: #ede9fe; color: #5b21b6; }
+    .rt-tag-shopee { background: #ffedd5; color: #9a3412; }
+    .rt-tag-tiktok { background: #e5e7eb; color: #374151; }
+    @media (max-width: 1120px) {
+      .rt-cards, .rt-grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .rt-cards, .rt-grid4 { grid-template-columns: minmax(0, 1fr); }
+    }
+
+</style>
 </head>
 <body>
   <div class="app" id="appShell">
@@ -2017,6 +2059,7 @@
         <button data-page="tiktok"><span class="dot"></span><span class="nav-full">Tiktokshop</span><span class="nav-short">TKshop</span></button>
         <button data-page="weekly-budgeting"><span class="dot"></span><span class="nav-full">Review weekly & Budgeting</span><span class="nav-short">W&B</span></button>
         <button data-page="product"><span class="dot"></span><span class="nav-full">Product</span><span class="nav-short">Pro</span></button>
+        <button data-page="return"><span class="dot"></span><span class="nav-full">Return</span><span class="nav-short">Ret</span></button>
         <button data-page="customer-management"><span class="dot"></span><span class="nav-full">Customer Management</span><span class="nav-short">Cust</span></button>
         <button data-page="finance"><span class="dot"></span><span class="nav-full">Finance</span><span class="nav-short">Fin</span></button>
         <button class="nav-sub" data-page="admin-marketplace"><span class="dot"></span><span class="nav-full">Admin Marketplace</span><span class="nav-short">Admin</span></button>
@@ -3657,6 +3700,68 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         </section>
       </section>
 
+      <section id="return-page" class="hidden">
+        <div class="topbar">
+          <div>
+            <h1>Return</h1>
+            <p class="subtitle">Return berdasarkan platform, produk, ekspedisi, dan provinsi (berdasarkan tanggal pemesanan)</p>
+          </div>
+          <div class="topbar-actions">
+            <button class="refresh-btn page-refresh-btn" data-refresh-page="return" type="button" title="Muat ulang data tanpa reload halaman"><span class="refresh-icon">⟳</span> Refresh Data</button>
+            <span class="status-pill" id="returnStatus">—</span>
+          </div>
+        </div>
+
+        <section class="filters" aria-label="Filter Return">
+          <div class="date-row">
+            <label>Bulan
+              <select id="returnMonth"></select>
+            </label>
+            <button class="apply-btn" id="returnApplyBtn" type="button">Terapkan</button>
+          </div>
+        </section>
+
+        <div id="returnCards"></div>
+
+        <h2 class="rt-title">Return Based on Produk</h2>
+        <div id="returnProductGrid" class="rt-grid4"></div>
+
+        <h2 class="rt-title">Return Based on Ekspedisi</h2>
+        <div id="returnExpeditionGrid" class="rt-grid4"></div>
+
+        <h2 class="rt-title">Return Based on Provinsi</h2>
+        <div id="returnProvinceGrid" class="rt-grid4"></div>
+
+        <section class="card panel" style="margin-top:18px">
+          <div class="panel-header">
+            <h2>Data Customer Return</h2>
+            <span class="panel-note" id="returnTableNote">—</span>
+          </div>
+          <div class="rt-search">
+            <input type="search" id="returnSearch" placeholder="Cari nomor order, nomor resi, atau advertiser">
+          </div>
+          <div class="daily-table-wrap">
+            <table class="daily-table rt-detail-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nomor Order</th>
+                  <th>Nomor Resi</th>
+                  <th>Tanggal Pemesanan</th>
+                  <th>Tanggal Return</th>
+                  <th>Selisih</th>
+                  <th>Platform</th>
+                  <th>Advertiser</th>
+                </tr>
+              </thead>
+              <tbody id="returnTableBody">
+                <tr><td colspan="8">Memuat data…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
       <section id="customer-management-page" class="hidden">
         <div class="topbar">
           <div>
@@ -4272,7 +4377,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     };
 
     const WEBOT_BASE_QUERY = `select ${Object.values(WEBOT_COLUMNS).join(",")}`;
-    const MARKETPLACE_BASE_QUERY = "select A,C,F,G,H,I,K,O,U,Y,AD,AE";
+    const MARKETPLACE_BASE_QUERY = "select A,C,D,F,G,H,I,K,O,U,Y,Z,AD,AE";
 
     function webotQuery(start, end) {
       if (!start || !end) return WEBOT_BASE_QUERY;
@@ -4531,6 +4636,17 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       weeklyPlatformOptions: document.getElementById("weeklyPlatformOptions"),
       weeklyProductOptions: document.getElementById("weeklyProductOptions"),
       productPage: document.getElementById("product-page"),
+      returnPage: document.getElementById("return-page"),
+      returnStatus: document.getElementById("returnStatus"),
+      returnMonth: document.getElementById("returnMonth"),
+      returnApplyBtn: document.getElementById("returnApplyBtn"),
+      returnSearch: document.getElementById("returnSearch"),
+      returnCards: document.getElementById("returnCards"),
+      returnProductGrid: document.getElementById("returnProductGrid"),
+      returnExpeditionGrid: document.getElementById("returnExpeditionGrid"),
+      returnProvinceGrid: document.getElementById("returnProvinceGrid"),
+      returnTableBody: document.getElementById("returnTableBody"),
+      returnTableNote: document.getElementById("returnTableNote"),
       customerManagementPage: document.getElementById("customer-management-page"),
       clvStatus: document.getElementById("clvStatus"),
       clvSearchInput: document.getElementById("clvSearchInput"),
@@ -5073,6 +5189,22 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return String(status || "").trim();
     }
 
+    // Ambil nomor order / resi sebagai teks utuh (tanpa notasi ilmiah, tanpa digit hilang).
+    function getIdText(row, names) {
+      for (const name of names) {
+        const formatted = row[`${name}__f`];
+        if (hasFieldValue(formatted)) {
+          const text = String(formatted).trim();
+          return /^[\d.,\s]+$/.test(text) ? text.replace(/[^\d]/g, "") : text;
+        }
+      }
+      const raw = getField(row, names);
+      if (typeof raw === "number" && Number.isFinite(raw)) {
+        return raw.toLocaleString("fullwide", { useGrouping: false, maximumFractionDigits: 0 });
+      }
+      return raw;
+    }
+
     function getField(row, names) {
       const keys = Object.keys(row);
       for (const name of names) {
@@ -5137,6 +5269,9 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
               const explicitColumn = selectedColumns[index] || columnLetter(index + 1);
               [col.label, col.id, col.fallback, explicitColumn, `__col_${index + 1}`].filter(Boolean).forEach(key => item[key] = value);
               if (formattedValue) item[`__formatted_col_${index + 1}`] = formattedValue;
+              if (formattedValue && typeof value === "number" && Math.abs(value) >= 1e10) {
+                [col.label, col.id, explicitColumn].filter(Boolean).forEach(key => item[`${key}__f`] = formattedValue);
+              }
             });
             return item;
           });
@@ -5185,9 +5320,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         const phoneRaw = getField(row, ["__formatted_col_14", "Customer Phone Number", WEBOT_COLUMNS.customerPhone, "Column 14", "__col_14", "Customer Phone", "Phone Number"]);
         return {
           source: "Webot",
-          orderId: cleanLabel(getField(row, ["Order Number", "invoice_number", WEBOT_COLUMNS.orderNumber]), ""),
-          resi: cleanLabel(getField(row, ["Nomor Resi", "No Resi", "Resi", "AWB", WEBOT_COLUMNS.awb, "Column 13"]), "-"),
+          orderId: cleanLabel(getIdText(row, ["Order Number", "invoice_number", WEBOT_COLUMNS.orderNumber]), ""),
+          resi: cleanLabel(getIdText(row, ["Awb", "AWB", "Nomor Resi", "No Resi", "Resi", WEBOT_COLUMNS.awb, "Column 13"]), "-"),
           date: parseDateValue(getField(row, ["Date", WEBOT_COLUMNS.date])),
+          returnDate: parseDateValue(getField(row, [WEBOT_COLUMNS.completionDate])),
           revenue: parseMoney(getField(row, ["Total Perline", WEBOT_COLUMNS.totalPerline])),
           status,
           channel: cleanLabel(getField(row, ["Kanal", "kanal", WEBOT_COLUMNS.channel]), "Tanpa kanal"),
@@ -5239,11 +5375,85 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       return cleaned;
     }
 
+    // Daftar 38 provinsi + variasi penulisan, dipakai untuk ambil nama provinsi saja dari billing address.
+    const PROVINCE_LIST = [
+      ["Aceh", ["aceh", "nanggroe aceh darussalam"]],
+      ["Sumatera Utara", ["sumatera utara", "sumatra utara", "sumut"]],
+      ["Sumatera Barat", ["sumatera barat", "sumatra barat", "sumbar"]],
+      ["Riau", ["riau"]],
+      ["Kepulauan Riau", ["kepulauan riau", "kep riau", "kepri"]],
+      ["Jambi", ["jambi"]],
+      ["Sumatera Selatan", ["sumatera selatan", "sumatra selatan", "sumsel"]],
+      ["Kepulauan Bangka Belitung", ["kepulauan bangka belitung", "bangka belitung", "babel"]],
+      ["Bengkulu", ["bengkulu"]],
+      ["Lampung", ["lampung"]],
+      ["DKI Jakarta", ["dki jakarta", "daerah khusus ibukota jakarta", "daerah khusus ibu kota jakarta"]],
+      ["Banten", ["banten"]],
+      ["Jawa Barat", ["jawa barat", "jabar"]],
+      ["Jawa Tengah", ["jawa tengah", "jateng"]],
+      ["DI Yogyakarta", ["di yogyakarta", "d i yogyakarta", "daerah istimewa yogyakarta", "diy"]],
+      ["Jawa Timur", ["jawa timur", "jatim"]],
+      ["Bali", ["bali"]],
+      ["Nusa Tenggara Barat", ["nusa tenggara barat", "ntb"]],
+      ["Nusa Tenggara Timur", ["nusa tenggara timur", "ntt"]],
+      ["Kalimantan Barat", ["kalimantan barat", "kalbar"]],
+      ["Kalimantan Tengah", ["kalimantan tengah", "kalteng"]],
+      ["Kalimantan Selatan", ["kalimantan selatan", "kalsel"]],
+      ["Kalimantan Timur", ["kalimantan timur", "kaltim"]],
+      ["Kalimantan Utara", ["kalimantan utara", "kaltara"]],
+      ["Sulawesi Utara", ["sulawesi utara", "sulut"]],
+      ["Gorontalo", ["gorontalo"]],
+      ["Sulawesi Tengah", ["sulawesi tengah", "sulteng"]],
+      ["Sulawesi Barat", ["sulawesi barat", "sulbar"]],
+      ["Sulawesi Selatan", ["sulawesi selatan", "sulsel"]],
+      ["Sulawesi Tenggara", ["sulawesi tenggara", "sultra"]],
+      ["Maluku", ["maluku"]],
+      ["Maluku Utara", ["maluku utara"]],
+      ["Papua", ["papua"]],
+      ["Papua Barat", ["papua barat"]],
+      ["Papua Barat Daya", ["papua barat daya"]],
+      ["Papua Selatan", ["papua selatan"]],
+      ["Papua Tengah", ["papua tengah"]],
+      ["Papua Pegunungan", ["papua pegunungan"]]
+    ];
+    // Cadangan kalau yang tertulis hanya nama kota/DKI tanpa kata "DKI" atau "Provinsi".
+    const PROVINCE_WEAK_ALIASES = [["jakarta", "DKI Jakarta"], ["yogyakarta", "DI Yogyakarta"], ["jogja", "DI Yogyakarta"]];
+
+    function findProvinceName(text) {
+      const normalized = ` ${String(text || "").toLowerCase().replace(/[^a-z]+/g, " ").trim()} `;
+      if (normalized.trim() === "") return "";
+      let best = null;
+      PROVINCE_LIST.forEach(([name, aliases]) => {
+        aliases.forEach(alias => {
+          const needle = ` ${alias} `;
+          const index = normalized.lastIndexOf(needle);
+          if (index < 0) return;
+          const end = index + needle.length;
+          if (!best || end > best.end || (end === best.end && alias.length > best.length)) {
+            best = { name, end, length: alias.length };
+          }
+        });
+      });
+      if (best) return best.name;
+      for (const [alias, name] of PROVINCE_WEAK_ALIASES) {
+        if (normalized.includes(` ${alias} `)) return name;
+      }
+      return "";
+    }
+
     function extractProvince(raw) {
       const value = String(raw || "").trim();
       if (!value) return "Tanpa provinsi";
       const match = value.match(/Provinsi:\s*([^,\n\r]+)/i);
-      return cleanLabel(match ? match[1] : value, "Tanpa provinsi");
+      if (match) {
+        const labeled = cleanLabel(match[1], "");
+        return findProvinceName(labeled) || labeled || "Tanpa provinsi";
+      }
+      const found = findProvinceName(value);
+      if (found) return found;
+      // Teks pendek tanpa koma/angka (mis. kolom provinsi marketplace dengan nama tak dikenal) dipertahankan apa adanya.
+      if (value.length <= 30 && !/[,\d\n\r]/.test(value)) return cleanLabel(value, "Tanpa provinsi");
+      return "Tanpa provinsi";
     }
 
     function cleanExpedition(raw) {
@@ -5265,8 +5475,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         const platform = String(getField(row, ["Platform", "platform", "F"]) || "-").trim() || "-";
         return {
           source: "Marketplace",
-          orderId: cleanLabel(getField(row, ["invoice_number", "Order Number", "A", "Column 1"]), ""),
-          date: parseDateValue(getField(row, ["Order_Date", "order_date", "C", "Column 3"])),
+          orderId: cleanLabel(getIdText(row, ["invoice_number", "Order Number", "A", "Column 1"]), ""),
+          date: parseDateValue(getField(row, ["Order_Date", "order_date", "C"])),
+          returnDate: parseDateValue(getField(row, ["date status", "Date Status", "Z"])),
+          resi: cleanLabel(getIdText(row, ["resi/awb", "Resi", "D"]), "-"),
           revenue: parseMoney(getField(row, ["Omset", "omset", "K"])),
           status: normalizeStatus(getField(row, ["Status", "status", "Y"])) || "All",
           channel: cleanLabel(getField(row, ["Kanal", "kanal", "C"]), "Marketplace"),
@@ -10488,6 +10700,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           els.tiktokPage.classList.add("hidden");
           els.weeklyBudgetingPage.classList.add("hidden");
           els.productPage.classList.add("hidden");
+          els.returnPage.classList.add("hidden");
           els.customerManagementPage.classList.add("hidden");
           els.financePage.classList.add("hidden");
           els.adminMarketplacePage.classList.add("hidden");
@@ -10536,6 +10749,11 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
           if (page === "product") {
             els.productPage.classList.remove("hidden");
             renderProductPage();
+            return;
+          }
+          if (page === "return") {
+            els.returnPage.classList.remove("hidden");
+            renderReturnPage();
             return;
           }
           if (page === "customer-management") {
@@ -11406,6 +11624,240 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
     }
     // ─────────────────────────────────────────────────────────────────────────
 
+    // ========== MENU RETURN ==========
+    const RETURN_GROUPS = [
+      { key: "all", label: "All Platform", cls: "rt-all" },
+      { key: "soscom", label: "Soscom Meta", cls: "rt-soscom" },
+      { key: "shopee", label: "Shopee", cls: "rt-shopee" },
+      { key: "tiktok", label: "TikTokShop", cls: "rt-tiktok" }
+    ];
+    const RETURN_MAX_ROWS = 10;
+    const RETURN_TABLE_LIMIT = 200;
+
+    function getReturnRange() {
+      const match = /^(\d{4})-(\d{2})$/.exec((els.returnMonth && els.returnMonth.value) || "");
+      if (!match) return rangePreset("thisMonth");
+      const year = Number(match[1]);
+      const month = Number(match[2]);
+      return [new Date(year, month - 1, 1), new Date(year, month, 0)];
+    }
+
+    // Webot = Soscom Meta (New Customer per Adv, Repeat = CRM). Marketplace = Shopee / TikTokShop.
+    function returnClassify(row) {
+      if (row.source === "Webot") {
+        const isRepeat = normalizeCompare(row.type).includes("repeat");
+        return {
+          group: "soscom",
+          repeat: isRepeat,
+          platform: isRepeat ? "Repeat Customer" : "New Customer",
+          advertiser: isRepeat ? "CRM" : (row.advertiser || "Tanpa advertiser")
+        };
+      }
+      const platform = normalizeCompare(row.type);
+      if (platform.includes("shopee")) return { group: "shopee", repeat: false, platform: "Shopee", advertiser: row.advertiser || "Tanpa advertiser" };
+      if (platform.includes("tiktok")) return { group: "tiktok", repeat: false, platform: "Tiktokshop", advertiser: row.advertiser || "Tanpa advertiser" };
+      return null;
+    }
+
+    function collectReturnItems() {
+      const [start, end] = getReturnRange();
+      const rangeStart = startOfDay(start);
+      const rangeEnd = startOfDay(end);
+      const items = [];
+      allRows.forEach(row => {
+        if (!row.date || row.date < rangeStart || row.date > rangeEnd) return;
+        if (!isReturnStatus(row.status)) return;
+        const info = returnClassify(row);
+        if (!info) return;
+        items.push(Object.assign({ row }, info));
+      });
+      return items;
+    }
+
+    function returnSum(items) {
+      return items.reduce((total, item) => total + (item.row.revenue || 0), 0);
+    }
+
+    function returnPct(value, total) {
+      return total > 0 ? `${(value / total * 100).toFixed(2).replace(".", ",")}%` : "0,00%";
+    }
+
+    function returnItemsForGroup(items, key) {
+      return key === "all" ? items : items.filter(item => item.group === key);
+    }
+
+    function returnAggregate(items, keyFn) {
+      const map = new Map();
+      items.forEach(item => {
+        const key = keyFn(item);
+        map.set(key, (map.get(key) || 0) + (item.row.revenue || 0));
+      });
+      return [...map.entries()].sort((a, b) => b[1] - a[1]);
+    }
+
+    function returnDateText(date) {
+      return date ? date.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }) : "-";
+    }
+
+    function renderReturnCards(items) {
+      const total = returnSum(items);
+      const groupItems = key => returnItemsForGroup(items, key);
+      const cardHtml = (cls, title, value, pctText, note) => `
+        <article class="rt-card ${cls}">
+          <div class="rt-card-head"><span>${escapeHtml(title)}</span><small>Pareto %</small></div>
+          <div class="rt-card-body"><strong>${currency(value)}</strong><span>${pctText}</span></div>
+          ${note ? `<div class="rt-card-note">${escapeHtml(note)}</div>` : ""}
+        </article>`;
+      const orderNote = list => `${countUniqueOrders(list.map(item => item.row)).toLocaleString("id-ID")} order`;
+
+      const soscomItems = groupItems("soscom");
+      const soscomTotal = returnSum(soscomItems);
+      const shopeeItems = groupItems("shopee");
+      const tiktokItems = groupItems("tiktok");
+
+      let html = `<div class="rt-cards">`;
+      html += cardHtml("rt-all", "Total All Return", total, "100%", orderNote(items));
+      html += cardHtml("rt-soscom", "Total Return Soscom", soscomTotal, returnPct(soscomTotal, total), orderNote(soscomItems));
+      html += cardHtml("rt-shopee", "Total Return Shopee", returnSum(shopeeItems), returnPct(returnSum(shopeeItems), total), orderNote(shopeeItems));
+      html += cardHtml("rt-tiktok", "Total Return TikTokShop", returnSum(tiktokItems), returnPct(returnSum(tiktokItems), total), orderNote(tiktokItems));
+      html += `</div>`;
+
+      const newItems = soscomItems.filter(item => !item.repeat);
+      const crmItems = soscomItems.filter(item => item.repeat);
+      const perAdv = returnAggregate(newItems, item => item.advertiser);
+      html += `<div class="rt-subtitle">Soscom Meta: New Customer per Advertiser dan Repeat Customer (CRM)</div><div class="rt-sub-cards">`;
+      perAdv.forEach(([name, value]) => {
+        html += cardHtml("rt-soscom", name, value, returnPct(value, soscomTotal), "New Customer");
+      });
+      html += cardHtml("rt-crm", "CRM", returnSum(crmItems), returnPct(returnSum(crmItems), soscomTotal), "Repeat Customer");
+      html += `</div>`;
+      els.returnCards.innerHTML = html;
+    }
+
+    function renderReturnBreakdown(container, items, keyFn, header, emptyLabel) {
+      container.innerHTML = RETURN_GROUPS.map(group => {
+        const list = returnItemsForGroup(items, group.key);
+        const total = returnSum(list);
+        let entries = returnAggregate(list, item => keyFn(item) || emptyLabel);
+        if (entries.length > RETURN_MAX_ROWS) {
+          const rest = entries.slice(RETURN_MAX_ROWS - 1);
+          entries = entries.slice(0, RETURN_MAX_ROWS - 1);
+          entries.push([`Lainnya (${rest.length})`, rest.reduce((sum, entry) => sum + entry[1], 0)]);
+        }
+        const rows = entries.length
+          ? entries.map(([label, value]) => `<div class="rt-row"><span title="${escapeHtml(label)}">${escapeHtml(label)}</span><span>${currency(value)}</span><span>${returnPct(value, total)}</span></div>`).join("")
+          : `<div class="rt-empty">Belum ada return.</div>`;
+        return `<div class="rt-box ${group.cls}">
+          <div class="rt-box-title">${escapeHtml(group.label)}</div>
+          <div class="rt-row rt-head-row"><span>${escapeHtml(header)}</span><span>Return</span><span>Pareto %</span></div>
+          ${rows}
+        </div>`;
+      }).join("");
+    }
+
+    function buildReturnOrders(items) {
+      const map = new Map();
+      items.forEach((item, index) => {
+        const row = item.row;
+        const key = `${row.source}|${row.orderId || row.resi || index}`;
+        const existing = map.get(key);
+        if (!existing) {
+          map.set(key, {
+            orderId: row.orderId || "-",
+            resi: row.resi && row.resi !== "-" ? row.resi : "-",
+            orderDate: row.date,
+            returnDate: row.returnDate || null,
+            platform: item.platform,
+            advertiser: item.advertiser,
+            group: item.group,
+            repeat: item.repeat
+          });
+          return;
+        }
+        if (existing.resi === "-" && row.resi && row.resi !== "-") existing.resi = row.resi;
+        if (!existing.returnDate && row.returnDate) existing.returnDate = row.returnDate;
+      });
+      return [...map.values()].sort((a, b) => {
+        const aTime = a.returnDate ? a.returnDate.getTime() : 0;
+        const bTime = b.returnDate ? b.returnDate.getTime() : 0;
+        if (bTime !== aTime) return bTime - aTime;
+        return (b.orderDate ? b.orderDate.getTime() : 0) - (a.orderDate ? a.orderDate.getTime() : 0);
+      });
+    }
+
+    function returnPlatformTag(order) {
+      if (order.group === "shopee") return `<span class="rt-tag rt-tag-shopee">Shopee</span>`;
+      if (order.group === "tiktok") return `<span class="rt-tag rt-tag-tiktok">Tiktokshop</span>`;
+      return order.repeat
+        ? `<span class="rt-tag rt-tag-repeat">Repeat Customer</span>`
+        : `<span class="rt-tag rt-tag-new">New Customer</span>`;
+    }
+
+    function renderReturnTable(items) {
+      const orders = buildReturnOrders(items);
+      const keyword = normalizeCompare((els.returnSearch && els.returnSearch.value) || "").trim();
+      const filtered = keyword
+        ? orders.filter(order => normalizeCompare(`${order.orderId} ${order.resi} ${order.advertiser}`).includes(keyword))
+        : orders;
+      const shown = filtered.slice(0, RETURN_TABLE_LIMIT);
+      els.returnTableNote.textContent = filtered.length > shown.length
+        ? `menampilkan ${shown.length.toLocaleString("id-ID")} dari ${filtered.length.toLocaleString("id-ID")} order return`
+        : `${filtered.length.toLocaleString("id-ID")} order return`;
+      if (!shown.length) {
+        els.returnTableBody.innerHTML = `<tr><td colspan="8">${keyword ? "Tidak ada order yang cocok dengan pencarian." : "Belum ada data return di bulan ini."}</td></tr>`;
+        return;
+      }
+      els.returnTableBody.innerHTML = shown.map((order, index) => {
+        let diff = "-";
+        if (order.orderDate && order.returnDate) {
+          const days = Math.round((order.returnDate - order.orderDate) / 86400000);
+          diff = `${days} hari`;
+        }
+        return `<tr>
+          <td>${index + 1}</td>
+          <td>${escapeHtml(order.orderId)}</td>
+          <td>${escapeHtml(order.resi)}</td>
+          <td>${returnDateText(order.orderDate)}</td>
+          <td>${returnDateText(order.returnDate)}</td>
+          <td>${diff}</td>
+          <td>${returnPlatformTag(order)}</td>
+          <td>${escapeHtml(order.advertiser)}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    async function renderReturnPage() {
+      if (!els.returnPage) return;
+      const [start, end] = getReturnRange();
+      await ensureCoreDataForRange(start, end);
+      const items = collectReturnItems();
+      renderReturnCards(items);
+      renderReturnBreakdown(els.returnProductGrid, items, item => canonicalProductName(item.row.product), "Nama Produk", "Tanpa produk");
+      renderReturnBreakdown(els.returnExpeditionGrid, items, item => item.row.expedition, "Nama Ekspedisi", "Tanpa ekspedisi");
+      renderReturnBreakdown(els.returnProvinceGrid, items, item => item.row.province, "Provinsi", "Tanpa provinsi");
+      renderReturnTable(items);
+      const orderCount = countUniqueOrders(items.map(item => item.row));
+      els.returnStatus.textContent = `${orderCount.toLocaleString("id-ID")} order return (${els.returnMonth.selectedOptions[0] ? els.returnMonth.selectedOptions[0].textContent : "bulan ini"})`;
+    }
+
+    function setupReturnPage() {
+      if (!els.returnMonth) return;
+      const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      const now = new Date();
+      const options = [];
+      for (let i = 0; i < 36; i++) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+        options.push(`<option value="${value}">${monthNames[date.getMonth()]} ${date.getFullYear()}</option>`);
+      }
+      els.returnMonth.innerHTML = options.join("");
+      els.returnMonth.value = options.length ? `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}` : "";
+      els.returnApplyBtn.addEventListener("click", renderReturnPage);
+      els.returnMonth.addEventListener("change", renderReturnPage);
+      els.returnSearch.addEventListener("input", () => renderReturnTable(collectReturnItems()));
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     function renderCurrentPage() {
       if (activePage === "advertiser") return renderAdvertiserReport();
       if (activePage === "cs") return renderCsReport();
@@ -11415,6 +11867,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       if (activePage === "weekly-budgeting") return renderWeeklyBudgetingPage();
       if (activePage === "admin-marketplace") return renderAdminMarketplacePage();
       if (activePage === "product") return renderProductPage();
+      if (activePage === "return") return renderReturnPage();
       return render();
     }
 
@@ -12963,6 +13416,10 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
         await forceRefreshCoreDataForRange(...getProductRange());
         renderProductPage();
       },
+      "return": async () => {
+        await forceRefreshCoreDataForRange(...getReturnRange());
+        renderReturnPage();
+      },
       "admin-marketplace": async () => {
         await forceRefreshCoreDataForRange(...getAdminMarketplaceRange());
         await forceRefreshSupportingData();
@@ -12979,6 +13436,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       tiktok: () => els.tiktokStatus,
       "weekly-budgeting": () => els.weeklyAdvertiserStatus,
       product: () => els.productStatus,
+      "return": () => els.returnStatus,
       "admin-marketplace": () => els.adminMarketplaceStatus
     };
 
@@ -13358,6 +13816,7 @@ Contoh: Adv1,Shopee,ProductA,1000000,25" style="width: 100%; height: 120px; font
       setupNavigation();
       setupFilters();
       setupProductPage();
+      setupReturnPage();
       setupProdukUtamaFilter();
       setupChartHover();
       setupCrmStackTooltip();
